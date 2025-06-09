@@ -2,8 +2,10 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { storage } from "./storage";
+import { redisClient } from "./redis_client";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
+import { spawn } from "child_process";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -30,24 +32,47 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Store io instance for use in other modules
   (app as any).io = io;
 
-  // Portfolio endpoints
+  // Start Python trading service
+  let pythonProcess: any = null;
+  try {
+    pythonProcess = spawn('python3', ['python_service.py'], { 
+      cwd: process.cwd() + '/server',
+      detached: false,
+      stdio: 'pipe'
+    });
+    
+    pythonProcess.stdout?.on('data', (data: any) => {
+      console.log(`Python Service: ${data}`);
+    });
+    
+    pythonProcess.stderr?.on('data', (data: any) => {
+      console.error(`Python Service Error: ${data}`);
+    });
+    
+    console.log('Python trading service started');
+  } catch (error) {
+    console.error('Failed to start Python service:', error);
+  }
+
+  // Portfolio endpoints - now using Redis data from Python service
   app.get("/api/portfolio/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const positions = await storage.getActivePositions(userId);
-      const settings = await storage.getTradingSettings(userId);
-      const totalValue = positions.reduce((sum, pos) => sum + parseFloat(pos.size || "0"), 0);
-      const totalPnL = positions.reduce((sum, pos) => sum + parseFloat(pos.pnl || "0"), 0);
+      const portfolio = await redisClient.getPortfolio(userId);
+      const positions = await redisClient.getPositions(userId);
 
       res.json({
-        totalValue: totalValue.toFixed(2),
-        dailyPnL: totalPnL.toFixed(2),
-        activePositions: positions.length,
-        maxPositions: settings?.maxPositions || 5,
-        availableFunds: (parseFloat(settings?.maxPositionSize || "100") * (settings?.maxPositions || 5) - totalValue).toFixed(2),
+        totalValue: portfolio.totalValue,
+        dailyPnL: portfolio.dailyPnL,
+        unrealizedPnL: portfolio.unrealizedPnL,
+        realizedPnL: portfolio.realizedPnL,
+        availableBalance: portfolio.availableBalance,
+        marginUsed: portfolio.marginUsed,
+        activePositions: parseInt(portfolio.activePositions),
         positions
       });
     } catch (error) {
+      console.error("Error fetching portfolio:", error);
       res.status(500).json({ error: "Failed to fetch portfolio" });
     }
   });
@@ -56,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/positions/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const positions = await storage.getActivePositions(userId);
+      const positions = await redisClient.getPositions(userId);
       res.json(positions);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch positions" });
@@ -117,7 +142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.userId);
       const limit = parseInt(req.query.limit as string) || 50;
-      const trades = await storage.getTradeHistory(userId, limit);
+      const trades = await redisClient.getTrades(userId, limit);
       res.json(trades);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch trade history" });
@@ -129,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const symbols = req.query.symbols as string;
       const symbolList = symbols ? symbols.split(',') : [];
-      const sentiment = await storage.getSocialSentiment(symbolList);
+      const sentiment = await redisClient.getSentiment(symbolList.length > 0 ? symbolList : undefined);
       res.json(sentiment);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch sentiment data" });
@@ -140,7 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/settings/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const settings = await storage.getTradingSettings(userId);
+      const settings = await redisClient.getSettings(userId);
       res.json(settings);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch trading settings" });
@@ -151,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.userId);
       const updates = req.body;
-      const settings = await storage.updateTradingSettings(userId, updates);
+      const settings = await redisClient.updateSettings(userId, updates);
       res.json(settings);
     } catch (error) {
       res.status(500).json({ error: "Failed to update trading settings" });
