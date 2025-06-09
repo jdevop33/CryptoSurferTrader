@@ -129,6 +129,7 @@ export class MemStorage implements IStorage {
       ...insertUser, 
       id,
       createdAt: new Date(),
+      walletAddress: insertUser.walletAddress || null,
     };
     this.users.set(id, user);
     return user;
@@ -148,8 +149,19 @@ export class MemStorage implements IStorage {
   async createPosition(position: InsertTradingPosition): Promise<TradingPosition> {
     const id = this.currentPositionId++;
     const newPosition: TradingPosition = {
-      ...position,
       id,
+      userId: position.userId,
+      symbol: position.symbol,
+      exchange: position.exchange,
+      side: position.side,
+      entryPrice: position.entryPrice,
+      currentPrice: position.currentPrice || null,
+      size: position.size,
+      pnl: position.pnl || null,
+      pnlPercent: position.pnlPercent || null,
+      status: "open",
+      stopLoss: position.stopLoss || null,
+      takeProfit: position.takeProfit || null,
       createdAt: new Date(),
       closedAt: null,
     };
@@ -206,8 +218,18 @@ export class MemStorage implements IStorage {
   async createTrade(trade: InsertTradeHistory): Promise<TradeHistory> {
     const id = this.currentTradeId++;
     const newTrade: TradeHistory = {
-      ...trade,
       id,
+      userId: trade.userId,
+      positionId: trade.positionId || null,
+      symbol: trade.symbol,
+      exchange: trade.exchange,
+      type: trade.type,
+      entryPrice: trade.entryPrice,
+      exitPrice: trade.exitPrice || null,
+      size: trade.size,
+      pnl: trade.pnl || null,
+      trigger: trade.trigger || null,
+      metadata: trade.metadata || null,
       executedAt: new Date(),
     };
     this.trades.set(id, newTrade);
@@ -229,7 +251,13 @@ export class MemStorage implements IStorage {
     
     const newSentiment: SocialSentiment = {
       id: existing?.id || this.currentSentimentId++,
-      ...sentiment,
+      symbol: sentiment.symbol,
+      sentimentScore: sentiment.sentimentScore,
+      mentions: sentiment.mentions || null,
+      influencerCount: sentiment.influencerCount || null,
+      marketCap: sentiment.marketCap || null,
+      volumeChange: sentiment.volumeChange || null,
+      metadata: sentiment.metadata || null,
       timestamp: new Date(),
     };
     
@@ -282,8 +310,14 @@ export class MemStorage implements IStorage {
   async createNotification(notification: InsertNotification): Promise<Notification> {
     const id = this.currentNotificationId++;
     const newNotification: Notification = {
-      ...notification,
       id,
+      userId: notification.userId,
+      type: notification.type,
+      title: notification.title,
+      message: notification.message,
+      priority: notification.priority || null,
+      read: notification.read || null,
+      metadata: notification.metadata || null,
       createdAt: new Date(),
     };
     this.notifications.set(id, newNotification);
