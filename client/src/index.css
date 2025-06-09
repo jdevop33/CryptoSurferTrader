@@ -1,0 +1,345 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(222, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217, 32.6%, 17.5%);
+  --muted-foreground: hsl(215, 20.2%, 65.1%);
+  --popover: hsl(222, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217, 32.6%, 17.5%);
+  --input: hsl(217, 32.6%, 17.5%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(217, 32.6%, 17.5%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217, 32.6%, 17.5%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(212, 95%, 83.9%);
+  --radius: 0.5rem;
+  --chart-1: hsl(207, 90%, 54%);
+  --chart-2: hsl(142, 76%, 36%);
+  --chart-3: hsl(35, 91%, 65%);
+  --chart-4: hsl(270, 95%, 75%);
+  --chart-5: hsl(16, 100%, 66%);
+  
+  /* Trading specific colors */
+  --success: hsl(142, 76%, 36%);
+  --success-foreground: hsl(355.7, 100%, 97.3%);
+  --warning: hsl(35, 91%, 65%);
+  --warning-foreground: hsl(20, 14.3%, 4.1%);
+  --danger: hsl(0, 84.2%, 60.2%);
+  --danger-foreground: hsl(210, 40%, 98%);
+  
+  /* Sidebar colors */
+  --sidebar-background: hsl(220, 30%, 18%);
+  --sidebar-foreground: hsl(210, 40%, 98%);
+  --sidebar-primary: hsl(207, 90%, 54%);
+  --sidebar-primary-foreground: hsl(211, 100%, 99%);
+  --sidebar-accent: hsl(217, 32.6%, 17.5%);
+  --sidebar-accent-foreground: hsl(210, 40%, 98%);
+  --sidebar-border: hsl(217, 32.6%, 17.5%);
+  --sidebar-ring: hsl(212, 95%, 83.9%);
+}
+
+.dark {
+  --background: hsl(222, 84%, 4.9%);
+  --foreground: hsl(210, 40%, 98%);
+  --muted: hsl(217, 32.6%, 17.5%);
+  --muted-foreground: hsl(215, 20.2%, 65.1%);
+  --popover: hsl(222, 84%, 4.9%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --card: hsl(222, 84%, 4.9%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --border: hsl(217, 32.6%, 17.5%);
+  --input: hsl(217, 32.6%, 17.5%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(217, 32.6%, 17.5%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --accent: hsl(217, 32.6%, 17.5%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(210, 40%, 98%);
+  --ring: hsl(212, 95%, 83.9%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Custom scrollbar for webkit browsers */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-md;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-muted-foreground/50;
+  }
+}
+
+@layer components {
+  /* Trading specific component styles */
+  .trading-card {
+    @apply bg-slate-800 border-slate-700 rounded-xl;
+  }
+
+  .trading-sidebar {
+    @apply bg-slate-800 border-r border-slate-700;
+  }
+
+  .sentiment-positive {
+    @apply text-green-400 bg-green-400/10;
+  }
+
+  .sentiment-neutral {
+    @apply text-yellow-400 bg-yellow-400/10;
+  }
+
+  .sentiment-negative {
+    @apply text-red-400 bg-red-400/10;
+  }
+
+  .pnl-positive {
+    @apply text-green-400;
+  }
+
+  .pnl-negative {
+    @apply text-red-400;
+  }
+
+  .exchange-badge-binance {
+    @apply bg-yellow-600 text-white;
+  }
+
+  .exchange-badge-bybit {
+    @apply bg-orange-600 text-white;
+  }
+
+  .exchange-badge-uniswap {
+    @apply bg-purple-600 text-white;
+  }
+
+  .exchange-badge-pancakeswap {
+    @apply bg-green-600 text-white;
+  }
+
+  /* Animations for real-time updates */
+  .pulse-green {
+    @apply animate-pulse text-green-400;
+  }
+
+  .pulse-red {
+    @apply animate-pulse text-red-400;
+  }
+
+  .notification-enter {
+    @apply animate-in slide-in-from-right duration-300;
+  }
+
+  .notification-exit {
+    @apply animate-out slide-out-to-right duration-200;
+  }
+
+  /* Chart container styles */
+  .chart-container {
+    @apply relative h-full w-full;
+  }
+
+  .chart-container canvas {
+    @apply rounded-lg;
+  }
+
+  /* MetaMask connection status */
+  .metamask-connected {
+    @apply bg-green-900/30 border-green-500/50 text-green-400;
+  }
+
+  .metamask-disconnected {
+    @apply bg-red-900/30 border-red-500/50 text-red-400;
+  }
+
+  /* Risk level indicators */
+  .risk-low {
+    @apply text-green-400 bg-green-400/10;
+  }
+
+  .risk-moderate {
+    @apply text-yellow-400 bg-yellow-400/10;
+  }
+
+  .risk-high {
+    @apply text-red-400 bg-red-400/10;
+  }
+
+  /* Token symbol circles */
+  .token-circle {
+    @apply w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold;
+  }
+
+  .token-pepe {
+    @apply bg-yellow-500 text-black;
+  }
+
+  .token-shib {
+    @apply bg-orange-500 text-white;
+  }
+
+  .token-bonk {
+    @apply bg-purple-500 text-white;
+  }
+
+  .token-floki {
+    @apply bg-green-500 text-white;
+  }
+
+  .token-default {
+    @apply bg-primary text-white;
+  }
+}
+
+@layer utilities {
+  /* Text utilities for trading interface */
+  .text-success {
+    color: hsl(var(--success));
+  }
+
+  .text-warning {
+    color: hsl(var(--warning));
+  }
+
+  .text-danger {
+    color: hsl(var(--danger));
+  }
+
+  .bg-success {
+    background-color: hsl(var(--success));
+  }
+
+  .bg-warning {
+    background-color: hsl(var(--warning));
+  }
+
+  .bg-danger {
+    background-color: hsl(var(--danger));
+  }
+
+  .border-success {
+    border-color: hsl(var(--success));
+  }
+
+  .border-warning {
+    border-color: hsl(var(--warning));
+  }
+
+  .border-danger {
+    border-color: hsl(var(--danger));
+  }
+
+  /* Animation utilities */
+  .animate-pulse-fast {
+    animation: pulse 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .animate-bounce-soft {
+    animation: bounce 2s ease-in-out infinite;
+  }
+
+  /* Gradient utilities for charts and backgrounds */
+  .bg-gradient-success {
+    background: linear-gradient(135deg, hsl(var(--success)) 0%, hsl(var(--success) / 0.1) 100%);
+  }
+
+  .bg-gradient-danger {
+    background: linear-gradient(135deg, hsl(var(--danger)) 0%, hsl(var(--danger) / 0.1) 100%);
+  }
+
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary) / 0.1) 100%);
+  }
+}
+
+/* Custom keyframes for trading animations */
+@keyframes price-flash-up {
+  0% { background-color: transparent; }
+  50% { background-color: hsl(var(--success) / 0.2); }
+  100% { background-color: transparent; }
+}
+
+@keyframes price-flash-down {
+  0% { background-color: transparent; }
+  50% { background-color: hsl(var(--danger) / 0.2); }
+  100% { background-color: transparent; }
+}
+
+.price-flash-up {
+  animation: price-flash-up 0.6s ease-out;
+}
+
+.price-flash-down {
+  animation: price-flash-down 0.6s ease-out;
+}
+
+/* Responsive design for mobile trading */
+@media (max-width: 768px) {
+  .trading-sidebar {
+    @apply w-full border-r-0 border-b border-slate-700;
+  }
+
+  .chart-container {
+    @apply h-64;
+  }
+
+  .token-circle {
+    @apply w-6 h-6 text-xs;
+  }
+}
+
+/* High contrast mode for accessibility */
+@media (prefers-contrast: high) {
+  :root {
+    --border: hsl(210, 40%, 30%);
+    --input: hsl(210, 40%, 30%);
+  }
+
+  .dark {
+    --border: hsl(210, 40%, 30%);
+    --input: hsl(210, 40%, 30%);
+  }
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse,
+  .animate-bounce,
+  .animate-pulse-fast,
+  .animate-bounce-soft {
+    animation: none;
+  }
+
+  .price-flash-up,
+  .price-flash-down {
+    animation: none;
+  }
+}
