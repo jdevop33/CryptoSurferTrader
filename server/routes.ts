@@ -187,7 +187,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/notifications/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const notifications = await storage.getNotifications(userId);
+      const notifications = await dataService.getNotifications(userId);
       res.json(notifications);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch notifications" });
@@ -224,19 +224,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.userId);
       
-      // Disable auto trading
-      await storage.updateTradingSettings(userId, { autoTradingEnabled: false });
-      
-      // Close all positions (in a real implementation, this would trigger the trading engine)
-      const positions = await storage.getActivePositions(userId);
-      for (const position of positions) {
-        await storage.closePosition(position.id);
-      }
+      // Execute emergency stop using authenticated data service
+      const result = await dataService.emergencyStop(userId);
       
       // Emit emergency stop notification
       io.to(`user-${userId}`).emit('emergency-stop');
       
-      res.json({ success: true, message: "Emergency stop executed" });
+      res.json(result);
     } catch (error) {
       res.status(500).json({ error: "Failed to execute emergency stop" });
     }
