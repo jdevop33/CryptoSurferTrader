@@ -1,0 +1,31 @@
+Here are the LLM-optimized prompts for your Replit setup:
+
+## **Technical Architecture**
+```
+Web dashboard with real-time charts using React frontend, WebSocket feeds for live data visualization. Python/FastAPI backend integrated with nautilus_trader. Real-time monitoring via Grafana dashboards showing positions, P&L, social sentiment scores. Push notifications via Discord/Telegram webhooks for trade alerts.
+```
+
+## **Trading Strategy Specifics**
+```
+Monitor Twitter accounts with 50K+ followers in crypto space, tracking engagement velocity (100+ likes/retweets in first 10 minutes). Buy triggers: new token mentions with >5 influencers posting within 30min window, sentiment score >0.8. Define smaller markets as tokens with <$10M market cap on Binance/Bybit. Take profits at 30% gains OR when social volume drops 60% from peak. Emergency exit if -15% loss.
+```
+
+## **Risk Management Parameters**
+```
+Max $100 per position, max 5 concurrent positions ($500 total exposure). Daily loss limit $200. Stop-loss at -15% per position. Position sizing: 0.5% of liquidity pool size maximum. Exit to USDT/USDC (stablecoins) when taking profits. No leverage trading. Blacklist tokens mentioned by known pump-and-dump accounts.
+```
+
+## **Data Sources & Integration**
+```
+Primary exchanges: Binance and Bybit via nautilus_trader adapters. Twitter API v2 for social sentiment via tweepy. Monitor top 100 crypto influencers list updated weekly. Technical indicators: RSI, volume spikes (>300% 5min average). Use CoinGecko API for market cap verification. Redis for caching social scores with 60-second TTL.
+```
+
+## **MetaMask Integration Scope**
+```
+MetaMask for DEX trading only - Uniswap V3 and PancakeSwap via web3.py. Use MetaMask for wallet monitoring and gas fee estimation. Centralized exchange trading via nautilus_trader native adapters (no MetaMask needed). Transaction signing for DEX swaps only. Focus 80% on CEX for better liquidity, 20% DEX for early tokens.
+```
+
+## **Additional Replit Environment Setup**
+```
+Python 3.11, nautilus_trader[binance,bybit], pandas, tweepy, web3, redis, fastapi, uvicorn, discord-webhook. Environment variables: BINANCE_API_KEY, BINANCE_SECRET, TWITTER_BEARER_TOKEN, DISCORD_WEBHOOK_URL, REDIS_URL. Use Replit Secrets for all API keys. Enable Always On for 24/7 monitoring.
+```
