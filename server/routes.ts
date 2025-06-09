@@ -2,7 +2,7 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { storage } from "./storage";
-import { redisClient } from "./redis_client";
+import { dataService } from "./data_service";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 import { spawn } from "child_process";
@@ -54,12 +54,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.error('Failed to start Python service:', error);
   }
 
-  // Portfolio endpoints - now using Redis data from Python service
+  // Portfolio endpoints - using authenticated market data service
   app.get("/api/portfolio/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const portfolio = await redisClient.getPortfolio(userId);
-      const positions = await redisClient.getPositions(userId);
+      const portfolio = await dataService.getPortfolio(userId);
+      const positions = await dataService.getPositions(userId);
 
       res.json({
         totalValue: portfolio.totalValue,
@@ -81,7 +81,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/positions/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const positions = await redisClient.getPositions(userId);
+      const positions = await dataService.getPositions(userId);
       res.json(positions);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch positions" });
@@ -142,7 +142,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.userId);
       const limit = parseInt(req.query.limit as string) || 50;
-      const trades = await redisClient.getTrades(userId, limit);
+      const trades = await dataService.getTrades(userId, limit);
       res.json(trades);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch trade history" });
@@ -154,7 +154,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const symbols = req.query.symbols as string;
       const symbolList = symbols ? symbols.split(',') : [];
-      const sentiment = await redisClient.getSentiment(symbolList.length > 0 ? symbolList : undefined);
+      const sentiment = await dataService.getSentiment(symbolList.length > 0 ? symbolList : undefined);
       res.json(sentiment);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch sentiment data" });
@@ -165,7 +165,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/settings/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const settings = await redisClient.getSettings(userId);
+      const settings = await dataService.getSettings(userId);
       res.json(settings);
     } catch (error) {
       res.status(500).json({ error: "Failed to fetch trading settings" });
@@ -176,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const userId = parseInt(req.params.userId);
       const updates = req.body;
-      const settings = await redisClient.updateSettings(userId, updates);
+      const settings = await dataService.updateSettings(userId, updates);
       res.json(settings);
     } catch (error) {
       res.status(500).json({ error: "Failed to update trading settings" });
