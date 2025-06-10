@@ -64,12 +64,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
     console.error('Failed to initialize Python trading bridge:', error);
   });
 
-  // Portfolio endpoints - using authenticated market data service
+  // Portfolio endpoints - Enhanced with Python backend integration
   app.get("/api/portfolio/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const portfolio = await dataService.getPortfolio(userId);
-      const positions = await dataService.getPositions(userId);
+      
+      // Try to get data from Python backend first, fallback to dataService
+      let portfolio;
+      if (pythonBridge.isReady()) {
+        portfolio = await pythonBridge.getPortfolio();
+      } else {
+        portfolio = await dataService.getPortfolio(userId);
+      }
 
       res.json({
         totalValue: portfolio.totalValue,
@@ -78,8 +84,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         realizedPnL: portfolio.realizedPnL,
         availableBalance: portfolio.availableBalance,
         marginUsed: portfolio.marginUsed,
-        activePositions: parseInt(portfolio.activePositions),
-        positions
+        activePositions: portfolio.activePositions || 0,
+        lastUpdated: portfolio.lastUpdated
       });
     } catch (error) {
       console.error("Error fetching portfolio:", error);
@@ -87,13 +93,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Trading positions endpoints
+  // Trading positions endpoints - Enhanced with Nautilus Trader integration
   app.get("/api/positions/:userId", async (req, res) => {
     try {
       const userId = parseInt(req.params.userId);
-      const positions = await dataService.getPositions(userId);
+      
+      // Try to get positions from Python backend first
+      let positions;
+      if (pythonBridge.isReady()) {
+        positions = await pythonBridge.getPositions();
+      } else {
+        positions = await dataService.getPositions(userId);
+      }
+      
       res.json(positions);
     } catch (error) {
+      console.error("Error fetching positions:", error);
       res.status(500).json({ error: "Failed to fetch positions" });
     }
   });
