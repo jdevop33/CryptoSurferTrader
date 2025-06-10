@@ -87,18 +87,26 @@ export class PythonTradingBridge extends EventEmitter {
 
   private async startPythonService(): Promise<void> {
     return new Promise((resolve, reject) => {
-      this.pythonProcess = spawn('python3', ['server/python_service.py'], {
+      this.pythonProcess = spawn('python3', ['server/simple_trading_service.py'], {
         cwd: process.cwd(),
         stdio: ['pipe', 'pipe', 'pipe']
       });
 
       this.pythonProcess.stdout?.on('data', (data: Buffer) => {
-        const output = data.toString();
-        console.log('🐍 Python Service:', output.trim());
+        const output = data.toString().trim();
         
-        // Check for initialization success
-        if (output.includes('Trading service started')) {
-          resolve();
+        // Parse JSON messages from Python service
+        try {
+          const message = JSON.parse(output);
+          this.handlePythonMessage(message);
+        } catch (e) {
+          // Regular log output
+          if (output.includes('🐍') || output.includes('Nautilus')) {
+            console.log(output);
+            if (output.includes('service starting') || output.includes('service')) {
+              resolve();
+            }
+          }
         }
       });
 
@@ -156,6 +164,54 @@ export class PythonTradingBridge extends EventEmitter {
     }));
     
     this.emit('sentimentUpdate', this.sentimentData);
+  }
+
+  private handlePythonMessage(message: any): void {
+    try {
+      const { type, data } = message;
+      
+      switch (type) {
+        case 'portfolio_update':
+          this.portfolioData = {
+            totalValue: data.total_value?.toString() || this.portfolioData.totalValue,
+            dailyPnL: data.daily_pnl?.toString() || this.portfolioData.dailyPnL,
+            unrealizedPnL: data.unrealized_pnl?.toString() || this.portfolioData.unrealizedPnL,
+            realizedPnL: data.realized_pnl?.toString() || this.portfolioData.realizedPnL,
+            availableBalance: data.available_balance?.toString() || this.portfolioData.availableBalance,
+            marginUsed: data.margin_used?.toString() || this.portfolioData.marginUsed,
+            activePositions: data.active_positions || this.portfolioData.activePositions,
+            lastUpdated: data.last_updated || new Date().toISOString()
+          };
+          this.emit('portfolioUpdate', this.portfolioData);
+          break;
+          
+        case 'sentiment_update':
+          if (Array.isArray(data)) {
+            this.sentimentData = data;
+            this.emit('sentimentUpdate', this.sentimentData);
+          }
+          break;
+          
+        case 'trade_executed':
+          const position = this.formatNautilusPosition(data);
+          this.positionsData.push(position);
+          this.emit('tradeExecuted', position);
+          break;
+          
+        case 'position_update':
+          const updatedPosition = this.formatNautilusPosition(data);
+          const existingIndex = this.positionsData.findIndex(p => p.symbol === updatedPosition.symbol);
+          if (existingIndex >= 0) {
+            this.positionsData[existingIndex] = updatedPosition;
+          } else {
+            this.positionsData.push(updatedPosition);
+          }
+          this.emit('positionUpdate', updatedPosition);
+          break;
+      }
+    } catch (error) {
+      console.error('Error handling Python message:', error);
+    }
   }
 
   private formatNautilusPosition(data: any): NautilusPosition {
