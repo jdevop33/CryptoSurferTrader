@@ -303,5 +303,254 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // Production Testing Endpoints
+  app.get("/api/testing/validation", async (req, res) => {
+    try {
+      const report = await productionTestingService.runFullValidation();
+      res.json(report);
+    } catch (error) {
+      res.status(500).json({ error: "Validation failed", details: error.message });
+    }
+  });
+
+  app.get("/api/testing/required-apis", async (req, res) => {
+    res.json({
+      requiredKeys: productionTestingService.getRequiredAPIKeys(),
+      recommendedServices: productionTestingService.getRecommendedServices(),
+      currentStatus: {
+        twitterAPI: !!process.env.TWITTER_BEARER_TOKEN,
+        coinGeckoAPI: !!process.env.COINGECKO_API_KEY,
+        ethereumRPC: !!process.env.ETHEREUM_RPC_URL,
+        walletKey: !!process.env.WALLET_PRIVATE_KEY,
+        alibabaAI: !!process.env.ALIBABA_CLOUD_API_KEY
+      }
+    });
+  });
+
+  // Backtesting Endpoints
+  app.post("/api/backtest/run", async (req, res) => {
+    try {
+      const config = req.body;
+      const results = await backtestingService.runBacktest(config);
+      res.json(results);
+    } catch (error) {
+      res.status(500).json({ error: "Backtesting failed", details: error.message });
+    }
+  });
+
+  // DEX Trading Endpoints
+  app.get("/api/dex/prices", async (req, res) => {
+    try {
+      const prices = await dexTradingService.getRealTimePrices();
+      res.json(prices);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch DEX prices", details: error.message });
+    }
+  });
+
+  app.post("/api/dex/simulate-trade", async (req, res) => {
+    try {
+      const tradeParams = req.body;
+      const simulation = await dexTradingService.simulateTrade(tradeParams);
+      res.json(simulation);
+    } catch (error) {
+      res.status(500).json({ error: "Trade simulation failed", details: error.message });
+    }
+  });
+
+  app.post("/api/dex/execute-trade", async (req, res) => {
+    try {
+      if (dexTradingService.requiresWalletConnection()) {
+        return res.status(400).json({ 
+          error: "Wallet not connected", 
+          message: "Provide WALLET_PRIVATE_KEY environment variable" 
+        });
+      }
+
+      const tradeParams = req.body;
+      const txHash = await dexTradingService.executeTrade(tradeParams);
+      res.json({ success: true, transactionHash: txHash });
+    } catch (error) {
+      res.status(500).json({ error: "Trade execution failed", details: error.message });
+    }
+  });
+
+  app.get("/api/dex/account-balance", async (req, res) => {
+    try {
+      const address = req.query.address as string;
+      const balances = await dexTradingService.getAccountBalance(address);
+      res.json(balances);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get account balance", details: error.message });
+    }
+  });
+
+  app.get("/api/dex/market-depth/:symbol", async (req, res) => {
+    try {
+      const symbol = req.params.symbol;
+      const depth = await dexTradingService.getMarketDepth(symbol);
+      res.json(depth);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get market depth", details: error.message });
+    }
+  });
+
+  app.get("/api/dex/supported-tokens", async (req, res) => {
+    res.json(dexTradingService.getSupportedTokens());
+  });
+
+  // Twitter Sentiment Endpoints
+  app.get("/api/twitter/influencers", async (req, res) => {
+    res.json(twitterService.getMonitoredInfluencers());
+  });
+
+  app.get("/api/twitter/target-tokens", async (req, res) => {
+    res.json(twitterService.getTargetTokens());
+  });
+
+  app.get("/api/twitter/status", async (req, res) => {
+    res.json({
+      ready: twitterService.isReady(),
+      hasAPIKey: !!process.env.TWITTER_BEARER_TOKEN,
+      influencerCount: twitterService.getMonitoredInfluencers().length,
+      tokenCount: twitterService.getTargetTokens().length
+    });
+  });
+
+  // Live Trading Control Endpoints
+  app.post("/api/live-trading/start", async (req, res) => {
+    try {
+      const { userId, strategy, riskLevel } = req.body;
+      
+      // Validate all services are ready
+      if (!alibabaAIService.isReady()) {
+        return res.status(400).json({ error: "AI service not ready" });
+      }
+      
+      if (!dexTradingService.isReady()) {
+        return res.status(400).json({ error: "DEX service not ready" });
+      }
+      
+      if (dexTradingService.requiresWalletConnection()) {
+        return res.status(400).json({ error: "Wallet not connected" });
+      }
+
+      // Update trading settings to enable live trading
+      const settings = await storage.updateTradingSettings(userId, {
+        autoTradingEnabled: true,
+        strategy: strategy || 'hybrid',
+        riskLevel: riskLevel || 'MEDIUM'
+      });
+
+      io.to(`user-${userId}`).emit('live-trading-started', settings);
+      
+      res.json({ success: true, message: "Live trading activated", settings });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to start live trading", details: error.message });
+    }
+  });
+
+  app.post("/api/live-trading/stop", async (req, res) => {
+    try {
+      const { userId } = req.body;
+      
+      const settings = await storage.updateTradingSettings(userId, {
+        autoTradingEnabled: false
+      });
+
+      io.to(`user-${userId}`).emit('live-trading-stopped', settings);
+      
+      res.json({ success: true, message: "Live trading stopped", settings });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to stop live trading", details: error.message });
+    }
+  });
+
+  // System Health Endpoints
+  app.get("/api/system/health", async (req, res) => {
+    const health = {
+      status: "operational",
+      services: {
+        aiService: alibabaAIService.isReady(),
+        dexService: dexTradingService.isReady(),
+        twitterService: twitterService.isReady(),
+        walletConnected: !dexTradingService.requiresWalletConnection()
+      },
+      apiKeys: {
+        twitter: !!process.env.TWITTER_BEARER_TOKEN,
+        coinGecko: !!process.env.COINGECKO_API_KEY,
+        ethereum: !!process.env.ETHEREUM_RPC_URL,
+        wallet: !!process.env.WALLET_PRIVATE_KEY,
+        alibaba: !!process.env.ALIBABA_CLOUD_API_KEY
+      },
+      timestamp: new Date().toISOString()
+    };
+    
+    const allServicesReady = Object.values(health.services).every(Boolean);
+    health.status = allServicesReady ? "operational" : "degraded";
+    
+    res.json(health);
+  });
+
+  app.get("/api/system/production-readiness", async (req, res) => {
+    try {
+      const validation = await productionTestingService.runFullValidation();
+      
+      res.json({
+        readyForProduction: validation.readyForProduction,
+        overallScore: validation.overallScore,
+        criticalIssues: validation.criticalIssues,
+        profitabilityAnalysis: validation.profitabilityAnalysis,
+        riskAssessment: validation.riskAssessment,
+        recommendations: validation.recommendations.slice(0, 5) // Top 5 recommendations
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        readyForProduction: false,
+        error: "Production readiness check failed",
+        details: error.message
+      });
+    }
+  });
+
+  // Real-time price streaming with enhanced data
+  app.get("/api/streaming/prices", async (req, res) => {
+    try {
+      const prices = await dexTradingService.getRealTimePrices();
+      
+      // Enhance with AI analysis
+      const enhancedPrices = await Promise.all(prices.map(async (price) => {
+        try {
+          const aiAnalysis = await alibabaAIService.analyzeMarketData({
+            symbol: price.symbol,
+            price: price.price,
+            volume: price.volume24h,
+            marketCap: price.marketCap,
+            sentiment: 0.5, // Default sentiment
+            socialMentions: 100,
+            influencerCount: 5
+          });
+          
+          return {
+            ...price,
+            aiSignal: aiAnalysis.tradingSignal,
+            confidence: aiAnalysis.confidence,
+            riskLevel: aiAnalysis.riskLevel
+          };
+        } catch {
+          return price; // Return without AI data if analysis fails
+        }
+      }));
+      
+      res.json(enhancedPrices);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get streaming prices", details: error.message });
+    }
+  });
+        "Trading signal generation"
+      ]
+    });
+  });
+
   return httpServer;
 }
