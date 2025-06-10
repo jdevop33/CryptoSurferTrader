@@ -1,0 +1,166 @@
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 --PageSize 50
+{
+        "Instances": {
+                "Instance": [
+                        {
+                                "AdditionalInfo": {},
+                                "AutoReleaseTime": "",
+                                "ClusterId": "",
+                                "Cpu": 2,
+                                "CpuOptions": {
+                                        "CoreCount": 1,
+                                        "Numa": "",
+                                        "ThreadsPerCore": 2
+                                },
+                                "CreationTime": "2025-06-10T03:09Z",
+                                "CreditSpecification": "Standard",
+                                "DedicatedHostAttribute": {
+                                        "DedicatedHostClusterId": "",
+                                        "DedicatedHostId": "",
+                                        "DedicatedHostName": ""
+                                },
+                                "DedicatedInstanceAttribute": {
+                                        "Affinity": "",
+                                        "Tenancy": ""
+                                },
+                                "DeletionProtection": false,
+                                "DeploymentSetId": "",
+                                "Description": "",
+                                "DeviceAvailable": true,
+                                "EcsCapacityReservationAttr": {
+                                        "CapacityReservationId": "",
+                                        "CapacityReservationPreference": ""
+                                },
+                                "EipAddress": {
+                                        "AllocationId": "",
+                                        "InternetChargeType": "",
+                                        "IpAddress": ""
+                                },
+                                "ExpiredTime": "2099-12-31T15:59Z",
+                                "GPUAmount": 0,
+                                "GPUSpec": "",
+                                "HibernationOptions": {
+                                        "Configured": false
+                                },
+                                "HostName": "iZt4ndx1mvq6rwcxzwalrjZ",
+                                "ImageId": "ubuntu_24_04_x64_20G_alibase_20240812.vhd",
+                                "ImageOptions": {},
+                                "InnerIpAddress": {
+                                        "IpAddress": []
+                                },
+                                "InstanceChargeType": "PostPaid",
+                                "InstanceId": "i-t4ndx1mvq6rwcxzwalrj",
+                                "InstanceName": "tradingserver",
+                                "InstanceNetworkType": "vpc",
+                                "InstanceType": "ecs.t6-c1m2.large",
+                                "InstanceTypeFamily": "ecs.t6",
+                                "InternetChargeType": "PayByTraffic",
+                                "InternetMaxBandwidthIn": 80,
+                                "InternetMaxBandwidthOut": 100,
+                                "IoOptimized": true,
+                                "Memory": 4096,
+                                "MetadataOptions": {
+                                        "HttpEndpoint": "",
+                                        "HttpTokens": ""
+                                },
+                                "NetworkInterfaces": {
+                                        "NetworkInterface": [
+                                                {
+                                                        "MacAddress": "00:16:3e:16:c0:26",
+                                                        "NetworkInterfaceId": "eni-t4n5kz6qbhfz1z6xuaw1",
+                                                        "PrimaryIpAddress": "10.0.1.248",
+                                                        "PrivateIpSets": {
+                                                                "PrivateIpSet": [
+                                                                        {
+                                                                                "Primary": true,
+                                                                                "PrivateIpAddress": "10.0.1.248"
+                                                                        }
+                                                                ]
+                                                        },
+                                                        "Type": "Primary"
+                                                }
+                                        ]
+                                },
+                                "OSName": "Ubuntu  24.04 64位",
+                                "OSNameEn": "Ubuntu  24.04 64 bit",
+                                "OSType": "linux",
+                                "OperationLocks": {
+                                        "LockReason": []
+                                },
+                                "PrivateDnsNameOptions": {},
+                                "PublicIpAddress": {
+                                        "IpAddress": [
+                                                "8.222.177.208"
+                                        ]
+                                },
+                                "Recyclable": false,
+                                "RegionId": "ap-southeast-1",
+                                "ResourceGroupId": "",
+                                "SaleCycle": "",
+                                "SecurityGroupIds": {
+                                        "SecurityGroupId": [
+                                                "sg-t4nfmr0n02ch476dlwb6"
+                                        ]
+                                },
+                                "SerialNumber": "346e51f4-3d83-4118-9fbd-71fd59ae2de7",
+                                "SpotPriceLimit": 0.0,
+                                "SpotStrategy": "NoSpot",
+                                "StartTime": "2025-06-10T03:09Z",
+                                "Status": "Running",
+                                "StoppedMode": "Not-applicable",
+                                "VlanId": "",
+                                "VpcAttributes": {
+                                        "NatIpAddress": "",
+                                        "PrivateIpAddress": {
+                                                "IpAddress": [
+                                                        "10.0.1.248"
+                                                ]
+                                        },
+                                        "VSwitchId": "vsw-t4najempq4wxom2gajsoh",
+                                        "VpcId": "vpc-t4nieljvv4252xbycwrqg"
+                                },
+                                "ZoneId": "ap-southeast-1a"
+                        }
+                ]
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 50,
+        "RequestId": "F3DF1A87-27B1-3002-8DA8-2DB4DE92B07A",
+        "TotalCount": 1
+}
+shell@Alicloud:~$ ssh root@8.222.177.208
+The authenticity of host '8.222.177.208 (8.222.177.208)' can't be established.
+ECDSA key fingerprint is SHA256:tNI8q9vl6oASwcPdRXxzDFGFQUAkUw9jz773X2JQ4T0.
+Are you sure you want to continue connecting (yes/no)? yes
+Warning: Permanently added '8.222.177.208' (ECDSA) to the list of known hosts.
+root@8.222.177.208's password: 
+Welcome to Ubuntu 24.04 LTS (GNU/Linux 6.8.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Tue Jun 10 11:16:39 AM CST 2025
+
+  System load:  0.0               Processes:             132
+  Usage of /:   5.3% of 39.01GB   Users logged in:       0
+  Memory usage: 8%                IPv4 address for eth0: 10.0.1.248
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+The list of available updates is more than a week old.
+To check for new updates run: sudo apt update
+
+
+Welcome to Alibaba Cloud Elastic Compute Service !
+
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# 
