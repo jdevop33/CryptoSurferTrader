@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import Dashboard from "@/pages/Dashboard";
+import GettingStarted from "@/pages/GettingStarted";
 import AIInsights from "@/pages/AI-Insights";
 import Deploy from "@/pages/Deploy";
 import Web3Trading from "@/pages/Web3Trading";
@@ -16,7 +17,8 @@ import { NotificationSystem } from "@/components/NotificationSystem";
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={Dashboard} />
+      <Route path="/" component={GettingStarted} />
+      <Route path="/dashboard" component={Dashboard} />
       <Route path="/ai-insights" component={AIInsights} />
       <Route path="/deploy" component={Deploy} />
       <Route path="/web3-trading" component={Web3Trading} />
