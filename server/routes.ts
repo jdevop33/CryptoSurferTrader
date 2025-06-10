@@ -8,6 +8,7 @@ import { twitterService } from "./twitter_service";
 import { dexTradingService } from "./dex_trading_service";
 import { backtestingService } from "./backtesting_service";
 import { productionTestingService } from "./production_testing_service";
+import { alchemyService } from "./alchemy_service";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 import { spawn } from "child_process";
@@ -488,6 +489,84 @@ export async function registerRoutes(app: Express): Promise<Server> {
     health.status = allServicesReady ? "operational" : "degraded";
     
     res.json(health);
+  });
+
+  // Alchemy Web3 Trading Endpoints
+  app.get("/api/alchemy/wallet/:address/tokens", async (req, res) => {
+    try {
+      const { address } = req.params;
+      const tokens = await alchemyService.getTokenBalances(address);
+      res.json(tokens);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch token balances" });
+    }
+  });
+
+  app.get("/api/alchemy/token/:address/metadata", async (req, res) => {
+    try {
+      const { address } = req.params;
+      const metadata = await alchemyService.getTokenMetadata(address);
+      res.json(metadata);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch token metadata" });
+    }
+  });
+
+  app.post("/api/alchemy/swap/quote", async (req, res) => {
+    try {
+      const { tokenIn, tokenOut, amountIn, walletAddress } = req.body;
+      const quote = await alchemyService.getSwapQuote(tokenIn, tokenOut, amountIn, walletAddress);
+      res.json(quote);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get swap quote" });
+    }
+  });
+
+  app.post("/api/alchemy/swap/execute", async (req, res) => {
+    try {
+      const { tokenIn, tokenOut, amountIn, minAmountOut, walletAddress, privateKey } = req.body;
+      const txHash = await alchemyService.executeSwap(tokenIn, tokenOut, amountIn, minAmountOut, walletAddress, privateKey);
+      res.json({ transactionHash: txHash });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to execute swap" });
+    }
+  });
+
+  app.get("/api/alchemy/transaction/:hash", async (req, res) => {
+    try {
+      const { hash } = req.params;
+      const status = await alchemyService.monitorTransaction(hash);
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to monitor transaction" });
+    }
+  });
+
+  app.get("/api/alchemy/gas-price", async (req, res) => {
+    try {
+      const gasPrice = await alchemyService.getGasPrice();
+      res.json({ gasPrice });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch gas price" });
+    }
+  });
+
+  app.get("/api/alchemy/tokens/top", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const tokens = await alchemyService.getTopTokens(limit);
+      res.json(tokens);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch top tokens" });
+    }
+  });
+
+  app.get("/api/alchemy/status", async (req, res) => {
+    res.json({
+      ready: alchemyService.isReady(),
+      hasAPIKey: !!process.env.ALCHEMY_API_KEY,
+      service: "Alchemy Web3 Infrastructure"
+    });
   });
 
   app.get("/api/system/production-readiness", async (req, res) => {
