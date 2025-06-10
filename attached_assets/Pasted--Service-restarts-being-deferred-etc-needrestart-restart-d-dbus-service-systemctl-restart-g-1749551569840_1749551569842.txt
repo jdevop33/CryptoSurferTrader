@@ -1,0 +1,786 @@
+
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart getty@tty1.service
+ systemctl restart networkd-dispatcher.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+User sessions running outdated binaries:
+ root @ session #2: sshd[4370]
+ root @ user manager service: systemd[4375]
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# npm install -g pm2
+
+added 135 packages in 7s
+
+13 packages are looking for funding
+  run `npm fund` for details
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.4.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.4.1
+npm notice To update run: npm install -g npm@11.4.1
+npm notice
+root@iZt4ndx1mvq6rwcxzwalrjZ:~#  npm install -g npm@11.4.1
+
+removed 9 packages, and changed 106 packages in 3s
+
+25 packages are looking for funding
+  run `npm fund` for details
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# mkdir -p /opt/trading-app
+cd /opt/trading-app
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# cat > package.json << 'EOF'
+{
+  "name": "8trader8panda",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "socket.io": "^4.7.0"
+  }
+}
+EOF
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# npm install
+
+added 100 packages, and audited 101 packages in 6s
+
+16 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# cat > server.js << 'EOF'
+const express = require('express');
+const cors = require('cors');
+const { Server } = require('socket.io');
+const http = require('http');
+
+const app = express();
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
+
+app.use(cors());
+app.use(express.json());
+
+app.get('/', (req, res) => {
+  res.send(`
+<!DOCTYPE html>
+<html>
+<head>
+    <title>8Trader8Panda - AI Trading System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #0f172a; color: white; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .card { background: #1e293b; padding: 20px; border-radius: 8px; border: 1px solid #334155; }
+        .status { color: #10b981; font-weight: bold; }
+        .signal { padding: 10px; margin: 5px 0; border-radius: 4px; }
+        .buy { background: #065f46; }
+        .sell { background: #7f1d1d; }
+        .hold { background: #374151; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🐼 8Trader8Panda</h1>
+            <p>Professional AI-Powered Cryptocurrency Trading System</p>
+            <div class="status">● LIVE ON ALIBABA CLOUD</div>
+        </div>
+        
+        <div class="stats">
+            <div class="card">
+                <h3>System Status</h3>
+                <p>🟢 Trading Engine: Active</p>
+                <p>🟢 AI Analysis: Running</p>
+                <p>🟢 Market Data: Connected</p>
+                <p>🟢 SSL: Ready</p>
+            </div>
+EOFonsole.log(\`8Trader8Panda running on port \${PORT}\`);secured' }e + (Math.random() - 0.5) * 10));x; }e; }
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# cat > package.json << 'EOF'
+{
+  "name": "8trader8panda-professional",
+  "version": "1.0.0",
+  "description": "Professional AI-Powered Cryptocurrency Trading System",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.0",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "socket.io": "^4.7.0",
+    "ws": "^8.14.0",
+    "node-cron": "^3.0.3",
+    "winston": "^3.11.0",
+    "helmet": "^7.1.0",
+    "compression": "^1.7.4"
+  }
+}
+EOF
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# npm install
+
+added 35 packages, and audited 136 packages in 2s
+
+17 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# cd /opt/trading-app
+rm -rf * .git  # Clear current manual files
+git clone https://github.com/jdevop33/panda_trader.git .
+Cloning into '.'...
+Username for 'https://github.com': jdevop33
+Password for 'https://jdevop33@github.com': 
+remote: Support for password authentication was removed on August 13, 2021.
+remote: Please see https://docs.github.com/get-started/getting-started-with-git/about-remote-repositories#cloning-with-https-urls for information on currently recommended modes of authentication.
+fatal: Authentication failed for 'https://github.com/jdevop33/panda_trader.git/'
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app#    git config --global user.name "jdevop33"
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app#    git config --global user.email "fitforgov@gmail.com"
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# git clone https://github.com/jdevop33/panda_trader.git .
+Cloning into '.'...
+Username for 'https://github.com': cd /opt/trading-app
+rm -rf * .git
+git clone https://github.com/jdevop33/panda_trader.git .Password for 'https://cd%20%2Fopt%2Ftrading-app@github.com': 
+remote: Invalid username or password.
+fatal: Authentication failed for 'https://github.com/jdevop33/panda_trader.git/'
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# cd /opt/trading-app
+rm -rf * .git
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+
+Disconnected.
+
+Requesting a Cloud Shell..Succeeded.
+Connecting terminal
+
+Welcome to Alibaba Cloud Shell! 
+
+Type "help" to learn about Cloud Shell
+Type "aliyun" to use Alibaba Cloud CLI
+
+shell@Alicloud:~$ 
+
+Disconnected.
+
+Requesting a Cloud Shell.Succeeded.
+Connecting terminal
+
+Welcome to Alibaba Cloud Shell! 
+
+Type "help" to learn about Cloud Shell
+Type "aliyun" to use Alibaba Cloud CLI
+
+shell@Alicloud:~$ ssh root@8.222.177.208
+root@8.222.177.208's password: 
+Welcome to Ubuntu 24.04.2 LTS (GNU/Linux 6.8.0-40-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+ System information as of Tue Jun 10 06:14:32 PM CST 2025
+
+  System load:  0.02              Processes:             139
+  Usage of /:   8.7% of 39.01GB   Users logged in:       0
+  Memory usage: 15%               IPv4 address for eth0: 10.0.1.248
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+*** System restart required ***
+
+Welcome to Alibaba Cloud Elastic Compute Service !
+
+Last login: Tue Jun 10 13:21:45 2025 from 101.132.188.187
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# # On your Alibaba Cloud server (8.222.177.208):
+wget https://raw.githubusercontent.com/jdevop33/panda_trader/main/deploy-server.sh
+chmod +x deploy-server.sh
+./deploy-server.sh
+--2025-06-10 18:25:29--  https://raw.githubusercontent.com/jdevop33/panda_trader/main/deploy-server.sh
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.108.133, 185.199.111.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
+HTTP request sent, awaiting response... 404 Not Found
+2025-06-10 18:25:30 ERROR 404: Not Found.
+
+chmod: cannot access 'deploy-server.sh': No such file or directory
+-bash: ./deploy-server.sh: No such file or directory
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# # Download and execute the deployment script
+curl -o alibaba-cloud-deploy.sh https://raw.githubusercontent.com/jdevop33/panda_trader/main/alibaba-cloud-deploy.sh
+chmod +x alibaba-cloud-deploy.sh
+./alibaba-cloud-deploy.sh
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    14  100    14    0     0     43      0 --:--:-- --:--:-- --:--:--    43
+./alibaba-cloud-deploy.sh: line 1: 404:: command not found
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# curl -o alibaba-cloud-deploy.sh https://raw.githubusercontent.com/jdevop33/panda_trader/main/alibaba-cloud-deploy.sh
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    14  100    14    0     0     38      0 --:--:-- --:--:-- --:--:--    38
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# chmod +x alibaba-cloud-deploy.sh
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# ./alibaba-cloud-deploy.sh
+./alibaba-cloud-deploy.sh: line 1: 404:: command not found
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# cat > server-setup.sh << 'EOF'
+#!/bin/bash
+
+# 8Trader8Panda Direct Server Setup
+# Run this script on your Ubuntu 24.04 ECS instance
+
+echo "🐼 8Trader8Panda Production Setup Starting..."
+
+# Update system
+apt update && apt upgrade -y
+
+# Install Node.js 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
+
+# Install PM2
+npm install -g pm2
+
+# Install system dependencies
+apt install -y redis-server postgresql postgresql-contrib nginx git
+
+# Start services
+systemctl enable redis-server postgresql nginx
+systemctl start redis-server postgresql nginx
+
+# Create application directory
+mkdir -p /opt/trading-app
+cd /opt/trading-app
+
+# Create package.json
+cat > package.json << 'PKGEOF'
+{
+  "name": "8trader8panda",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx server/index.ts",
+    "build": "tsc && vite build",
+    "start": "node dist/server/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "tsx": "^4.7.0",
+    "typescript": "^5.3.3"
+  }
+}
+./server-setup.shetup.shader8panda"(after DNS config)"ginx/sites-enabled/ading_dbJSI%3DEUifiRBkKG5E2XzMDjRfl76ZC9Ub0wnz4XsNiRVBChTYbJcE3Fp>ions.</p>nal risk management.</p>
+🐼 8Trader8Panda Production Setup Starting...
+Hit:1 https://deb.nodesource.com/node_20.x nodistro InRelease
+Hit:2 http://mirrors.cloud.aliyuncs.com/ubuntu noble InRelease
+Get:3 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates InRelease [126 kB]
+Get:4 http://mirrors.cloud.aliyuncs.com/ubuntu noble-backports InRelease [126 kB]
+Get:5 http://mirrors.cloud.aliyuncs.com/ubuntu noble-security InRelease [126 kB]
+Get:6 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 Packages [1,118 kB]
+Get:7 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 Components [161 kB]
+Get:8 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/restricted amd64 Components [212 B]
+Get:9 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/universe amd64 Packages [1,078 kB]
+Get:10 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/universe amd64 Components [376 kB]
+Get:11 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/multiverse amd64 Components [940 B]
+Get:12 http://mirrors.cloud.aliyuncs.com/ubuntu noble-backports/main amd64 Components [7,068 B]
+Get:13 http://mirrors.cloud.aliyuncs.com/ubuntu noble-backports/restricted amd64 Components [216 B]
+Get:14 http://mirrors.cloud.aliyuncs.com/ubuntu noble-backports/universe amd64 Components [16.4 kB]
+Get:15 http://mirrors.cloud.aliyuncs.com/ubuntu noble-backports/multiverse amd64 Components [212 B]
+Get:16 http://mirrors.cloud.aliyuncs.com/ubuntu noble-security/main amd64 Components [21.5 kB]
+Get:17 http://mirrors.cloud.aliyuncs.com/ubuntu noble-security/restricted amd64 Components [212 B]
+Get:18 http://mirrors.cloud.aliyuncs.com/ubuntu noble-security/universe amd64 Components [52.2 kB]
+Get:19 http://mirrors.cloud.aliyuncs.com/ubuntu noble-security/multiverse amd64 Components [208 B]
+Fetched 3,211 kB in 2s (1,559 kB/s)                          
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+2 packages can be upgraded. Run 'apt list --upgradable' to see them.
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+Calculating upgrade... Done
+The following packages were automatically installed and are no longer required:
+  gyp handlebars libauthen-sasl-perl libcares2 libclone-perl libdata-dump-perl libdrm-amdgpu1 libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libegl-mesa0 libegl1 libencode-locale-perl libfile-basedir-perl
+  libfile-desktopentry-perl libfile-listing-perl libfile-mimeinfo-perl libfont-afm-perl libgbm1 libgl1 libgl1-amber-dri libgl1-mesa-dri libglapi-mesa libgles2 libglvnd0 libglx-mesa0 libglx0 libhtml-form-perl
+  libhtml-format-perl libhtml-parser-perl libhtml-tagset-perl libhtml-tree-perl libhttp-cookies-perl libhttp-daemon-perl libhttp-date-perl libhttp-message-perl libhttp-negotiate-perl libice6 libio-html-perl
+  libio-socket-ssl-perl libio-stringy-perl libipc-system-simple-perl libjs-async libjs-events libjs-inherits libjs-is-typedarray libjs-prettify libjs-regenerate libjs-source-map libjs-sprintf-js
+  libjs-typedarray-to-buffer libllvm19 liblwp-mediatypes-perl liblwp-protocol-https-perl libmailtools-perl libnet-dbus-perl libnet-http-perl libnet-smtp-ssl-perl libnet-ssleay-perl libpciaccess0 libre2-10
+  libsm6 libssl-dev libtie-ixhash-perl libtimedate-perl libtry-tiny-perl liburi-perl libuv1-dev libvulkan1 libwayland-client0 libwayland-server0 libwww-perl libwww-robotrules-perl libx11-protocol-perl
+  libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0 libxcb-shm0 libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2 libxi6
+  libxinerama1 libxkbfile1 libxml-parser-perl libxml-twig-perl libxml-xpathengine-perl libxmu6 libxrandr2 libxrender1 libxshmfence1 libxt6t64 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 mesa-libgallium
+  mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-escapes node-ansi-regex node-ansi-styles node-aproba node-are-we-there-yet node-argparse node-arrify node-async node-async-each
+  node-auto-bind node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match node-base64-js node-binary-extensions node-brace-expansion node-busboy node-camelcase node-caniuse-lite
+  node-chownr node-chrome-trace-event node-ci-info node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone node-clone-deep node-collection-visit node-color-convert node-color-name node-colors
+  node-commander node-commondir node-concat-stream node-console-control-strings node-convert-source-map node-core-js node-core-js-pure node-core-util-is node-data-uri-to-buffer node-decompress-response
+  node-deep-is node-defaults node-define-property node-delegates node-depd node-diff node-electron-to-chromium node-encoding node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys node-esquery node-estraverse node-esutils node-events node-fancy-log node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up
+  node-flatted node-for-in node-for-own node-foreground-child node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath node-function-bind node-functional-red-black-tree node-get-caller-file
+  node-get-stream node-get-value node-glob node-globals node-got node-graceful-fs node-growl node-has-flag node-has-unicode node-has-value node-has-values node-hosted-git-info node-iconv-lite node-ieee754
+  node-iferr node-imurmurhash node-indent-string node-inflight node-inherits node-ini node-interpret node-ip node-ip-regex node-is-arrayish node-is-binary-path node-is-buffer node-is-descriptor
+  node-is-extendable node-is-extglob node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream node-is-typedarray node-is-windows node-isarray node-isexe node-isobject node-js-tokens node-jsesc
+  node-json-buffer node-json-parse-better-errors node-json-schema node-json-schema-traverse node-json-stable-stringify node-jsonify node-jsonparse node-kind-of node-levn node-loader-runner node-locate-path
+  node-lodash-packages node-log-driver node-lowercase-keys node-lru-cache node-map-visit node-memfs node-merge-stream node-mimic-response node-minimatch node-minimist node-minipass node-mixin-deep
+  node-mute-stream node-n3 node-negotiator node-neo-async node-npm-run-path node-object-inspect node-object-visit node-once node-optimist node-optionator node-osenv node-p-cancelable node-p-limit
+  node-p-locate node-p-map node-pascalcase node-path-dirname node-path-exists node-path-is-absolute node-path-is-inside node-path-type node-pify node-pkg-dir node-postcss-value-parser node-prelude-ls
+  node-process-nextick-args node-promise-inflight node-promise-retry node-promzard node-prr node-pump node-punycode node-quick-lru node-randombytes node-read node-readable-stream node-rechoir node-regenerate
+  node-regenerate-unicode-properties node-regenerator-runtime node-regenerator-transform node-regexpp node-regjsgen node-repeat-string node-require-directory node-require-from-string node-resolve
+  node-resolve-cwd node-resolve-from node-restore-cursor node-resumer node-retry node-run-queue node-safe-buffer node-sellside-emitter node-serialize-javascript node-set-blocking node-set-immediate-shim
+  node-shebang-command node-shebang-regex node-shell-quote node-signal-exit node-slash node-slice-ansi node-source-list-map node-source-map node-source-map-support node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri node-stack-utils node-string-decoder node-strip-bom node-strip-json-comments node-supports-color node-tapable node-terser
+  node-text-table node-through node-time-stamp node-to-fast-properties node-tslib node-type-check node-typedarray node-typedarray-to-buffer node-undici node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript node-unicode-property-aliases-ecmascript node-unique-filename node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources node-wordwrap node-wrappy node-write-file-atomic node-xtend node-y18n node-yallist node-yaml perl-openssl-defaults x11-common x11-utils
+  x11-xserver-utils xdg-utils zutty
+Use 'apt autoremove' to remove them.
+The following upgrades have been deferred due to phasing:
+  ubuntu-drivers-common
+The following packages have been kept back:
+  cloud-init
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+N: Some packages may have been kept back due to phasing.
+2025-06-10 18:30:37 - Installing pre-requisites
+Hit:1 http://mirrors.cloud.aliyuncs.com/ubuntu noble InRelease
+Hit:2 https://deb.nodesource.com/node_20.x nodistro InRelease           
+Hit:3 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates InRelease  
+Hit:4 http://mirrors.cloud.aliyuncs.com/ubuntu noble-backports InRelease
+Hit:5 http://mirrors.cloud.aliyuncs.com/ubuntu noble-security InRelease
+Reading package lists... Done
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+apt-transport-https is already the newest version (2.8.3).
+ca-certificates is already the newest version (20240203).
+curl is already the newest version (8.5.0-2ubuntu10.6).
+gnupg is already the newest version (2.4.4-2ubuntu17.2).
+The following packages were automatically installed and are no longer required:
+  gyp handlebars libauthen-sasl-perl libcares2 libclone-perl libdata-dump-perl libdrm-amdgpu1 libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libegl-mesa0 libegl1 libencode-locale-perl libfile-basedir-perl
+  libfile-desktopentry-perl libfile-listing-perl libfile-mimeinfo-perl libfont-afm-perl libgbm1 libgl1 libgl1-amber-dri libgl1-mesa-dri libglapi-mesa libgles2 libglvnd0 libglx-mesa0 libglx0 libhtml-form-perl
+  libhtml-format-perl libhtml-parser-perl libhtml-tagset-perl libhtml-tree-perl libhttp-cookies-perl libhttp-daemon-perl libhttp-date-perl libhttp-message-perl libhttp-negotiate-perl libice6 libio-html-perl
+  libio-socket-ssl-perl libio-stringy-perl libipc-system-simple-perl libjs-async libjs-events libjs-inherits libjs-is-typedarray libjs-prettify libjs-regenerate libjs-source-map libjs-sprintf-js
+  libjs-typedarray-to-buffer libllvm19 liblwp-mediatypes-perl liblwp-protocol-https-perl libmailtools-perl libnet-dbus-perl libnet-http-perl libnet-smtp-ssl-perl libnet-ssleay-perl libpciaccess0 libre2-10
+  libsm6 libssl-dev libtie-ixhash-perl libtimedate-perl libtry-tiny-perl liburi-perl libuv1-dev libvulkan1 libwayland-client0 libwayland-server0 libwww-perl libwww-robotrules-perl libx11-protocol-perl
+  libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0 libxcb-shm0 libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2 libxi6
+  libxinerama1 libxkbfile1 libxml-parser-perl libxml-twig-perl libxml-xpathengine-perl libxmu6 libxrandr2 libxrender1 libxshmfence1 libxt6t64 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 mesa-libgallium
+  mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-escapes node-ansi-regex node-ansi-styles node-aproba node-are-we-there-yet node-argparse node-arrify node-async node-async-each
+  node-auto-bind node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match node-base64-js node-binary-extensions node-brace-expansion node-busboy node-camelcase node-caniuse-lite
+  node-chownr node-chrome-trace-event node-ci-info node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone node-clone-deep node-collection-visit node-color-convert node-color-name node-colors
+  node-commander node-commondir node-concat-stream node-console-control-strings node-convert-source-map node-core-js node-core-js-pure node-core-util-is node-data-uri-to-buffer node-decompress-response
+  node-deep-is node-defaults node-define-property node-delegates node-depd node-diff node-electron-to-chromium node-encoding node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys node-esquery node-estraverse node-esutils node-events node-fancy-log node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up
+  node-flatted node-for-in node-for-own node-foreground-child node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath node-function-bind node-functional-red-black-tree node-get-caller-file
+  node-get-stream node-get-value node-glob node-globals node-got node-graceful-fs node-growl node-has-flag node-has-unicode node-has-value node-has-values node-hosted-git-info node-iconv-lite node-ieee754
+  node-iferr node-imurmurhash node-indent-string node-inflight node-inherits node-ini node-interpret node-ip node-ip-regex node-is-arrayish node-is-binary-path node-is-buffer node-is-descriptor
+  node-is-extendable node-is-extglob node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream node-is-typedarray node-is-windows node-isarray node-isexe node-isobject node-js-tokens node-jsesc
+  node-json-buffer node-json-parse-better-errors node-json-schema node-json-schema-traverse node-json-stable-stringify node-jsonify node-jsonparse node-kind-of node-levn node-loader-runner node-locate-path
+  node-lodash-packages node-log-driver node-lowercase-keys node-lru-cache node-map-visit node-memfs node-merge-stream node-mimic-response node-minimatch node-minimist node-minipass node-mixin-deep
+  node-mute-stream node-n3 node-negotiator node-neo-async node-npm-run-path node-object-inspect node-object-visit node-once node-optimist node-optionator node-osenv node-p-cancelable node-p-limit
+  node-p-locate node-p-map node-pascalcase node-path-dirname node-path-exists node-path-is-absolute node-path-is-inside node-path-type node-pify node-pkg-dir node-postcss-value-parser node-prelude-ls
+  node-process-nextick-args node-promise-inflight node-promise-retry node-promzard node-prr node-pump node-punycode node-quick-lru node-randombytes node-read node-readable-stream node-rechoir node-regenerate
+  node-regenerate-unicode-properties node-regenerator-runtime node-regenerator-transform node-regexpp node-regjsgen node-repeat-string node-require-directory node-require-from-string node-resolve
+  node-resolve-cwd node-resolve-from node-restore-cursor node-resumer node-retry node-run-queue node-safe-buffer node-sellside-emitter node-serialize-javascript node-set-blocking node-set-immediate-shim
+  node-shebang-command node-shebang-regex node-shell-quote node-signal-exit node-slash node-slice-ansi node-source-list-map node-source-map node-source-map-support node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri node-stack-utils node-string-decoder node-strip-bom node-strip-json-comments node-supports-color node-tapable node-terser
+  node-text-table node-through node-time-stamp node-to-fast-properties node-tslib node-type-check node-typedarray node-typedarray-to-buffer node-undici node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript node-unicode-property-aliases-ecmascript node-unique-filename node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources node-wordwrap node-wrappy node-write-file-atomic node-xtend node-y18n node-yallist node-yaml perl-openssl-defaults x11-common x11-utils
+  x11-xserver-utils xdg-utils zutty
+Use 'apt autoremove' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+Hit:1 http://mirrors.cloud.aliyuncs.com/ubuntu noble InRelease
+Hit:2 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates InRelease   
+Hit:3 http://mirrors.cloud.aliyuncs.com/ubuntu noble-backports InRelease 
+Hit:4 http://mirrors.cloud.aliyuncs.com/ubuntu noble-security InRelease  
+Hit:5 https://deb.nodesource.com/node_20.x nodistro InRelease            
+Reading package lists... Done                     
+2025-06-10 18:30:42 - Repository configured successfully.
+2025-06-10 18:30:42 - To install Node.js, run: apt-get install nodejs -y
+2025-06-10 18:30:42 - You can use N|solid Runtime as a node.js alternative
+2025-06-10 18:30:42 - To install N|solid Runtime, run: apt-get install nsolid -y 
+
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+nodejs is already the newest version (20.19.2-1nodesource1).
+The following packages were automatically installed and are no longer required:
+  gyp handlebars libauthen-sasl-perl libcares2 libclone-perl libdata-dump-perl libdrm-amdgpu1 libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libegl-mesa0 libegl1 libencode-locale-perl libfile-basedir-perl
+  libfile-desktopentry-perl libfile-listing-perl libfile-mimeinfo-perl libfont-afm-perl libgbm1 libgl1 libgl1-amber-dri libgl1-mesa-dri libglapi-mesa libgles2 libglvnd0 libglx-mesa0 libglx0 libhtml-form-perl
+  libhtml-format-perl libhtml-parser-perl libhtml-tagset-perl libhtml-tree-perl libhttp-cookies-perl libhttp-daemon-perl libhttp-date-perl libhttp-message-perl libhttp-negotiate-perl libice6 libio-html-perl
+  libio-socket-ssl-perl libio-stringy-perl libipc-system-simple-perl libjs-async libjs-events libjs-inherits libjs-is-typedarray libjs-prettify libjs-regenerate libjs-source-map libjs-sprintf-js
+  libjs-typedarray-to-buffer libllvm19 liblwp-mediatypes-perl liblwp-protocol-https-perl libmailtools-perl libnet-dbus-perl libnet-http-perl libnet-smtp-ssl-perl libnet-ssleay-perl libpciaccess0 libre2-10
+  libsm6 libssl-dev libtie-ixhash-perl libtimedate-perl libtry-tiny-perl liburi-perl libuv1-dev libvulkan1 libwayland-client0 libwayland-server0 libwww-perl libwww-robotrules-perl libx11-protocol-perl
+  libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0 libxcb-shm0 libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2 libxi6
+  libxinerama1 libxkbfile1 libxml-parser-perl libxml-twig-perl libxml-xpathengine-perl libxmu6 libxrandr2 libxrender1 libxshmfence1 libxt6t64 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 mesa-libgallium
+  mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-escapes node-ansi-regex node-ansi-styles node-aproba node-are-we-there-yet node-argparse node-arrify node-async node-async-each
+  node-auto-bind node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match node-base64-js node-binary-extensions node-brace-expansion node-busboy node-camelcase node-caniuse-lite
+  node-chownr node-chrome-trace-event node-ci-info node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone node-clone-deep node-collection-visit node-color-convert node-color-name node-colors
+  node-commander node-commondir node-concat-stream node-console-control-strings node-convert-source-map node-core-js node-core-js-pure node-core-util-is node-data-uri-to-buffer node-decompress-response
+  node-deep-is node-defaults node-define-property node-delegates node-depd node-diff node-electron-to-chromium node-encoding node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys node-esquery node-estraverse node-esutils node-events node-fancy-log node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up
+  node-flatted node-for-in node-for-own node-foreground-child node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath node-function-bind node-functional-red-black-tree node-get-caller-file
+  node-get-stream node-get-value node-glob node-globals node-got node-graceful-fs node-growl node-has-flag node-has-unicode node-has-value node-has-values node-hosted-git-info node-iconv-lite node-ieee754
+  node-iferr node-imurmurhash node-indent-string node-inflight node-inherits node-ini node-interpret node-ip node-ip-regex node-is-arrayish node-is-binary-path node-is-buffer node-is-descriptor
+  node-is-extendable node-is-extglob node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream node-is-typedarray node-is-windows node-isarray node-isexe node-isobject node-js-tokens node-jsesc
+  node-json-buffer node-json-parse-better-errors node-json-schema node-json-schema-traverse node-json-stable-stringify node-jsonify node-jsonparse node-kind-of node-levn node-loader-runner node-locate-path
+  node-lodash-packages node-log-driver node-lowercase-keys node-lru-cache node-map-visit node-memfs node-merge-stream node-mimic-response node-minimatch node-minimist node-minipass node-mixin-deep
+  node-mute-stream node-n3 node-negotiator node-neo-async node-npm-run-path node-object-inspect node-object-visit node-once node-optimist node-optionator node-osenv node-p-cancelable node-p-limit
+  node-p-locate node-p-map node-pascalcase node-path-dirname node-path-exists node-path-is-absolute node-path-is-inside node-path-type node-pify node-pkg-dir node-postcss-value-parser node-prelude-ls
+  node-process-nextick-args node-promise-inflight node-promise-retry node-promzard node-prr node-pump node-punycode node-quick-lru node-randombytes node-read node-readable-stream node-rechoir node-regenerate
+  node-regenerate-unicode-properties node-regenerator-runtime node-regenerator-transform node-regexpp node-regjsgen node-repeat-string node-require-directory node-require-from-string node-resolve
+  node-resolve-cwd node-resolve-from node-restore-cursor node-resumer node-retry node-run-queue node-safe-buffer node-sellside-emitter node-serialize-javascript node-set-blocking node-set-immediate-shim
+  node-shebang-command node-shebang-regex node-shell-quote node-signal-exit node-slash node-slice-ansi node-source-list-map node-source-map node-source-map-support node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri node-stack-utils node-string-decoder node-strip-bom node-strip-json-comments node-supports-color node-tapable node-terser
+  node-text-table node-through node-time-stamp node-to-fast-properties node-tslib node-type-check node-typedarray node-typedarray-to-buffer node-undici node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript node-unicode-property-aliases-ecmascript node-unique-filename node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources node-wordwrap node-wrappy node-write-file-atomic node-xtend node-y18n node-yallist node-yaml perl-openssl-defaults x11-common x11-utils
+  x11-xserver-utils xdg-utils zutty
+Use 'apt autoremove' to remove them.
+0 upgraded, 0 newly installed, 0 to remove and 2 not upgraded.
+
+added 1 package, and changed 135 packages in 6s
+
+13 packages are looking for funding
+  run `npm fund` for details
+Reading package lists... Done
+Building dependency tree... Done
+Reading state information... Done
+nginx is already the newest version (1.24.0-2ubuntu7.3).
+git is already the newest version (1:2.43.0-1ubuntu7.2).
+The following packages were automatically installed and are no longer required:
+  gyp handlebars libauthen-sasl-perl libcares2 libclone-perl libdata-dump-perl libdrm-amdgpu1 libdrm-intel1 libdrm-nouveau2 libdrm-radeon1 libegl-mesa0 libegl1 libencode-locale-perl libfile-basedir-perl
+  libfile-desktopentry-perl libfile-listing-perl libfile-mimeinfo-perl libfont-afm-perl libgbm1 libgl1 libgl1-amber-dri libgl1-mesa-dri libglapi-mesa libgles2 libglvnd0 libglx-mesa0 libglx0 libhtml-form-perl
+  libhtml-format-perl libhtml-parser-perl libhtml-tagset-perl libhtml-tree-perl libhttp-cookies-perl libhttp-daemon-perl libhttp-date-perl libhttp-message-perl libhttp-negotiate-perl libice6 libio-html-perl
+  libio-socket-ssl-perl libio-stringy-perl libipc-system-simple-perl libjs-async libjs-events libjs-inherits libjs-is-typedarray libjs-prettify libjs-regenerate libjs-source-map libjs-sprintf-js
+  libjs-typedarray-to-buffer libllvm19 liblwp-mediatypes-perl liblwp-protocol-https-perl libmailtools-perl libnet-dbus-perl libnet-http-perl libnet-smtp-ssl-perl libnet-ssleay-perl libpciaccess0 libre2-10
+  libsm6 libssl-dev libtie-ixhash-perl libtimedate-perl libtry-tiny-perl liburi-perl libuv1-dev libvulkan1 libwayland-client0 libwayland-server0 libwww-perl libwww-robotrules-perl libx11-protocol-perl
+  libx11-xcb1 libxaw7 libxcb-dri2-0 libxcb-dri3-0 libxcb-glx0 libxcb-present0 libxcb-randr0 libxcb-shape0 libxcb-shm0 libxcb-sync1 libxcb-xfixes0 libxcomposite1 libxcursor1 libxfixes3 libxft2 libxi6
+  libxinerama1 libxkbfile1 libxml-parser-perl libxml-twig-perl libxml-xpathengine-perl libxmu6 libxrandr2 libxrender1 libxshmfence1 libxt6t64 libxtst6 libxv1 libxxf86dga1 libxxf86vm1 mesa-libgallium
+  mesa-vulkan-drivers node-abbrev node-ampproject-remapping node-ansi-escapes node-ansi-regex node-ansi-styles node-aproba node-are-we-there-yet node-argparse node-arrify node-async node-async-each
+  node-auto-bind node-babel-plugin-add-module-exports node-babel7-runtime node-balanced-match node-base64-js node-binary-extensions node-brace-expansion node-busboy node-camelcase node-caniuse-lite
+  node-chownr node-chrome-trace-event node-ci-info node-cjs-module-lexer node-cli-boxes node-cli-cursor node-clone node-clone-deep node-collection-visit node-color-convert node-color-name node-colors
+  node-commander node-commondir node-concat-stream node-console-control-strings node-convert-source-map node-core-js node-core-js-pure node-core-util-is node-data-uri-to-buffer node-decompress-response
+  node-deep-is node-defaults node-define-property node-delegates node-depd node-diff node-electron-to-chromium node-encoding node-end-of-stream node-err-code node-error-ex node-es-module-lexer
+  node-escape-string-regexp node-eslint-utils node-eslint-visitor-keys node-esquery node-estraverse node-esutils node-events node-fancy-log node-fast-deep-equal node-fast-levenshtein node-fetch node-find-up
+  node-flatted node-for-in node-for-own node-foreground-child node-fs-readdir-recursive node-fs-write-stream-atomic node-fs.realpath node-function-bind node-functional-red-black-tree node-get-caller-file
+  node-get-stream node-get-value node-glob node-globals node-got node-graceful-fs node-growl node-has-flag node-has-unicode node-has-value node-has-values node-hosted-git-info node-iconv-lite node-ieee754
+  node-iferr node-imurmurhash node-indent-string node-inflight node-inherits node-ini node-interpret node-ip node-ip-regex node-is-arrayish node-is-binary-path node-is-buffer node-is-descriptor
+  node-is-extendable node-is-extglob node-is-path-cwd node-is-plain-obj node-is-plain-object node-is-stream node-is-typedarray node-is-windows node-isarray node-isexe node-isobject node-js-tokens node-jsesc
+  node-json-buffer node-json-parse-better-errors node-json-schema node-json-schema-traverse node-json-stable-stringify node-jsonify node-jsonparse node-kind-of node-levn node-loader-runner node-locate-path
+  node-lodash-packages node-log-driver node-lowercase-keys node-lru-cache node-map-visit node-memfs node-merge-stream node-mimic-response node-minimatch node-minimist node-minipass node-mixin-deep
+  node-mute-stream node-n3 node-negotiator node-neo-async node-npm-run-path node-object-inspect node-object-visit node-once node-optimist node-optionator node-osenv node-p-cancelable node-p-limit
+  node-p-locate node-p-map node-pascalcase node-path-dirname node-path-exists node-path-is-absolute node-path-is-inside node-path-type node-pify node-pkg-dir node-postcss-value-parser node-prelude-ls
+  node-process-nextick-args node-promise-inflight node-promise-retry node-promzard node-prr node-pump node-punycode node-quick-lru node-randombytes node-read node-readable-stream node-rechoir node-regenerate
+  node-regenerate-unicode-properties node-regenerator-runtime node-regenerator-transform node-regexpp node-regjsgen node-repeat-string node-require-directory node-require-from-string node-resolve
+  node-resolve-cwd node-resolve-from node-restore-cursor node-resumer node-retry node-run-queue node-safe-buffer node-sellside-emitter node-serialize-javascript node-set-blocking node-set-immediate-shim
+  node-shebang-command node-shebang-regex node-shell-quote node-signal-exit node-slash node-slice-ansi node-source-list-map node-source-map node-source-map-support node-spdx-correct node-spdx-exceptions
+  node-spdx-expression-parse node-spdx-license-ids node-sprintf-js node-ssri node-stack-utils node-string-decoder node-strip-bom node-strip-json-comments node-supports-color node-tapable node-terser
+  node-text-table node-through node-time-stamp node-to-fast-properties node-tslib node-type-check node-typedarray node-typedarray-to-buffer node-undici node-unicode-canonical-property-names-ecmascript
+  node-unicode-match-property-value-ecmascript node-unicode-property-aliases-ecmascript node-unique-filename node-unset-value node-uri-js node-util-deprecate node-uuid node-v8flags
+  node-validate-npm-package-license node-wcwidth.js node-webpack-sources node-wordwrap node-wrappy node-write-file-atomic node-xtend node-y18n node-yallist node-yaml perl-openssl-defaults x11-common x11-utils
+  x11-xserver-utils xdg-utils zutty
+Use 'apt autoremove' to remove them.
+The following additional packages will be installed:
+  libcommon-sense-perl libjemalloc2 libjson-perl libjson-xs-perl libllvm17t64 liblzf1 libpq5 libtypes-serialiser-perl postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common redis-tools
+  ssl-cert
+Suggested packages:
+  postgresql-doc postgresql-doc-16 ruby-redis
+The following NEW packages will be installed:
+  libcommon-sense-perl libjemalloc2 libjson-perl libjson-xs-perl libllvm17t64 liblzf1 libpq5 libtypes-serialiser-perl postgresql postgresql-16 postgresql-client-16 postgresql-client-common postgresql-common
+  postgresql-contrib redis-server redis-tools ssl-cert
+0 upgraded, 17 newly installed, 0 to remove and 2 not upgraded.
+Need to get 45.1 MB of archives.
+After this operation, 183 MB of additional disk space will be used.
+Get:1 http://mirrors.cloud.aliyuncs.com/ubuntu noble/main amd64 libjson-perl all 4.10000-1 [81.9 kB]
+Get:2 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 postgresql-client-common all 257build1.1 [36.4 kB]
+Get:3 http://mirrors.cloud.aliyuncs.com/ubuntu noble/main amd64 ssl-cert all 1.1.2ubuntu1 [17.8 kB]
+Get:4 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 postgresql-common all 257build1.1 [161 kB]
+Get:5 http://mirrors.cloud.aliyuncs.com/ubuntu noble/universe amd64 libjemalloc2 amd64 5.3.0-2build1 [256 kB]
+Get:6 http://mirrors.cloud.aliyuncs.com/ubuntu noble/universe amd64 liblzf1 amd64 3.6-4 [7,624 B]
+Get:7 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/universe amd64 redis-tools amd64 5:7.0.15-1ubuntu0.24.04.1 [1,166 kB]
+Get:8 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/universe amd64 redis-server amd64 5:7.0.15-1ubuntu0.24.04.1 [51.7 kB]
+Get:9 http://mirrors.cloud.aliyuncs.com/ubuntu noble/main amd64 libcommon-sense-perl amd64 3.75-3build3 [20.4 kB]
+Get:10 http://mirrors.cloud.aliyuncs.com/ubuntu noble/main amd64 libtypes-serialiser-perl all 1.01-1 [11.6 kB]
+Get:11 http://mirrors.cloud.aliyuncs.com/ubuntu noble/main amd64 libjson-xs-perl amd64 4.030-2build3 [83.6 kB]
+Get:12 http://mirrors.cloud.aliyuncs.com/ubuntu noble/main amd64 libllvm17t64 amd64 1:17.0.6-9ubuntu1 [26.2 MB]
+Get:13 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 libpq5 amd64 16.9-0ubuntu0.24.04.1 [143 kB]
+Get:14 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 postgresql-client-16 amd64 16.9-0ubuntu0.24.04.1 [1,294 kB]
+Get:15 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 postgresql-16 amd64 16.9-0ubuntu0.24.04.1 [15.5 MB]
+Get:16 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 postgresql all 16+257build1.1 [11.6 kB]
+Get:17 http://mirrors.cloud.aliyuncs.com/ubuntu noble-updates/main amd64 postgresql-contrib all 16+257build1.1 [11.6 kB]
+Fetched 45.1 MB in 5s (8,452 kB/s)              
+Preconfiguring packages ...
+Selecting previously unselected package libjson-perl.
+(Reading database ... 111729 files and directories currently installed.)
+Preparing to unpack .../00-libjson-perl_4.10000-1_all.deb ...
+Unpacking libjson-perl (4.10000-1) ...
+Selecting previously unselected package postgresql-client-common.
+Preparing to unpack .../01-postgresql-client-common_257build1.1_all.deb ...
+Unpacking postgresql-client-common (257build1.1) ...
+Selecting previously unselected package ssl-cert.
+Preparing to unpack .../02-ssl-cert_1.1.2ubuntu1_all.deb ...
+Unpacking ssl-cert (1.1.2ubuntu1) ...
+Selecting previously unselected package postgresql-common.
+Preparing to unpack .../03-postgresql-common_257build1.1_all.deb ...
+Adding 'diversion of /usr/bin/pg_config to /usr/bin/pg_config.libpq-dev by postgresql-common'
+Unpacking postgresql-common (257build1.1) ...
+Selecting previously unselected package libjemalloc2:amd64.
+Preparing to unpack .../04-libjemalloc2_5.3.0-2build1_amd64.deb ...
+Unpacking libjemalloc2:amd64 (5.3.0-2build1) ...
+Selecting previously unselected package liblzf1:amd64.
+Preparing to unpack .../05-liblzf1_3.6-4_amd64.deb ...
+Unpacking liblzf1:amd64 (3.6-4) ...
+Selecting previously unselected package redis-tools.
+Preparing to unpack .../06-redis-tools_5%3a7.0.15-1ubuntu0.24.04.1_amd64.deb ...
+Unpacking redis-tools (5:7.0.15-1ubuntu0.24.04.1) ...
+Selecting previously unselected package redis-server.
+Preparing to unpack .../07-redis-server_5%3a7.0.15-1ubuntu0.24.04.1_amd64.deb ...
+Unpacking redis-server (5:7.0.15-1ubuntu0.24.04.1) ...
+Selecting previously unselected package libcommon-sense-perl:amd64.
+Preparing to unpack .../08-libcommon-sense-perl_3.75-3build3_amd64.deb ...
+Unpacking libcommon-sense-perl:amd64 (3.75-3build3) ...
+Selecting previously unselected package libtypes-serialiser-perl.
+Preparing to unpack .../09-libtypes-serialiser-perl_1.01-1_all.deb ...
+Unpacking libtypes-serialiser-perl (1.01-1) ...
+Selecting previously unselected package libjson-xs-perl.
+Preparing to unpack .../10-libjson-xs-perl_4.030-2build3_amd64.deb ...
+Unpacking libjson-xs-perl (4.030-2build3) ...
+Selecting previously unselected package libllvm17t64:amd64.
+Preparing to unpack .../11-libllvm17t64_1%3a17.0.6-9ubuntu1_amd64.deb ...
+Unpacking libllvm17t64:amd64 (1:17.0.6-9ubuntu1) ...
+Selecting previously unselected package libpq5:amd64.
+Preparing to unpack .../12-libpq5_16.9-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking libpq5:amd64 (16.9-0ubuntu0.24.04.1) ...
+Selecting previously unselected package postgresql-client-16.
+Preparing to unpack .../13-postgresql-client-16_16.9-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking postgresql-client-16 (16.9-0ubuntu0.24.04.1) ...
+Selecting previously unselected package postgresql-16.
+Preparing to unpack .../14-postgresql-16_16.9-0ubuntu0.24.04.1_amd64.deb ...
+Unpacking postgresql-16 (16.9-0ubuntu0.24.04.1) ...
+Selecting previously unselected package postgresql.
+Preparing to unpack .../15-postgresql_16+257build1.1_all.deb ...
+Unpacking postgresql (16+257build1.1) ...
+Selecting previously unselected package postgresql-contrib.
+Preparing to unpack .../16-postgresql-contrib_16+257build1.1_all.deb ...
+Unpacking postgresql-contrib (16+257build1.1) ...
+Setting up postgresql-client-common (257build1.1) ...
+Setting up libpq5:amd64 (16.9-0ubuntu0.24.04.1) ...
+Setting up libcommon-sense-perl:amd64 (3.75-3build3) ...
+Setting up libjemalloc2:amd64 (5.3.0-2build1) ...
+Setting up libllvm17t64:amd64 (1:17.0.6-9ubuntu1) ...
+Setting up ssl-cert (1.1.2ubuntu1) ...
+Created symlink /etc/systemd/system/multi-user.target.wants/ssl-cert.service → /usr/lib/systemd/system/ssl-cert.service.
+Setting up liblzf1:amd64 (3.6-4) ...
+Setting up libtypes-serialiser-perl (1.01-1) ...
+Setting up libjson-perl (4.10000-1) ...
+Setting up libjson-xs-perl (4.030-2build3) ...
+Setting up postgresql-client-16 (16.9-0ubuntu0.24.04.1) ...
+update-alternatives: using /usr/share/postgresql/16/man/man1/psql.1.gz to provide /usr/share/man/man1/psql.1.gz (psql.1.gz) in auto mode
+Setting up redis-tools (5:7.0.15-1ubuntu0.24.04.1) ...
+Setting up postgresql-common (257build1.1) ...
+
+Creating config file /etc/postgresql-common/createcluster.conf with new version
+Building PostgreSQL dictionaries from installed myspell/hunspell packages...
+Removing obsolete dictionary files:
+Created symlink /etc/systemd/system/multi-user.target.wants/postgresql.service → /usr/lib/systemd/system/postgresql.service.
+Setting up postgresql-16 (16.9-0ubuntu0.24.04.1) ...
+Creating new PostgreSQL cluster 16/main ...
+/usr/lib/postgresql/16/bin/initdb -D /var/lib/postgresql/16/main --auth-local peer --auth-host scram-sha-256 --no-instructions
+The files belonging to this database system will be owned by user "postgres".
+This user must also own the server process.
+
+The database cluster will be initialized with locale "en_US.UTF-8".
+The default database encoding has accordingly been set to "UTF8".
+The default text search configuration will be set to "english".
+
+Data page checksums are disabled.
+
+fixing permissions on existing directory /var/lib/postgresql/16/main ... ok
+creating subdirectories ... ok
+selecting dynamic shared memory implementation ... posix
+selecting default max_connections ... 100
+selecting default shared_buffers ... 128MB
+selecting default time zone ... Asia/Shanghai
+creating configuration files ... ok
+running bootstrap script ... ok
+performing post-bootstrap initialization ... ok
+syncing data to disk ... ok
+Setting up redis-server (5:7.0.15-1ubuntu0.24.04.1) ...
+Created symlink /etc/systemd/system/redis.service → /usr/lib/systemd/system/redis-server.service.
+Created symlink /etc/systemd/system/multi-user.target.wants/redis-server.service → /usr/lib/systemd/system/redis-server.service.
+Setting up postgresql-contrib (16+257build1.1) ...
+Setting up postgresql (16+257build1.1) ...
+Processing triggers for man-db (2.12.0-4build2) ...
+Processing triggers for libc-bin (2.39-0ubuntu8.4) ...
+Scanning processes...                                                                                                                                                                                             
+Scanning candidates...                                                                                                                                                                                            
+Scanning linux images...                                                                                                                                                                                          
+
+Running kernel seems to be up-to-date.
+
+Restarting services...
+
+Service restarts being deferred:
+ /etc/needrestart/restart.d/dbus.service
+ systemctl restart getty@tty1.service
+ systemctl restart networkd-dispatcher.service
+ systemctl restart serial-getty@ttyS0.service
+ systemctl restart systemd-logind.service
+ systemctl restart unattended-upgrades.service
+
+No containers need to be restarted.
+
+No user sessions are running outdated binaries.
+
+No VM guests are running outdated hypervisor (qemu) binaries on this host.
+Synchronizing state of redis-server.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable redis-server
+Synchronizing state of postgresql.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable postgresql
+Synchronizing state of nginx.service with SysV service script with /usr/lib/systemd/systemd-sysv-install.
+Executing: /usr/lib/systemd/systemd-sysv-install enable nginx
+
+added 123 packages, and audited 124 packages in 7s
+
+17 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+CREATE ROLE
+CREATE DATABASE
+GRANT
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+Rules updated
+Rules updated (v6)
+Rules updated
+Rules updated (v6)
+Rules updated
+Rules updated (v6)
+Rules updated
+Rules updated (v6)
+Firewall is active and enabled on system startup
+
+                        -------------
+
+__/\\\\\\\\\\\\\____/\\\\____________/\\\\____/\\\\\\\\\_____
+ _\/\\\/////////\\\_\/\\\\\\________/\\\\\\__/\\\///////\\\___
+  _\/\\\_______\/\\\_\/\\\//\\\____/\\\//\\\_\///______\//\\\__
+   _\/\\\\\\\\\\\\\/__\/\\\\///\\\/\\\/_\/\\\___________/\\\/___
+    _\/\\\/////////____\/\\\__\///\\\/___\/\\\________/\\\//_____
+     _\/\\\_____________\/\\\____\///_____\/\\\_____/\\\//________
+      _\/\\\_____________\/\\\_____________\/\\\___/\\\/___________
+       _\/\\\_____________\/\\\_____________\/\\\__/\\\\\\\\\\\\\\\_
+        _\///______________\///______________\///__\///////////////__
+
+
+                          Runtime Edition
+
+        PM2 is a Production Process Manager for Node.js applications
+                     with a built-in Load Balancer.
+
+                Start and Daemonize any application:
+                $ pm2 start app.js
+
+                Load Balance 4 instances of api.js:
+                $ pm2 start api.js -i 4
+
+                Monitor in production:
+                $ pm2 monitor
+
+                Make pm2 auto-boot at server restart:
+                $ pm2 startup
+
+                To go further checkout:
+                http://pm2.io/
+
+
+                        -------------
+
+[PM2] Spawning PM2 daemon with pm2_home=/root/.pm2
+[PM2] PM2 Successfully daemonized
+[PM2][ERROR] File ecosystem.config.js malformated
+SyntaxError: Invalid or unexpected token
+    at compileSourceTextModule (node:internal/modules/esm/utils:340:16)
+    at ModuleLoader.importSyncForRequire (node:internal/modules/esm/loader:316:18)
+    at loadESMFromCJS (node:internal/modules/cjs/loader:1371:24)
+    at Module._compile (node:internal/modules/cjs/loader:1511:5)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1572:16)
+    at Module.load (node:internal/modules/cjs/loader:1275:32)
+    at Module._load (node:internal/modules/cjs/loader:1096:12)
+    at Module.require (node:internal/modules/cjs/loader:1298:19)
+    at require (node:internal/modules/helpers:182:18)
+    at Common.parseConfig (/usr/lib/node_modules/pm2/lib/Common.js:331:12)
+[PM2] Saving current process list...
+[PM2][WARN] PM2 is not managing any process, skipping save...
+[PM2][WARN] To force saving use: pm2 save --force
+[PM2] Init System found: systemd
+Platform systemd
+Template
+[Unit]
+Description=PM2 process manager
+Documentation=https://pm2.keymetrics.io/
+After=network.target
+
+[Service]
+Type=forking
+User=root
+LimitNOFILE=infinity
+LimitNPROC=infinity
+LimitCORE=infinity
+Environment=PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin
+Environment=PM2_HOME=/root/.pm2
+PIDFile=/root/.pm2/pm2.pid
+Restart=on-failure
+
+ExecStart=/usr/lib/node_modules/pm2/bin/pm2 resurrect
+ExecReload=/usr/lib/node_modules/pm2/bin/pm2 reload all
+ExecStop=/usr/lib/node_modules/pm2/bin/pm2 kill
+
+[Install]
+WantedBy=multi-user.target
+
+Target path
+/etc/systemd/system/pm2-root.service
+Command list
+[ 'systemctl enable pm2-root' ]
+[PM2] Writing init configuration in /etc/systemd/system/pm2-root.service
+[PM2] Making script booting at startup...
+[PM2] [-] Executing: systemctl enable pm2-root...
+Created symlink /etc/systemd/system/multi-user.target.wants/pm2-root.service → /etc/systemd/system/pm2-root.service.
+[PM2] [v] Command successfully executed.
++---------------------------------------+
+[PM2] Freeze a process list on reboot via:
+$ pm2 save
+
+[PM2] Remove init script via:
+$ pm2 unstartup systemd
+
+✅ 8Trader8Panda Production Deployment Complete!
+
+🌐 Your platform is now live at:
+   http://8.222.177.208:3000 (direct)
+   http://8.222.177.208 (nginx proxy)
+   http://8trader8panda8.xin (after DNS config)
+
+📊 Management commands:
+   pm2 status
+   pm2 logs 8trader8panda
+   pm2 restart 8trader8panda
+
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# 
