@@ -10,6 +10,7 @@ import { backtestingService } from "./backtesting_service";
 import { productionTestingService } from "./production_testing_service";
 import { alchemyService } from "./alchemy_service";
 import { enhancedTwitterService } from "./enhanced_twitter_service";
+import { pythonBridge } from "./python_bridge";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 import { spawn } from "child_process";
@@ -39,27 +40,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Store io instance for use in other modules
   (app as any).io = io;
 
-  // Start Python trading service
-  let pythonProcess: any = null;
-  try {
-    pythonProcess = spawn('python3', ['python_service.py'], { 
-      cwd: process.cwd() + '/server',
-      detached: false,
-      stdio: 'pipe'
+  // Initialize Python trading bridge with Nautilus Trader
+  pythonBridge.initialize().then(() => {
+    console.log('🐍 Nautilus Trader backend connected');
+    
+    // Set up real-time event handlers for WebSocket updates
+    pythonBridge.on('positionUpdate', (position) => {
+      io.emit('position-update', position);
     });
     
-    pythonProcess.stdout?.on('data', (data: any) => {
-      console.log(`Python Service: ${data}`);
+    pythonBridge.on('portfolioUpdate', (portfolio) => {
+      io.emit('portfolio-update', portfolio);
     });
     
-    pythonProcess.stderr?.on('data', (data: any) => {
-      console.error(`Python Service Error: ${data}`);
+    pythonBridge.on('tradeExecuted', (trade) => {
+      io.emit('trade-executed', trade);
     });
     
-    console.log('Python trading service started');
-  } catch (error) {
-    console.error('Failed to start Python service:', error);
-  }
+    pythonBridge.on('sentimentUpdate', (sentiment) => {
+      io.emit('sentiment-update', sentiment);
+    });
+  }).catch((error) => {
+    console.error('Failed to initialize Python trading bridge:', error);
+  });
 
   // Portfolio endpoints - using authenticated market data service
   app.get("/api/portfolio/:userId", async (req, res) => {
