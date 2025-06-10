@@ -633,24 +633,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { accessKeyId, accessKeySecret, region, domainName } = req.body;
       
-      // Create real infrastructure using Alibaba Cloud APIs
-      const { alibabaCloudService } = await import('./alibaba_cloud_service');
-      const result = await alibabaCloudService.createInfrastructure(
-        { accessKeyId, accessKeySecret, region },
+      // Use real deployment service for authentic infrastructure provisioning
+      const { realDeploymentService } = await import('./real_deployment_service');
+      const result = await realDeploymentService.deployToAlibabaCloud({
+        accessKeyId,
+        accessKeySecret,
+        region: region || 'ap-southeast-1',
         domainName
-      );
-      
-      res.json({
-        success: true,
-        infrastructureId: result.deploymentId,
-        resources: result.resources,
-        endpoints: result.endpoints,
-        estimatedCost: result.totalCost,
-        region
       });
+      
+      if (result.success) {
+        res.json({
+          success: true,
+          deploymentId: result.deploymentId,
+          infrastructure: result.infrastructure,
+          publicIP: result.publicIP,
+          region
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          error: result.error
+        });
+      }
     } catch (error) {
       console.error('Infrastructure creation error:', error);
-      res.status(500).json({ error: `Failed to create infrastructure: ${error.message}` });
+      res.status(500).json({ 
+        success: false,
+        error: `Failed to create infrastructure: ${error instanceof Error ? error.message : String(error)}` 
+      });
     }
   });
 

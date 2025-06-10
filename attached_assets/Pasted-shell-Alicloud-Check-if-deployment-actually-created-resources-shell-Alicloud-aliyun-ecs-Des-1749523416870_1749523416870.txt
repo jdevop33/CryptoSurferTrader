@@ -1,0 +1,182 @@
+shell@Alicloud:~$ # Check if deployment actually created resources
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 | grep "InstanceName\|InstanceId\|Status"
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # List all regions to confirm we're checking the right one
+shell@Alicloud:~$ aliyun ecs DescribeRegions
+{
+        "Regions": {
+                "Region": [
+                        {
+                                "LocalName": "华北1（青岛）",
+                                "RegionEndpoint": "ecs.cn-qingdao.aliyuncs.com",
+                                "RegionId": "cn-qingdao"
+                        },
+                        {
+                                "LocalName": "华北2（北京）",
+                                "RegionEndpoint": "ecs.cn-beijing.aliyuncs.com",
+                                "RegionId": "cn-beijing"
+                        },
+                        {
+                                "LocalName": "华北3（张家口）",
+                                "RegionEndpoint": "ecs.cn-zhangjiakou.aliyuncs.com",
+                                "RegionId": "cn-zhangjiakou"
+                        },
+                        {
+                                "LocalName": "华北5（呼和浩特）",
+                                "RegionEndpoint": "ecs.cn-huhehaote.aliyuncs.com",
+                                "RegionId": "cn-huhehaote"
+                        },
+                        {
+                                "LocalName": "华北6（乌兰察布）",
+                                "RegionEndpoint": "ecs.cn-wulanchabu.aliyuncs.com",
+                                "RegionId": "cn-wulanchabu"
+                        },
+                        {
+                                "LocalName": "华东1（杭州）",
+                                "RegionEndpoint": "ecs.aliyuncs.com",
+                                "RegionId": "cn-hangzhou"
+                        },
+                        {
+                                "LocalName": "华东2（上海）",
+                                "RegionEndpoint": "ecs.cn-shanghai.aliyuncs.com",
+                                "RegionId": "cn-shanghai"
+                        },
+                        {
+                                "LocalName": "华东5（南京-本地地域）",
+                                "RegionEndpoint": "ecs.cn-nanjing.aliyuncs.com",
+                                "RegionId": "cn-nanjing"
+                        },
+                        {
+                                "LocalName": "华南1（深圳）",
+                                "RegionEndpoint": "ecs.cn-shenzhen.aliyuncs.com",
+                                "RegionId": "cn-shenzhen"
+                        },
+                        {
+                                "LocalName": "华南2（河源）",
+                                "RegionEndpoint": "ecs.cn-heyuan.aliyuncs.com",
+                                "RegionId": "cn-heyuan"
+                        },
+                        {
+                                "LocalName": "华南3（广州）",
+                                "RegionEndpoint": "ecs.cn-guangzhou.aliyuncs.com",
+                                "RegionId": "cn-guangzhou"
+                        },
+                        {
+                                "LocalName": "华东6（福州-本地地域）",
+                                "RegionEndpoint": "ecs.cn-fuzhou.aliyuncs.com",
+                                "RegionId": "cn-fuzhou"
+                        },
+                        {
+                                "LocalName": "华中1（武汉-本地地域）",
+                                "RegionEndpoint": "ecs.cn-wuhan-lr.aliyuncs.com",
+                                "RegionId": "cn-wuhan-lr"
+                        },
+                        {
+                                "LocalName": "西南1（成都）",
+                                "RegionEndpoint": "ecs.cn-chengdu.aliyuncs.com",
+                                "RegionId": "cn-chengdu"
+                        },
+                        {
+                                "LocalName": "中国香港",
+                                "RegionEndpoint": "ecs.cn-hongkong.aliyuncs.com",
+                                "RegionId": "cn-hongkong"
+                        },
+                        {
+                                "LocalName": "日本（东京）",
+                                "RegionEndpoint": "ecs.ap-northeast-1.aliyuncs.com",
+                                "RegionId": "ap-northeast-1"
+                        },
+                        {
+                                "LocalName": "韩国（首尔）",
+                                "RegionEndpoint": "ecs.ap-northeast-2.aliyuncs.com",
+                                "RegionId": "ap-northeast-2"
+                        },
+                        {
+                                "LocalName": "新加坡",
+                                "RegionEndpoint": "ecs.ap-southeast-1.aliyuncs.com",
+                                "RegionId": "ap-southeast-1"
+                        },
+                        {
+                                "LocalName": "马来西亚（吉隆坡）",
+                                "RegionEndpoint": "ecs.ap-southeast-3.aliyuncs.com",
+                                "RegionId": "ap-southeast-3"
+                        },
+                        {
+                                "LocalName": "菲律宾（马尼拉）",
+                                "RegionEndpoint": "ecs.ap-southeast-6.aliyuncs.com",
+                                "RegionId": "ap-southeast-6"
+                        },
+                        {
+                                "LocalName": "印度尼西亚（雅加达）",
+                                "RegionEndpoint": "ecs.ap-southeast-5.aliyuncs.com",
+                                "RegionId": "ap-southeast-5"
+                        },
+                        {
+                                "LocalName": "泰国（曼谷）",
+                                "RegionEndpoint": "ecs.ap-southeast-7.aliyuncs.com",
+                                "RegionId": "ap-southeast-7"
+                        },
+                        {
+                                "LocalName": "美国（弗吉尼亚）",
+                                "RegionEndpoint": "ecs.us-east-1.aliyuncs.com",
+                                "RegionId": "us-east-1"
+                        },
+                        {
+                                "LocalName": "美国（硅谷）",
+                                "RegionEndpoint": "ecs.us-west-1.aliyuncs.com",
+                                "RegionId": "us-west-1"
+                        },
+                        {
+                                "LocalName": "墨西哥",
+                                "RegionEndpoint": "ecs.na-south-1.aliyuncs.com",
+                                "RegionId": "na-south-1"
+                        },
+                        {
+                                "LocalName": "英国（伦敦）",
+                                "RegionEndpoint": "ecs.eu-west-1.aliyuncs.com",
+                                "RegionId": "eu-west-1"
+                        },
+                        {
+                                "LocalName": "阿联酋（迪拜）",
+                                "RegionEndpoint": "ecs.me-east-1.aliyuncs.com",
+                                "RegionId": "me-east-1"
+                        },
+                        {
+                                "LocalName": "沙特（利雅得)",
+                                "RegionEndpoint": "ecs.me-central-1.aliyuncs.com",
+                                "RegionId": "me-central-1"
+                        },
+                        {
+                                "LocalName": "德国（法兰克福）",
+                                "RegionEndpoint": "ecs.eu-central-1.aliyuncs.com",
+                                "RegionId": "eu-central-1"
+                        }
+                ]
+        },
+        "RequestId": "798C1AB6-C38A-3C0B-9600-6851922FE842"
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check if resources exist in other regions
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region cn-hangzhou --PageSize 10
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "691BF852-E67E-5AA8-88FB-B489200C646A",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region us-west-1 --PageSize 10
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "F1D11BD8-2DA3-37E4-96FF-A2CE010DF7A5",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
