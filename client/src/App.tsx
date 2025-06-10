@@ -6,6 +6,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import Dashboard from "@/pages/Dashboard";
 import AIInsights from "@/pages/AI-Insights";
+import Terms from "@/pages/Terms";
+import Privacy from "@/pages/Privacy";
 import NotFound from "@/pages/not-found";
 import { NotificationSystem } from "@/components/NotificationSystem";
 
@@ -14,6 +16,8 @@ function Router() {
     <Switch>
       <Route path="/" component={Dashboard} />
       <Route path="/ai-insights" component={AIInsights} />
+      <Route path="/terms" component={Terms} />
+      <Route path="/privacy" component={Privacy} />
       <Route component={NotFound} />
     </Switch>
   );

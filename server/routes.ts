@@ -546,5 +546,59 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Twitter OAuth authentication routes
+  app.get('/auth/twitter', (req, res) => {
+    const clientId = process.env.TWITTER_CLIENT_ID;
+    const redirectUri = encodeURIComponent('https://8trader8panda8.xin/auth/twitter/callback');
+    const state = Math.random().toString(36).substring(2, 15);
+    
+    // Store state in session for verification
+    req.session = req.session || {};
+    req.session.twitterState = state;
+    
+    const authUrl = `https://twitter.com/i/oauth2/authorize?response_type=code&client_id=${clientId}&redirect_uri=${redirectUri}&scope=tweet.read%20users.read%20offline.access&state=${state}`;
+    
+    res.redirect(authUrl);
+  });
+
+  app.get('/auth/twitter/callback', async (req, res) => {
+    try {
+      const { code, state } = req.query;
+      
+      // Verify state parameter
+      if (state !== req.session?.twitterState) {
+        return res.status(400).send('Invalid state parameter');
+      }
+      
+      // Exchange code for access token
+      const tokenResponse = await fetch('https://api.twitter.com/2/oauth2/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': `Basic ${Buffer.from(`${process.env.TWITTER_CLIENT_ID}:${process.env.TWITTER_CLIENT_SECRET}`).toString('base64')}`
+        },
+        body: new URLSearchParams({
+          grant_type: 'authorization_code',
+          code: code as string,
+          redirect_uri: 'https://8trader8panda8.xin/auth/twitter/callback',
+          client_id: process.env.TWITTER_CLIENT_ID!
+        })
+      });
+      
+      const tokens = await tokenResponse.json();
+      
+      if (tokens.access_token) {
+        // Store tokens securely and redirect to dashboard
+        req.session.twitterTokens = tokens;
+        res.redirect('https://8trader8panda8.xin/?auth=success');
+      } else {
+        res.redirect('https://8trader8panda8.xin/?auth=error');
+      }
+    } catch (error) {
+      console.error('Twitter OAuth callback error:', error);
+      res.redirect('https://8trader8panda8.xin/?auth=error');
+    }
+  });
+
   return httpServer;
 }
