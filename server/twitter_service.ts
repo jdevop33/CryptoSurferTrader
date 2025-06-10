@@ -75,12 +75,26 @@ export class TwitterService {
   private async initialize() {
     try {
       const bearerToken = process.env.TWITTER_BEARER_TOKEN;
+      const clientSecret = process.env.TWITTER_CLIENT_SECRET;
+      
       if (!bearerToken) {
         console.warn('Twitter Bearer Token not found. Social sentiment monitoring disabled.');
         return;
       }
 
-      this.client = new TwitterApi(bearerToken);
+      // Enhanced OAuth 2.0 authentication when client secret is available
+      if (clientSecret) {
+        this.client = new TwitterApi({
+          appKey: process.env.TWITTER_API_KEY || '',
+          appSecret: clientSecret,
+          accessToken: process.env.TWITTER_ACCESS_TOKEN || '',
+          accessSecret: process.env.TWITTER_ACCESS_TOKEN_SECRET || '',
+        });
+        console.log('🔐 Twitter OAuth 2.0 authentication enabled');
+      } else {
+        this.client = new TwitterApi(bearerToken);
+      }
+
       await this.setupStreamingRules();
       this.isInitialized = true;
       console.log('🐦 Twitter Service initialized with', this.CRYPTO_INFLUENCERS.length, 'influencers');

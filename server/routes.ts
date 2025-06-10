@@ -9,6 +9,7 @@ import { dexTradingService } from "./dex_trading_service";
 import { backtestingService } from "./backtesting_service";
 import { productionTestingService } from "./production_testing_service";
 import { alchemyService } from "./alchemy_service";
+import { enhancedTwitterService } from "./enhanced_twitter_service";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 import { spawn } from "child_process";
@@ -567,6 +568,30 @@ export async function registerRoutes(app: Express): Promise<Server> {
       hasAPIKey: !!process.env.ALCHEMY_API_KEY,
       service: "Alchemy Web3 Infrastructure"
     });
+  });
+
+  // Enhanced Twitter API v2 Endpoints
+  app.get("/api/twitter/stream/status", async (req, res) => {
+    res.json(enhancedTwitterService.getStreamStatus());
+  });
+
+  app.get("/api/twitter/influencer-activity", async (req, res) => {
+    try {
+      const timeframe = req.query.timeframe as string || '24h';
+      const activity = await enhancedTwitterService.getInfluencerActivity(timeframe);
+      res.json(activity);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch influencer activity" });
+    }
+  });
+
+  app.post("/api/twitter/stream/stop", async (req, res) => {
+    try {
+      await enhancedTwitterService.stopStream();
+      res.json({ success: true, message: "Twitter stream stopped" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to stop stream" });
+    }
   });
 
   app.get("/api/system/production-readiness", async (req, res) => {

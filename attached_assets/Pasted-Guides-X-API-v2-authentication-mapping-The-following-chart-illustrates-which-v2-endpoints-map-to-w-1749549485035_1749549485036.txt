@@ -1,0 +1,533 @@
+Guides
+X API v2 authentication mapping
+The following chart illustrates which v2 endpoints map to what authentication methods.   
+
+Endpoint	OAuth 1.0a User Context	OAuth 2.0 App Only 
+OAuth 2.0
+Authorization Code with PKCE
+Tweet lookup
+
+Retrieve multiple Tweets with a list of IDs
+
+GET /2/tweets
+
+Retrieve a single Tweet with an ID
+
+GET /2/tweets/:id	✅	✅	✅  
+
+Scopes:
+
+tweet.read
+
+users.read
+Manage Tweets
+
+Post a Tweet
+
+POST /2/tweets
+
+Delete a Tweet
+
+DELETE /2/tweets/:id	✅		✅
+
+Scopes:
+
+tweet.read
+
+tweet.write
+
+users.read
+Timelines
+
+User Tweet timeline
+
+GET /2/users/:id/tweets
+
+User mention timeline
+
+GET /2/users/:id/mentions
+
+Reverse chronological home timeline
+
+GET /2/users/:id/timelines/reverse_cronological	✅
+
+✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+✅
+
+Scopes:
+
+tweet.read
+
+users.read
+Recent search
+
+Search for Tweets published in the last 7 days
+
+GET /2/tweets/search/recent	✅	✅	✅
+
+Scopes: 
+
+tweet.read
+
+users.read
+Full-archive search
+
+Only available to those with Academic Research access
+
+Search the full archive of Tweets
+
+GET /2/tweets/search/all		✅	
+Filtered stream
+
+Add or delete rules from your stream
+
+POST /2/tweets/search/stream/rules
+
+Retrieve your stream’s rules
+
+GET /2/tweets/search/stream/rules
+
+Connect to the stream
+
+GET /2/tweets/search/stream		✅	
+Volume streams
+
+Streams about 1% of all Tweets in real-time.
+
+GET /2/tweets/sample/stream		✅	
+Manage Retweets
+
+Retweet a Tweet
+
+POST /2/users/:id/retweets
+
+Delete a Retweet
+
+DELETE /2/users/:id/retweets/:source_tweet_id	✅		✅
+
+Scopes:
+
+tweet.read
+
+tweet.write
+
+users.read
+Retweets lookup
+
+Users who have Retweeted a Tweet
+
+GET /2/tweets/:id/retweeted_by	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+Bookmarks lookup
+
+Get bookmarked Tweets
+
+GET /2/tweets/:id/bookmarks			✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+bookmark.read
+Manage Bookmarks
+
+Bookmark a Tweet
+
+POST /2/tweets/:id/bookmarks
+
+Remove a Bookmark of a Tweet
+
+DELETE /2/users/:id/bookmarks:tweet_id			✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+bookmark.write
+Manage Likes
+
+Like a Tweet
+
+POST /2/users/:id/likes
+
+Undo a Like of a Tweet
+
+DELETE /2/users/:id/likes/:tweet_id	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+like.write
+Likes lookup
+
+Users who have liked a Tweet
+
+GET /2/tweets/:id/liking_users
+
+Tweets liked by a user
+
+GET /2/users/:id/liked_tweets	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+like.read
+Hide replies
+
+Hides or unhides a reply to a Tweet.
+
+PUT /2/tweets/:id/hidden	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+tweet.moderate.write
+Users lookup
+
+Retrieve multiple users with IDs
+
+GET /2/users
+
+Retrieve a single user with an ID
+
+GET /2/users/:id
+
+Retrieve multiple users with usernames
+
+GET /2/users/by
+
+Retrieve a single user with a usernames
+
+GET /2/users/by/username/:username
+
+Get information about an authenticated user
+
+GET /2/users/me	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+Manage follows
+
+Allows a user ID to follow another user
+
+POST /2/users/:id/following
+
+Allows a user ID to unfollow another user
+
+DELETE /2/users/:source_user_id/following/:target_user_id	✅		✅
+
+Scopes: 
+
+tweet.read
+
+users.read
+
+follows.write
+Follows lookup
+
+Lookup following of a user by ID
+
+GET /2/users/:id/following
+
+Lookup followers of a user by ID
+
+GET /2/users/:id/followers	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+follows.read
+Blocks lookup
+
+Returns a list of users who are blocked by the specified user ID 
+
+GET /2/users/:id/blocking	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+block.read
+Manage Mutes
+
+Allows a user ID to mute another user
+
+POST /2/users/:id/muting
+
+Allows a user ID to unmute another user
+
+DELETE /2/users/:source_user_id/muting/:target_user_id	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+mute.write
+Mutes lookup
+
+Returns a list of users who are muted by the specified user ID
+
+GET /2/users/:id/muting	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+mute.read
+Spaces lookup
+
+Lookup Space by ID
+
+GET /2/spaces/:id
+
+Lookup multiple Spaces 
+
+GET /2/spaces
+
+Discover Spaces created by user ID
+
+GET /2/spaces/by/creator_ids		✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+space.read
+Spaces lookup
+
+Get users who purchased a ticket to a Space
+
+GET /2/spaces/:id/buyers			✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+space.read
+Spaces search
+
+Returns live or scheduled Spaces matching your specified search terms.
+
+GET /2/spaces/search		✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+space.read
+List lookup
+
+Lookup a specific list by ID
+
+GET /2/lists/:id
+
+Lookup a user’s owned List
+
+GET /2/users/:id/owned_lists	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.read
+Manage Lists
+
+Creates a new List on behalf of an authenticated user
+
+POST /2/lists	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.read
+
+list.write
+Manage Lists
+
+Deletes a List the authenticated user owns
+
+DELETE /2/lists/:id
+
+Updates the metadata for a List the authenticated user owns
+
+PUT /2/lists/:id	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.write
+List Tweets lookup
+
+Lookup Tweets from a specified List
+
+GET /2/lists/:id/tweets	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.read
+List members lookup
+
+Returns a list of members from a specified List
+
+GET /2/lists/:id/members
+
+Returns all Lists a specified user is a member of
+
+GET /2/users/:id/list_memberships	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.read
+Manage List members
+
+Add a member to a List that the authenticated user owns
+
+POST /2/lists/:id/members
+
+Removes a member from a List the authenticated user owns
+
+DELETE /2/lists/:id/members/:user_id	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.write
+List follows lookup
+
+Returns all followers of a specified List
+
+GET /2/lists/:id/followers
+
+Returns all Lists a specified user follows
+
+GET /2/users/:id/followed_lists	✅	✅	✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.read
+Manage List follows
+
+Follows a List on behalf of an authenticated user
+
+POST /2/users/:id/followed_lists
+
+Unfollows a List on behalf of an authenticated user
+
+DELETE /2/users/:id/followed_lists/:list_id	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.write
+Pinned List lookup
+
+Returns the pinned Lists of the authenticated user
+
+GET /2/users/:id/pinned_lists	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.read
+Manage pinned List
+
+Pins a List on behalf of an authenticated user
+
+POST /2/users/:id/pinned_lists
+
+Unpins a List on behalf of an authenticated user
+
+DELETE /2/users/:id/pinned_lists/:list_id	✅		✅
+
+Scopes:
+
+tweet.read
+
+users.read
+
+list.write
+Batch compliance
+
+Creates a new compliance job
+
+POST /2/compliance/jobs
+
+Returns status and download information about a specified compliance job
+
+GET /2/compliance/jobs/:job_id
+
+Returns a list of recent compliance jobs
+
+GET /2/compliance/jobs		✅
