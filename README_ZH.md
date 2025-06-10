@@ -8,7 +8,7 @@
 
 ```bash
 # 1. 克隆并安装
-git clone https://github.com/trading-system/8trader8panda.git
+git clone https://github.com/your-username/8trader8panda.git
 cd 8trader8panda
 npm install
 
@@ -402,9 +402,9 @@ MIT许可证 - 详见[LICENSE](LICENSE)文件。
 
 ---
 
-为模因币交易社区用❤️构建。
+为专业加密货币交易构建。
 
-**LFG! 🚀🐼📈**
+**企业级交易平台**
 
 生产部署支持: [部署指南](DEPLOYMENT_CHECKLIST.md)
 英文文档: [English Documentation](README.md)

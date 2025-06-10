@@ -8,7 +8,7 @@
 
 ```bash
 # 1. Clone and install
-git clone https://github.com/trading-system/8trader8panda.git
+git clone https://github.com/your-username/8trader8panda.git
 cd 8trader8panda
 npm install
 
@@ -402,9 +402,9 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-Built with ❤️ for the meme coin trading community. 
+Built for professional cryptocurrency trading.
 
-**LFG! 🚀🐼📈**
+**Enterprise-Grade Trading Platform**
 
 For production deployment support: [Deploy Guide](DEPLOYMENT_CHECKLIST.md)
 For Chinese documentation: [中文文档](README_ZH.md)

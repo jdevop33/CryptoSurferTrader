@@ -556,7 +556,7 @@ lighthouse https://8trader8panda8.xin --output=json
 ### Local Setup
 ```bash
 # 1. Clone repository
-git clone https://github.com/trading-system/8trader8panda.git
+git clone https://github.com/your-username/8trader8panda.git
 cd 8trader8panda
 
 # 2. Install dependencies
