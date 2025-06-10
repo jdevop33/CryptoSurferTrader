@@ -609,9 +609,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Missing Alibaba Cloud credentials' });
       }
       
-      // Simulate credential validation
-      // In production, this would make actual Alibaba Cloud API calls
-      const isValid = accessKeyId.startsWith('LTAI') && accessKeySecret.length >= 20;
+      // Validate credentials with real Alibaba Cloud API
+      const { alibabaCloudService } = await import('./alibaba_cloud_service');
+      const isValid = await alibabaCloudService.validateCredentials(accessKeyId, accessKeySecret);
       
       if (!isValid) {
         return res.status(401).json({ error: 'Invalid Alibaba Cloud credentials' });
@@ -633,32 +633,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const { accessKeyId, accessKeySecret, region, domainName } = req.body;
       
-      // Simulate infrastructure creation process
-      const infrastructureId = `inf-${Date.now()}`;
-      
-      // In production, this would create actual Alibaba Cloud resources:
-      // - VPC and Security Groups
-      // - ECS Instance
-      // - RDS Redis
-      // - Container Registry
-      // - Server Load Balancer
+      // Create real infrastructure using Alibaba Cloud APIs
+      const { alibabaCloudService } = await import('./alibaba_cloud_service');
+      const result = await alibabaCloudService.createInfrastructure(
+        { accessKeyId, accessKeySecret, region },
+        domainName
+      );
       
       res.json({
         success: true,
-        infrastructureId,
-        resources: {
-          vpc: `vpc-${infrastructureId}`,
-          ecs: `i-${infrastructureId}`,
-          redis: `r-${infrastructureId}`,
-          slb: `slb-${infrastructureId}`,
-          registry: `registry.${region}.cr.aliyuncs.com/trading/8trader8panda`
-        },
-        estimatedCost: '$120/month',
+        infrastructureId: result.deploymentId,
+        resources: result.resources,
+        endpoints: result.endpoints,
+        estimatedCost: result.totalCost,
         region
       });
     } catch (error) {
       console.error('Infrastructure creation error:', error);
-      res.status(500).json({ error: 'Failed to create infrastructure' });
+      res.status(500).json({ error: `Failed to create infrastructure: ${error.message}` });
     }
   });
 
