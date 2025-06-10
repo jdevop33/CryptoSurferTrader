@@ -1,4 +1,4 @@
-name: Deploy to Alibaba Cloud
+name: Deploy 8Trader8Panda to Alibaba Cloud
 
 on:
   push:
@@ -10,32 +10,67 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
-    
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
         node-version: '20'
         cache: 'npm'
-    
-    - name: Install dependencies
-      run: npm ci --production
-    
-    - name: Build application
-      run: |
-        npm run build
         
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Build application
+      run: npm run build
+      
     - name: Deploy to Alibaba Cloud ECS
       uses: appleboy/ssh-action@v1.0.3
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
         password: ${{ secrets.PASSWORD }}
-        port: 22
         script: |
-          cd /opt/trading-app
-          git pull origin main
+          cd /opt/trading-app || mkdir -p /opt/trading-app && cd /opt/trading-app
+          
+          # Stop existing application
+          pm2 stop 8trader8panda 2>/dev/null || true
+          pm2 delete 8trader8panda 2>/dev/null || true
+          
+          # Update repository
+          if [ -d ".git" ]; then
+            git pull origin main
+          else
+            git clone https://github.com/jdevop33/panda_trader.git .
+          fi
+          
+          # Install dependencies and build
           npm ci --production
           npm run build
-          pm2 restart 8trader8panda || pm2 start dist/index.js --name "8trader8panda"
+          
+          # Configure environment
+          export NODE_ENV=production
+          export PORT=3000
+          export ALIBABA_CLOUD_API_KEY="${{ secrets.ALIBABA_CLOUD_API_KEY }}"
+          export TWITTER_BEARER_TOKEN="${{ secrets.TWITTER_BEARER_TOKEN }}"
+          
+          # Start application
+          pm2 start dist/index.js --name "8trader8panda" --env production
           pm2 save
+          
+          # Show status
+          pm2 list
+          pm2 logs 8trader8panda --lines 20
+          
+    - name: Health Check
+      run: |
+        sleep 30
+        curl -f http://${{ secrets.HOST }}:3000/api/health || exit 1
+        echo "Deployment successful!"
+        
+    - name: Notify Success
+      run: |
+        echo "8Trader8Panda deployed successfully!"
+        echo "Application URL: http://${{ secrets.HOST }}:3000"
+        echo "Domain: https://8trader8panda8.xin (after DNS configuration)"
