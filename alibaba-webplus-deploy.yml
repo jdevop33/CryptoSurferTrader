@@ -1,0 +1,99 @@
+# Alibaba Cloud Web+ Deployment Configuration
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: 8trader8panda-config
+data:
+  application.properties: |
+    # 8Trader8Panda Production Configuration
+    server.port=3000
+    spring.application.name=8trader8panda
+    management.endpoints.web.exposure.include=health,info,metrics
+    
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: 8trader8panda-deployment
+  labels:
+    app: 8trader8panda
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: 8trader8panda
+  template:
+    metadata:
+      labels:
+        app: 8trader8panda
+    spec:
+      containers:
+      - name: 8trader8panda
+        image: node:20-alpine
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: "production"
+        - name: PORT
+          value: "3000"
+        workingDir: /app
+        command: ["node", "server.js"]
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /api/health
+            port: 3000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: 8trader8panda-service
+spec:
+  selector:
+    app: 8trader8panda
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: LoadBalancer
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: 8trader8panda-ingress
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - 8trader8panda8.xin
+    secretName: 8trader8panda-tls
+  rules:
+  - host: 8trader8panda8.xin
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: 8trader8panda-service
+            port:
+              number: 80

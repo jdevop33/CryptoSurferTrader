@@ -1,0 +1,154 @@
+ge of /:   9.4% of 39.01GB   Users logged in:       1
+  Memory usage: 17%               IPv4 address for eth0: 10.0.1.248
+  Swap usage:   0%
+
+
+Expanded Security Maintenance for Applications is not enabled.
+
+0 updates can be applied immediately.
+
+Enable ESM Apps to receive additional future security updates.
+See https://ubuntu.com/esm or run: sudo pro status
+
+
+*** System restart required ***
+
+Welcome to Alibaba Cloud Elastic Compute Service !
+
+Last login: Tue Jun 10 18:47:43 2025 from 100.104.24.188
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# # Clean setup
+root@iZt4ndx1mvq6rwcxzwalrjZ:~# cd /opt
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt# rm -rf trading-app
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt# mkdir trading-app
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt# cd trading-app
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# # Create package.json
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# cat > package.json << 'EOF'
+> {
+>   "name": "8trader8panda",
+>   "version": "1.0.0",
+>   "main": "app.js",
+>   "scripts": { "start": "node app.js" },
+>   "dependencies": { "express": "^4.18.0", "cors": "^2.8.5" }
+> }
+> EOF
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# # Install dependencies
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# npm install
+
+added 71 packages, and audited 72 packages in 3s
+
+14 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# # Create the server
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# cat > app.js << 'EOF'
+> const express = require('express');
+> const cors = require('cors');
+> const app = express();
+> 
+> app.use(cors());
+> app.use(express.json());
+> 
+> app.get('/', (req, res) => {
+>   res.send(`<!DOCTYPE html>
+> <html><head><title>8Trader8Panda - Professional Trading</title><style>
+> body{font-family:Arial;margin:0;padding:20px;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:white;min-height:100vh}
+> .container{max-width:800px;margin:0 auto;text-align:center}
+> .logo{font-size:4rem;margin-bottom:20px}
+> .title{font-size:3rem;font-weight:bold;margin-bottom:10px}
+> .status{background:rgba(255,255,255,0.1);padding:30px;border-radius:15px;margin:30px 0}
+> .online{color:#4ade80;font-weight:bold}
+> .btn{background:rgba(255,255,255,0.2);color:white;padding:10px 20px;margin:10px;border-radius:8px;text-decoration:none;display:inline-block}
+> .btn:hover{background:rgba(255,255,255,0.3)}
+> </style></head><body>
+> <div class="container">
+> <div class="logo">🐼</div>
+> <h1 class="title">8Trader8Panda</h1>
+> <p>Professional Cryptocurrency Trading Platform</p>
+> <div class="status">
+> <h2>System Status</h2>
+> <p class="online">🟢 Server: ONLINE</p>
+> <p class="online">🟢 API: ACTIVE</p>
+> <p class="online">🟢 Trading Engine: READY</p>
+> <p class="online">🟢 AI Analysis: RUNNING</p>
+> <p><strong>Server:</strong> 8.222.177.208:3000</p>
+> <p><strong>Domain:</strong> 8trader8panda8.xin</p>
+> </div>
+> <div>
+> <a href="/api/health" class="btn">Health Check</a>
+> <a href="/api/portfolio/1" class="btn">Portfolio API</a>
+> <a href="/api/trading/signals" class="btn">Trading Signals</a>
+> </div>
+> <p>AI-Powered Trading • Web3 Integration • Real-time Analytics</p>
+> <p>Deployed on Alibaba Cloud ECS</p>
+> </div></body></html>`);
+> });
+> 
+> app.get('/api/health', (req, res) => {
+>   res.json({
+>     status: 'healthy',
+>     timestamp: new Date().toISOString(),
+>     server: '8Trader8Panda Production',
+>     version: '1.0.0',
+>     uptime: process.uptime()
+>   });
+> });
+> 
+> app.get('/api/portfolio/:userId', (req, res) => {
+>   res.json({
+>     userId: req.params.userId,
+>     totalValue: "10000.00",
+>     availableBalance: "10000.00",
+>     dailyPnL: "0.00",
+>     timestamp: new Date().toISOString()
+>   });
+> });
+> 
+> app.get('/api/trading/signals', (req, res) => {
+>   res.json([
+>     { symbol: 'DOGE', signal: 'BUY', confidence: 0.85, price: '0.074', target: '0.081' },
+>     { symbol: 'SHIB', signal: 'HOLD', confidence: 0.72, price: '0.000009', target: '0.000010' },
+>     { symbol: 'PEPE', signal: 'SELL', confidence: 0.68, price: '0.000001', target: '0.0000009' }
+>   ]);
+> });
+> 
+> app.listen(3000, '0.0.0.0', () => {
+>   console.log('🚀 8Trader8Panda Server LIVE on port 3000');
+>   console.log('🌐 Access: http://8.222.177.208:3000');
+>   console.log('📊 Health: http://8.222.177.208:3000/api/health');
+> });
+> EOF
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# # Open firewall port
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# ufw allow 3000
+Skipping adding existing rule
+Skipping adding existing rule (v6)
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# # Start the server
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# node app.js
+node:events:502
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 0.0.0.0:3000
+    at Server.setupListenHandle [as _listen2] (node:net:1908:16)
+    at listenInCluster (node:net:1965:12)
+    at doListen (node:net:2139:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:83:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1944:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:82:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 3000
+}
+
+Node.js v20.19.2
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
+root@iZt4ndx1mvq6rwcxzwalrjZ:/opt/trading-app# 
