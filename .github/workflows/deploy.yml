@@ -1,0 +1,41 @@
+name: Deploy to Alibaba Cloud
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci --production
+    
+    - name: Build application
+      run: |
+        npm run build
+        
+    - name: Deploy to Alibaba Cloud ECS
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        password: ${{ secrets.PASSWORD }}
+        port: 22
+        script: |
+          cd /opt/trading-app
+          git pull origin main
+          npm ci --production
+          npm run build
+          pm2 restart 8trader8panda || pm2 start dist/index.js --name "8trader8panda"
+          pm2 save
