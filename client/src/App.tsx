@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import Dashboard from "@/pages/Dashboard";
 import AIInsights from "@/pages/AI-Insights";
 import Deploy from "@/pages/Deploy";
+import Web3Trading from "@/pages/Web3Trading";
 import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
 import NotFound from "@/pages/not-found";
@@ -18,6 +19,7 @@ function Router() {
       <Route path="/" component={Dashboard} />
       <Route path="/ai-insights" component={AIInsights} />
       <Route path="/deploy" component={Deploy} />
+      <Route path="/web3-trading" component={Web3Trading} />
       <Route path="/terms" component={Terms} />
       <Route path="/privacy" component={Privacy} />
       <Route component={NotFound} />

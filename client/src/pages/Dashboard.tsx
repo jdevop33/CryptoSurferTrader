@@ -20,7 +20,8 @@ import {
   Shield,
   BarChart3,
   Brain,
-  Cloud
+  Cloud,
+  Wallet
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { useTradingQueries, useTradingMutations, tradingAPI, type Position, type Trade, type SentimentData } from '@/lib/trading-api';
@@ -136,6 +137,13 @@ export default function Dashboard() {
               <Button variant="outline" size="sm">
                 <Brain className="w-4 h-4 mr-1" />
                 AI Insights
+              </Button>
+            </Link>
+            
+            <Link href="/web3-trading">
+              <Button variant="outline" size="sm">
+                <Wallet className="w-4 h-4 mr-1" />
+                Web3 Trading
               </Button>
             </Link>
             
