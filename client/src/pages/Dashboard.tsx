@@ -131,6 +131,13 @@ export default function Dashboard() {
               </span>
             )}
             
+            <Link href="/ai-insights">
+              <Button variant="outline" size="sm">
+                <Brain className="w-4 h-4 mr-1" />
+                AI Insights
+              </Button>
+            </Link>
+            
             <Button
               variant="outline"
               size="sm"

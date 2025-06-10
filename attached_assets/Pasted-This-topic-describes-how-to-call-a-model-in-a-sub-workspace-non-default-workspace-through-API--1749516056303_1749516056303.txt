@@ -1,0 +1,208 @@
+This topic describes how to call a model in a sub-workspace (non-default workspace) through API.
+
+Scenarios
+Control model permissions: Users in the default workspace can access all models. To control model access, add users to a sub-workspace and specify which models they can call.
+
+Track model usage costs: When multiple businesses share the default workspace, it's difficult to track model usage costs. By creating separate sub-workspaces, each business can generate independent bills, making cost allocation easier.
+
+Before you go
+If you are not familiar with concepts such as Alibaba Cloud account and RAM user, see Permissions first.
+Use Alibaba Cloud accountUse RAM user
+Prepare a sub-workspace: Create a sub-workspace. Skip this step if you already have one. Learn how to view all your workspaces.
+
+If you see the following message at the top of the Model Studio console, you need to activate Model Studio (and get the free quota). If this message is not displayed, the service is already active.image
+
+Model authorization: Authorize the workspace to call models in the list (such as Qwen-Plus).
+
+Add users: Add RAM users to the workspace (as Admins or Visitors).
+
+Note
+You can skip this step if you use Alibaba Cloud account to call the models directly.
+
+Obtain API key: The user who needs to call models must create an API key in the sub-workspace and set it as an environment variable.
+
+Call the model
+OpenAI compatible
+This section calls Qwen-Plus as an example in the OpenAI compatible method. The model has been authorized in advance. The only difference between calling models in a sub-workspace versus the default workspace is that you must use an API key created in that sub-workspace.
+
+Public cloud
+base_url for SDK: https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+
+HTTP endpoint: POST https://dashscope-intl.aliyuncs.com/compatible-mode/v1/chat/completions
+
+Before running the samples:
+
+Set the API key you prepared as an environment variable.
+
+Select a programming language you are familiar with and prepare the local development environment.
+
+To use the OpenAI SDK, you must alse install the OpenAI SDK.
+
+PythonNode.jsHTTP
+ 
+import os
+from openai import OpenAI
+
+client = OpenAI(
+    # If environment variables are not configured, replace the following line with: api_key="sk-xxx" using the API key of your sub-workspace
+    api_key=os.getenv("DASHSCOPE_API_KEY"), 
+    base_url="https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+)
+completion = client.chat.completions.create(
+    model="qwen-plus", # This example uses qwen-plus. You can change the model name as needed (model authorization is required). For supported models, see: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    messages=[
+        {'role': 'system', 'content': 'You are a helpful assistant.'},
+        {'role': 'user', 'content': 'Who are you?'}],
+    )
+    
+print(completion.model_dump_json())
+DashScope
+This section calls Qwen-Plus as an example in the DashScope method. The model has been authorized in advance. The only difference between calling models in a sub-workspace versus the default workspace is that you must use an API key created in that sub-workspace.
+
+Public cloud
+HTTP endpoint:
+
+For Qwen LLMs: POST https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/text-generation/generation
+
+For Qwen VL: POST https://dashscope-intl.aliyuncs.com/api/v1/services/aigc/multimodal-generation/generation
+
+base_url for SDK:
+
+Python:
+
+dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
+
+Java:
+
+Method 1:
+
+ 
+import com.alibaba.dashscope.protocol.Protocol;
+Generation gen = new Generation(Protocol.HTTP.getValue(), "https://dashscope-intl.aliyuncs.com/api/v1");
+Method 2:
+
+ 
+import com.alibaba.dashscope.utils.Constants;
+Constants.baseHttpApiUrl="https://dashscope-intl.aliyuncs.com/api/v1";
+Before running the samples:
+
+Set the API key you prepared as an environment variable.
+
+Select a programming language you are familiar with and prepare the local development environment.
+
+To use the DashScope SDK, you must install the DashScope SDK.
+
+PythonJavaHTTP
+ 
+import os
+import dashscope
+dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
+
+messages = [
+    {'role': 'system', 'content': 'You are a helpful assistant.'},
+    {'role': 'user', 'content': 'Who are you?'}
+    ]
+response = dashscope.Generation.call(
+    # If environment variables are not configured, replace the following line with: api_key="sk-xxx" using the API Key from your sub-workspace
+    api_key=os.getenv('DASHSCOPE_API_KEY'),
+    model="qwen-plus", # This example uses qwen-plus. You can change the model name as needed (model authorization required). For supported models, see: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    messages=messages,
+    result_format='message'
+    )
+print(response)
+Error codes
+
+
+
+
+HTTP status code
+
+Code
+
+Message
+
+Description
+
+400
+
+InvalidParameter
+
+Model not exist.
+
+The model name you entered is incorrect.
+
+401
+
+InvalidApiKey
+
+Invalid API-key provided.
+
+Incorrect API key provided.
+
+The API key you provided is incorrect.
+
+invalid_api_key
+
+403
+
+Model.AccessDenied
+
+Model access denied.
+
+You are not authorized to call the model.
+
+Authorize the model first.
+404
+
+ModelNotFound
+
+Model can not be found.
+
+The model xx does not exist or you do not have access to it.
+
+The model name you entered is incorrect.
+
+model_not_found
+
+-
+
+NoPermission
+
+You are not authorized to do this operation. Action: sfm:CreateSession;Resource: acs:sfm::xxx:* (1-1).
+
+Use your Alibaba Cloud account to grant the AliyunBailianDataFullAccess system policy (not AliyunBailianDataReadOnlyAccess) for your RAM user in the RAM console. For more information, see Grant data permissions to a RAM user.
+
+-
+
+-
+
+openai.OpenAIError: The api_key client option must be set either by passing api_key to the client or by setting the OPENAI_API_KEY environment variable.
+
+You did not provide an API key. Set your API key as an environment variable or write the API key as plaintext in the code (not recommended).
+
+-
+
+-
+
+AuthenticationError: No api key provided. You can set by dashscope.api_key = your_api_key in code, or you can set it via environment variable DASHSCOPE_API_KEY= your_api_key.
+
+FAQ
+How to view all my workspaces?
+
+You can view and switch between authorized workspaces in the lower-left corner of the console. Learn about how to authorize workspaces.
+
+How to check whether model authorization is required for the current sub-workspace?
+
+Switch to the sub-workspace and go to Models. If Playground for your desired model is disabled and displays the following message, you need to request model authorization from the Alibaba Cloud account user. Otherwise, you already can use this model.
+
+image
+
+What to do next
+More models
+
+The sample code uses Qwen-Plus as an example. Model Studio also supports other models. For information about supported models and their API references, see Models.
+
+Advanced features
+
+The sample code only shows basic functionality. To learn more about Qwen API features, see Stream, JSON mode, Tool invocation, and other topics under Text generation.
+

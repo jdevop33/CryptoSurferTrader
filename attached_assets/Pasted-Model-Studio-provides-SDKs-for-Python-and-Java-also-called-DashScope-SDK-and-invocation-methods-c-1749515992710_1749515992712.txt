@@ -1,0 +1,90 @@
+Model Studio provides SDKs for Python and Java (also called DashScope SDK), and invocation methods compatible with OpenAI SDKs for Python, Node.js, Java, and Go. This topic describes how to install Open AI SDK and DashScope SDK.
+
+Procedure
+PythonJavaNode.jsGo
+Step 1: Check Python version
+Run the following command in the terminal to check whether Python is installed:
+
+Make sure that you have Python version 3.8 or higher, see Install Python.
+
+ 
+python -V
+pip --version
+Take Windows CMD as an example:
+
+image
+
+FAQ
+Q: An error occurs when executing python -V, pip --version:
+
+'python' is not recognized as an internal or external command, operable program or batch file.
+
+'pip' is not recognized as an internal or external command, operable program or batch file.
+
+-bash: python: command not found
+
+-bash: pip: command not found
+
+A: Take the following steps:
+
+WindowsLinux and macOS
+Make sure you have installed Python in your computing environment.
+
+If you have installed Python but the error still occurs, run which python pip to check whether python and pip exist in the system.
+
+If the following result is returned, close the current terminal and open a new terminal to try again.
+
+ 
+/usr/bin/python
+/usr/bin/pip
+If the following result is returned, run which python3 pip3 to check again.
+
+ 
+/usr/bin/which: no python in (/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin)
+/usr/bin/which: no pip in (/root/.local/bin:/root/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin)
+If the following result is returned, run python3 -V, pip3 --version to check the version.
+
+ 
+/usr/bin/python3
+/usr/bin/pip3
+Step 2: Configure virtual environment (optional)
+After Python is installed, you can set up a virtual environment to manage dependencies for OpenAI Python SDK or DashScope Python SDK. The virtual environment can avoid conflicts with your other projects.
+
+Create a virtual environment
+
+Run the following command to create a virtual environment named .venv:
+
+ 
+# If the operation fails, replace python with python3 and run again
+python -m venv .venv
+Activate the virtual environment
+
+For Windows:
+
+ 
+.venv\Scripts\activate
+For macOS or Linux:
+
+ 
+source .venv/bin/activate
+Step 3: Install Python SDK
+Install OpenAI Python SDK or DashScope Python SDK to call models in Model Studio.
+
+OpenAI Python SDKDashScope Python SDK
+Run the following command:
+
+ 
+# If the operation fails, replace pip with pip3 and run again
+pip install -U openai
+image
+
+When the terminal displays Successfully installed ... openai-x.x.x, OpenAI Python SDK is installed.
+
+Note
+When installing the SDK, you may see WARNING: You are using pip version xxx; however, version xxx is available. This is an update notification of the pip tool, and is not related to the SDK. You can safely ignore it.
+
+What to do next
+Explore sample codes to call models with the OpenAI SDK or DashScope SDK.
+
+References
+For a list of models that support the OpenAI SDK, see Compatibility with OpenAI.

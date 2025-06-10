@@ -1,0 +1,54 @@
+We recommend that you set your API key as an environment variable to avoid explicitly specifying it when you use Alibaba Cloud Model Studio SDK and reduce the risk of an API leak. This topic describes how to set an API key as an environment variable.
+
+Prerequisites
+You have activated Model Studio and obtained an API key.
+
+Procedure
+LinuxmacOSWindows
+Permanent environment variableTemporary environment variable
+To configure your API key as a permanent environment variable for the current user to use in new sessions, set it as a permanent environment variable.
+
+Run the following command to add the environment variable to the ~/.bashrc file:
+
+ 
+# Replace YOUR_DASHSCOPE_API_KEY with your API key.
+echo "export DASHSCOPE_API_KEY='YOUR_DASHSCOPE_API_KEY'" >> ~/.bashrc
+You can also edit the ~/.bashrc  file manually.
+
+Edit manually
+
+Run the following command to make the change take effect:
+
+ 
+source ~/.bashrc
+Create a session and run the following command to check whether the environment variable takes effect:
+
+ 
+echo $DASHSCOPE_API_KEY
+FAQ
+Q: I have run the echo command to confirm the environment variable. But when I run my code, it still says no API key found or invalid API key?
+
+A: The reason may be:
+
+Scenario 1: The environment variable you set is not permanent. Temporary environment variables are only valid for the current terminal session and will not take effect in already opened IDEs or other applications. Please refer to the methods in this topic for setting permanent environment variables.
+
+Scenario 2: You have not restart your IDE, command-line tool or application.
+
+Usually you need to restart the IDE (such as VS Code) or command-line tools to load the latest environment variables.
+
+If the environment variable is set after you deploy your application, you may need to restart the application service for it to reload the environment variable.
+
+Scenario 3: You need to add the environment variable to the configuration file. If your application is started through a service manager (such as systemd or supervisord), you may need to add the environment variable to the configuration file of the service manager.
+
+Scenario 4: You used the sudo command. If you run the script using sudo python xx.py, you may miss the environment variables of the current user because sudo does not inherit all environment variables by default. You can use the command sudo -E python xx.py, where the -E option ensures that environment variables are passed through. If you have permission to execute the script, you can run it directly using python xx.py.
+
+Scenario 5: You may need to configure the base URL of Model Studio. Use one of the following methods:
+
+Add the base URL to your code:
+
+ 
+dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
+Set the base URL as an environment variable:
+
+ 
+DASHSCOPE_HTTP_BASE_URL='https://dashscope-intl.aliyuncs.com/api/v1'
