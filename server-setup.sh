@@ -285,22 +285,28 @@ cat > client/dist/index.html << 'EOF'
 </html>
 EOF
 
-# Create environment file
-cat > .env << 'EOF'
+# Create environment file template (DO NOT include real credentials)
+cat > .env.template << 'EOF'
 NODE_ENV=production
 PORT=3000
 HOST=0.0.0.0
 
-# API Keys
-ALIBABA_CLOUD_API_KEY=sk-9f4c8b2a1d3e5f6g7h8i9j0k1l2m3n4o5p6q7r8s9t0u1v2w3x4y5z6a7b8c9d0e1f2g3h4i5j6k7l8m9n0o1p2q3r4s5t6u7v8w9x0y1z2
-ALCHEMY_API_KEY=mXj8k9L2mN3oP4qR5sT6uV7wX8yZ9A0bC1dE2fG3hI4jK5lM6nO7pQ8rS9tU0vW1xY2zA3bC4dE5fG6hI7jK8lM9nO0pQ1rS2tU3vW4xY5z
-TWITTER_BEARER_TOKEN=AAAAAAAAAAAAAAAAAAAAAMLheAAAAAAA0%2BuSeid%2BULvsea4JtiGRiSDSJSI%3DEUifiRBkKG5E2XzMDjRfl76ZC9Ub0wnz4XsNiRVBChTYbJcE3F
-TWITTER_CLIENT_SECRET=eL0666PfNYfAK_S7kNIBBjvSVU44O_a5N2In2fQg04Maye1FK7
+# API Keys - Replace with your actual credentials
+ALIBABA_CLOUD_API_KEY=your_alibaba_cloud_api_key_here
+ALCHEMY_API_KEY=your_alchemy_api_key_here
+TWITTER_BEARER_TOKEN=your_twitter_bearer_token_here
+TWITTER_CLIENT_SECRET=your_twitter_client_secret_here
 
 # Database
 DATABASE_URL=postgresql://trading_user:trading_password@localhost:5432/trading_db
 REDIS_URL=redis://localhost:6379
 EOF
+
+echo ""
+echo "⚠️  SECURITY NOTICE: Copy .env.template to .env and add your real API keys"
+echo "   cp .env.template .env"
+echo "   nano .env  # Edit with your actual credentials"
+echo ""
 
 # Create PM2 ecosystem
 cat > ecosystem.config.js << 'EOF'
