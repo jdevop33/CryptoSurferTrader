@@ -98,30 +98,51 @@ export class DEXTradingService {
 
   async getRealTimePrices(): Promise<PriceData[]> {
     try {
-      const coinGeckoApiKey = process.env.COINGECKO_API_KEY;
-      const baseUrl = coinGeckoApiKey 
-        ? 'https://pro-api.coingecko.com/api/v3'
-        : 'https://api.coingecko.com/api/v3';
-      
-      const headers = coinGeckoApiKey 
-        ? { 'x-cg-pro-api-key': coinGeckoApiKey }
-        : {};
-
-      const tokenIds = ['dogecoin', 'shiba-inu', 'pepe', 'floki'];
+      // Use free CoinGecko API (50 calls/minute, no key required)
       const response = await axios.get(
-        `${baseUrl}/coins/markets?vs_currency=usd&ids=${tokenIds.join(',')}&order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h`,
-        { headers }
+        'https://api.coingecko.com/api/v3/simple/price?ids=dogecoin,shiba-inu,pepe,floki&vs_currencies=usd&include_market_cap=true&include_24hr_vol=true&include_24hr_change=true',
+        { timeout: 10000 }
       );
 
-      return response.data.map((coin: any) => ({
-        symbol: coin.symbol.toUpperCase(),
-        price: coin.current_price,
-        priceUsd: coin.current_price,
-        marketCap: coin.market_cap,
-        volume24h: coin.total_volume,
-        priceChange24h: coin.price_change_percentage_24h,
-        liquidity: coin.market_cap * 0.1 // Estimate liquidity as 10% of market cap
-      }));
+      const data = response.data;
+      return [
+        {
+          symbol: 'DOGE',
+          price: data.dogecoin?.usd || 0,
+          priceUsd: data.dogecoin?.usd || 0,
+          marketCap: data.dogecoin?.usd_market_cap || 0,
+          volume24h: data.dogecoin?.usd_24h_vol || 0,
+          priceChange24h: data.dogecoin?.usd_24h_change || 0,
+          liquidity: (data.dogecoin?.usd_market_cap || 0) * 0.1
+        },
+        {
+          symbol: 'SHIB',
+          price: data['shiba-inu']?.usd || 0,
+          priceUsd: data['shiba-inu']?.usd || 0,
+          marketCap: data['shiba-inu']?.usd_market_cap || 0,
+          volume24h: data['shiba-inu']?.usd_24h_vol || 0,
+          priceChange24h: data['shiba-inu']?.usd_24h_change || 0,
+          liquidity: (data['shiba-inu']?.usd_market_cap || 0) * 0.1
+        },
+        {
+          symbol: 'PEPE',
+          price: data.pepe?.usd || 0,
+          priceUsd: data.pepe?.usd || 0,
+          marketCap: data.pepe?.usd_market_cap || 0,
+          volume24h: data.pepe?.usd_24h_vol || 0,
+          priceChange24h: data.pepe?.usd_24h_change || 0,
+          liquidity: (data.pepe?.usd_market_cap || 0) * 0.1
+        },
+        {
+          symbol: 'FLOKI',
+          price: data.floki?.usd || 0,
+          priceUsd: data.floki?.usd || 0,
+          marketCap: data.floki?.usd_market_cap || 0,
+          volume24h: data.floki?.usd_24h_vol || 0,
+          priceChange24h: data.floki?.usd_24h_change || 0,
+          liquidity: (data.floki?.usd_market_cap || 0) * 0.1
+        }
+      ].filter(token => token.price > 0);
     } catch (error) {
       console.error('Failed to fetch real-time prices:', error);
       return this.getFallbackPrices();

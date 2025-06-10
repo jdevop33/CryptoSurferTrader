@@ -437,9 +437,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       // Update trading settings to enable live trading
       const settings = await storage.updateTradingSettings(userId, {
-        autoTradingEnabled: true,
-        strategy: strategy || 'hybrid',
-        riskLevel: riskLevel || 'MEDIUM'
+        autoTradingEnabled: true
       });
 
       io.to(`user-${userId}`).emit('live-trading-started', settings);
@@ -546,10 +544,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ error: "Failed to get streaming prices", details: error.message });
     }
-  });
-        "Trading signal generation"
-      ]
-    });
   });
 
   return httpServer;
