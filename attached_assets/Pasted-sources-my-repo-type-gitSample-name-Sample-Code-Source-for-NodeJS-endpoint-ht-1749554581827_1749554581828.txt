@@ -1,0 +1,110 @@
+sources:
+  my_repo:
+    type: gitSample
+    name: Sample Code Source for NodeJS
+    endpoint: https://atomgit.com/flow-example/node-expressjs.git
+    branch: master
+stages:
+  java_script_code_scan_stage:
+    name: "Test"
+    jobs:
+      java_script_code_scan_job:
+        name: "JavaScript Code Scan"
+        runsOn:
+          group: public/ap-southeast-1
+          container: build-steps-public-registry.ap-southeast-1.cr.aliyuncs.com/build-steps/alinux3:latest
+        steps:
+          java_script_code_scan_step:
+            name: "JavaScript Code Scan"
+            step: "JavaScriptCodeScan"
+            with:
+              localDependencies: "*"
+              useLocalRules: false
+              nodeVersion: "14.8"
+              incrementalScan: false
+              exclusion: "test/\nbuild/\nnode_modules/\nvendor/\ndist/\n**/*.min.js\n\
+                **/*-min.js\n**/*.bundle.js\n"
+      node_unit_test_job:
+        name: "Node.js Unit Test"
+        runsOn:
+          group: public/ap-southeast-1
+          container: build-steps-public-registry.ap-southeast-1.cr.aliyuncs.com/build-steps/alinux3:latest
+        steps:
+          setup_npmrc_step:
+            name: "Setup npmrc"
+            step: SetupNpmrc
+            with:
+              npmPrivateRepoConfigPath: "/root/.npmrc"
+          setup_node_step:
+            name: "Setup Node"
+            step: SetupNode
+            with:
+              versionType: "predefined"  # support predefined, custom, nvmrc
+              nodeVersion: "<your-node-version>"
+              npmType: "npm"
+          command_step:
+            name: "Execute Command"
+            step: Command
+            with:
+              run: |
+                # please use the option --pass-on-failing-test-suite with your mocha command to continue the following step
+                npm install && npm run test
+          unit_test_report_step:
+            name: "Unit Test Report"
+            step: UnitTestReport
+            with:
+              reportPath: mochawesome-report/mochawesome.html
+              reporter: Node.js-Mocha
+              failOnError: true
+  node_build_stage:
+    name: "Build"
+    jobs:
+      node_build_job:
+        name: "Node.js Build"
+        runsOn: 
+          group: public/ap-southeast-1
+          container: build-steps-public-registry.ap-southeast-1.cr.aliyuncs.com/build-steps/alinux3:latest
+        steps:
+          setup_npmrc_step:
+            name: "Setup npmrc"
+            step: SetupNpmrc
+            with:
+              npmPrivateRepoConfigPath: "/root/.npmrc"
+          setup_node_step:
+            name: "Setup Node"
+            step: SetupNode
+            with:
+              versionType: "predefined"  # support predefined, custom, nvmrc
+              nodeVersion: "<your-node-version>"
+              npmType: "npm"
+          command_step:
+            name: "Execute Command"
+            step: Command
+            with:
+              run: |
+                npm install
+          upload_artifact_step:
+            name: "Artifact Upload"
+            step: ArtifactUpload
+            with:
+              uploadType: packages
+              serviceConnection: <your service connection id>
+              repo: flow_generic_repo
+              artifact: "Artifacts_${PIPELINE_ID}"
+              filePath: "."
+              version: "${BUILD_NUMBER}"
+  vm_deploy_stage:
+    name: "Deploy"
+    jobs:
+      vm_deploy_job:
+        name: "Host Deployment"
+        component: "VMDeploy"
+        with:
+          downloadArtifact: true
+          useEncode: false
+          machineGroup: "<your-machine-group-id>"
+          run: "mkdir -p /home/admin/application/\n tar zxvf /home/admin/app/package.tgz\
+            \ -C /home/admin/application/\n sh /home/admin/application/deploy.sh restart\n"
+          artifactDownloadPath: "/home/admin/app/package.tgz"
+          executeUser: "root"
+          artifact: $[stages.node_build_stage.node_build_job.artifact_upload_step.artifacts.Artifacts_${PIPELINE_ID}]
