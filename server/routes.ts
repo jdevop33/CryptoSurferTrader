@@ -174,14 +174,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Social sentiment endpoints
+  // Social sentiment endpoints - Enhanced with Python backend integration
   app.get("/api/sentiment", async (req, res) => {
     try {
       const symbols = req.query.symbols as string;
       const symbolList = symbols ? symbols.split(',') : [];
-      const sentiment = await dataService.getSentiment(symbolList.length > 0 ? symbolList : undefined);
+      
+      // Try to get sentiment data from Python backend first for authentic data
+      let sentiment;
+      if (pythonBridge.isReady()) {
+        sentiment = await pythonBridge.getSentimentData();
+        // Filter by requested symbols if specified
+        if (symbolList.length > 0) {
+          sentiment = sentiment.filter(item => symbolList.includes(item.symbol));
+        }
+      } else {
+        sentiment = await dataService.getSentiment(symbolList.length > 0 ? symbolList : undefined);
+      }
+      
       res.json(sentiment);
     } catch (error) {
+      console.error("Error fetching sentiment data:", error);
       res.status(500).json({ error: "Failed to fetch sentiment data" });
     }
   });
