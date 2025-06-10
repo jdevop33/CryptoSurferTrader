@@ -86,7 +86,7 @@ stages:
                 # Install dependencies
                 npm install
                 
-                # Create production environment file
+                # Create production environment file using secure environment variables
                 cat > .env.production << 'EOF'
                 NODE_ENV=production
                 PORT=3000
@@ -97,8 +97,8 @@ stages:
                 TWITTER_CLIENT_SECRET=${TWITTER_CLIENT_SECRET}
                 DATABASE_URL=postgresql://trading_user:trading_password@localhost:5432/trading_db
                 REDIS_URL=redis://localhost:6379
-                SESSION_SECRET=8trader8panda-super-secure-session-key-2024
-                JWT_SECRET=8trader8panda-jwt-secret-key-2024
+                SESSION_SECRET=${SESSION_SECRET}
+                JWT_SECRET=${JWT_SECRET}
                 EOF
                 
                 # Create PM2 ecosystem file
