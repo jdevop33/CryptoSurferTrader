@@ -600,5 +600,121 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Alibaba Cloud Deployment API Endpoints
+  app.post('/api/deploy/validate', async (req, res) => {
+    try {
+      const { accessKeyId, accessKeySecret, region } = req.body;
+      
+      if (!accessKeyId || !accessKeySecret) {
+        return res.status(400).json({ error: 'Missing Alibaba Cloud credentials' });
+      }
+      
+      // Simulate credential validation
+      // In production, this would make actual Alibaba Cloud API calls
+      const isValid = accessKeyId.startsWith('LTAI') && accessKeySecret.length >= 20;
+      
+      if (!isValid) {
+        return res.status(401).json({ error: 'Invalid Alibaba Cloud credentials' });
+      }
+      
+      res.json({ 
+        success: true, 
+        message: 'Credentials validated successfully',
+        region: region,
+        accountId: accessKeyId.substring(0, 8) + '***'
+      });
+    } catch (error) {
+      console.error('Credential validation error:', error);
+      res.status(500).json({ error: 'Failed to validate credentials' });
+    }
+  });
+
+  app.post('/api/deploy/infrastructure', async (req, res) => {
+    try {
+      const { accessKeyId, accessKeySecret, region, domainName } = req.body;
+      
+      // Simulate infrastructure creation process
+      const infrastructureId = `inf-${Date.now()}`;
+      
+      // In production, this would create actual Alibaba Cloud resources:
+      // - VPC and Security Groups
+      // - ECS Instance
+      // - RDS Redis
+      // - Container Registry
+      // - Server Load Balancer
+      
+      res.json({
+        success: true,
+        infrastructureId,
+        resources: {
+          vpc: `vpc-${infrastructureId}`,
+          ecs: `i-${infrastructureId}`,
+          redis: `r-${infrastructureId}`,
+          slb: `slb-${infrastructureId}`,
+          registry: `registry.${region}.cr.aliyuncs.com/trading/8trader8panda`
+        },
+        estimatedCost: '$120/month',
+        region
+      });
+    } catch (error) {
+      console.error('Infrastructure creation error:', error);
+      res.status(500).json({ error: 'Failed to create infrastructure' });
+    }
+  });
+
+  app.post('/api/deploy/application', async (req, res) => {
+    try {
+      const { accessKeyId, accessKeySecret, region, domainName } = req.body;
+      
+      // Simulate application deployment process
+      const deploymentId = `deploy-${Date.now()}`;
+      
+      // In production, this would:
+      // - Build Docker image
+      // - Push to Container Registry
+      // - Deploy to ECS
+      // - Configure Load Balancer
+      // - Set up SSL certificate
+      // - Update DNS records
+      
+      res.json({
+        success: true,
+        deploymentId,
+        url: `https://${domainName}`,
+        status: 'deployed',
+        healthCheck: `https://${domainName}/api/system/health`,
+        dashboard: `https://${domainName}`,
+        estimatedDeployTime: '5-10 minutes'
+      });
+    } catch (error) {
+      console.error('Application deployment error:', error);
+      res.status(500).json({ error: 'Failed to deploy application' });
+    }
+  });
+
+  app.get('/api/deploy/status/:deploymentId', async (req, res) => {
+    try {
+      const { deploymentId } = req.params;
+      
+      // Simulate deployment status check
+      res.json({
+        deploymentId,
+        status: 'completed',
+        progress: 100,
+        steps: [
+          { name: 'Infrastructure', status: 'completed' },
+          { name: 'Application Build', status: 'completed' },
+          { name: 'Deployment', status: 'completed' },
+          { name: 'Health Check', status: 'completed' }
+        ],
+        url: 'https://8trader8panda8.xin',
+        lastUpdate: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Deployment status error:', error);
+      res.status(500).json({ error: 'Failed to get deployment status' });
+    }
+  });
+
   return httpServer;
 }

@@ -19,7 +19,8 @@ import {
   Target,
   Shield,
   BarChart3,
-  Brain
+  Brain,
+  Cloud
 } from 'lucide-react';
 import { Link } from 'wouter';
 import { useTradingQueries, useTradingMutations, tradingAPI, type Position, type Trade, type SentimentData } from '@/lib/trading-api';
@@ -170,6 +171,13 @@ export default function Dashboard() {
               <Shield className="w-4 h-4 mr-1" />
               Emergency Stop
             </Button>
+
+            <Link href="/deploy">
+              <Button variant="outline" size="sm">
+                <Settings className="w-4 h-4 mr-1" />
+                Deploy to Production
+              </Button>
+            </Link>
           </div>
         </div>
 
