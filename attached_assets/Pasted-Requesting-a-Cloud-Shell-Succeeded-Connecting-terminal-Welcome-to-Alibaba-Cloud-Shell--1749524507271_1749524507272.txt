@@ -1,0 +1,547 @@
+Requesting a Cloud Shell.......Succeeded.
+Connecting terminal
+
+Welcome to Alibaba Cloud Shell! 
+
+Type "help" to learn about Cloud Shell
+Type "aliyun" to use Alibaba Cloud CLI
+
+shell@Alicloud:~$ # Check ECS instances
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 --PageSize 50
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 50,
+        "RequestId": "8E28944B-7FB2-3842-AB00-B00E1D5AE9B8",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check Redis instances  
+shell@Alicloud:~$ aliyun r-kvstore DescribeInstances --region ap-southeast-1
+{
+        "Instances": {
+                "KVStoreInstance": []
+        },
+        "PageNumber": 1,
+        "PageSize": 30,
+        "RequestId": "F7ED0E38-443C-305D-8F44-1443154E165C",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check Load Balancers
+shell@Alicloud:~$ aliyun slb DescribeLoadBalancers --region ap-southeast-1
+{
+        "LoadBalancers": {
+                "LoadBalancer": []
+        },
+        "PageNumber": 1,
+        "PageSize": 0,
+        "RequestId": "C5155BF9-276A-30D8-B713-F05AD212E9FB",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check VPC networks
+shell@Alicloud:~$ aliyun vpc DescribeVpcs --region ap-southeast-1
+{
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "91B245C2-C38A-3BE8-9C58-02678714F6FE",
+        "TotalCount": 1,
+        "Vpcs": {
+                "Vpc": [
+                        {
+                                "AdvancedResource": false,
+                                "CenStatus": "Detached",
+                                "CidrBlock": "10.0.0.0/8",
+                                "CreationTime": "2025-06-10T02:28:25Z",
+                                "Description": "VPC for 8trader8panda trading system",
+                                "DnsHostnameStatus": "DISABLED",
+                                "EnabledIpv6": false,
+                                "Ipv6CidrBlock": "",
+                                "IsDefault": false,
+                                "NatGatewayIds": {
+                                        "NatGatewayIds": []
+                                },
+                                "NetworkAclNum": 0,
+                                "OwnerId": 5595948737889288,
+                                "RegionId": "ap-southeast-1",
+                                "ResourceGroupId": "rg-acfnwbea4koaica",
+                                "RouterTableIds": {
+                                        "RouterTableIds": [
+                                                "vtb-t4nr5c4j4qd7faigldd2i"
+                                        ]
+                                },
+                                "SecondaryCidrBlocks": {
+                                        "SecondaryCidrBlock": []
+                                },
+                                "Status": "Available",
+                                "UserCidrs": {
+                                        "UserCidr": []
+                                },
+                                "VRouterId": "vrt-t4npf22lm6mmf9zmk7pex",
+                                "VSwitchIds": {
+                                        "VSwitchId": []
+                                },
+                                "VpcId": "vpc-t4nieljvv4252xbycwrqg",
+                                "VpcName": "8trader8panda-vpc"
+                        }
+                ]
+        }
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check Container Registry repositories
+shell@Alicloud:~$ aliyun cr DescribeRepos --RegionId ap-southeast-1
+ERROR: 'DescribeRepos' is not a valid api. See `aliyun help cr`.
+shell@Alicloud:~$ aliyun help 
+Alibaba Cloud Command Line Interface Version 3.0.282
+
+Usage:
+  aliyun <product> <operation> [--parameter1 value1 --parameter2 value2 ...]
+
+Flags:
+  --mode                    use `--mode {AK|StsToken|RamRoleArn|EcsRamRole|RsaKeyPair|RamRoleArnWithRoleName}` to assign authenticate mode
+  --profile,-p              use `--profile <profileName>` to select profile
+  --language                use `--language [en|zh]` to assign language
+  --region                  use `--region <regionId>` to assign region
+  --config-path             use `--config-path` to specify the configuration file path
+  --access-key-id           use `--access-key-id <AccessKeyId>` to assign AccessKeyId, required in AK/StsToken/RamRoleArn mode
+  --access-key-secret       use `--access-key-secret <AccessKeySecret>` to assign AccessKeySecret
+  --sts-token               use `--sts-token <StsToken>` to assign StsToken
+  --sts-region              use `--sts-region <StsRegion>` to assign StsRegion
+  --ram-role-name           use `--ram-role-name <RamRoleName>` to assign RamRoleName
+  --ram-role-arn            use `--ram-role-arn <RamRoleArn>` to assign RamRoleArn
+  --role-session-name       use `--role-session-name <RoleSessionName>` to assign RoleSessionName
+  --external-id             use `--external-id <ExternalId>` to assign ExternalId
+  --private-key             use `--private-key <PrivateKey>` to assign RSA PrivateKey
+  --key-pair-name           use `--key-pair-name <KeyPairName>` to assign KeyPairName
+  --read-timeout            use `--read-timeout <seconds>` to set I/O timeout(seconds)
+  --connect-timeout         use `--connect-timeout <seconds>` to set connect timeout(seconds)
+  --retry-count             use `--retry-count <count>` to set retry count
+  --skip-secure-verify      use `--skip-secure-verify` to skip https certification validate [Not recommended]
+  --expired-seconds         use `--expired-seconds <seconds>` to specify expiration time
+  --process-command         use `--process-command <ProcessCommand>` to specify external program execution command
+  --oidc-provider-arn       use `--oidc-provider-arn <OIDCProviderARN>` to assign OIDC provider ARN
+  --oidc-token-file         use `--oidc-token-file <OIDCTokenFile>` to assign OIDC token file path
+  --cloud-sso-sign-in-url   use `--cloud-sso-sign-in-url` to specify the cloud sso sign in url
+  --cloud-sso-access-config use `--cloud-sso-access-config` to specify the cloud sso access config
+  --cloud-sso-account-id    use `--cloud-sso-account-id` to specify the cloud sso account id
+  --secure                  use `--secure` to force https
+  --force                   use `--force` to skip api and parameters check
+  --endpoint                use `--endpoint <endpoint>` to assign endpoint
+  --version                 use `--version <YYYY-MM-DD>` to assign product api version
+  --header                  use `--header X-foo=bar` to add custom HTTP header, repeatable
+  --body                    use `--body $(cat foo.json)` to assign http body in RESTful call
+  --pager                   use `--pager` to merge pages for pageable APIs
+  --output,-o               use `--output cols=Field1,Field2 [rows=jmesPath]` to print output as table
+  --waiter                  use `--waiter expr=<jmesPath> to=<value>` to pull api until result equal to expected value
+  --dryrun                  add `--dryrun` to validate and print request without running.
+  --quiet,-q                add `--quiet` to hide normal output
+  --method                  add `--method {GET|POST}` to assign rpc call method.
+  --help                    print help
+
+Sample:
+  aliyun ecs DescribeRegions
+
+Products:
+  actiontrail                  ActionTrail
+  adb                          AnalyticDB for MySQL
+  adcp                         Alibaba Cloud Distributed Cloud Container Platform
+  aiworkspace                  
+  alb                          Application Load Balancer
+  alidns                       Cloud DNS
+  alikafka                     ApsaraMQ for Kafka
+  apig                         
+  arms                         Application Real-Time Monitoring Service
+  bssopenapi                   Alibaba Cloud Billing
+  cas                          certificate management service (original SSL certificate)
+  cbn                          Cloud Enterprise Network
+  ccc                          Cloud Call Center
+  cdn                          CDN
+  chatbot                      beebot
+  clickhouse                   
+  cloud-siem                   
+  cloudapi                     API Gateway
+  cloudfw                      Cloud Firewall
+  cloudsso                     Cloud SSO
+  cms                          Cloud Monitor
+  computenest                  Computing Nest
+  computenestsupplier          Compute Nest - Supplier
+  config                       Cloud Config
+  cr                           Container Registry
+  cs                           Container Service for Kubernetes
+  csas                         
+  das                          
+  dataworks-public             
+  dbs                          
+  dcdn                         Dynamic Route for CDN
+  ddosbgp                      
+  ddoscoo                      BGP-line Anti-DDoS Pro
+  dds                          ApsaraDB for MongoDB
+  devops                       Devops 2020
+  dm                           DirectMail
+  dms-dg                       
+  dms-enterprise               Data Management
+  domain                       Domain
+  drds                         Distributed Relational Database Service
+  dts                          Data Transmission
+  eais                         
+  eas                          
+  ebs                          
+  eci                          Elastic Container Instance
+  ecs                          Elastic Compute Service
+  edas                         Enterprise Distributbed Application Service
+  eflo                         
+  eflo-cnp                     
+  eflo-controller              
+  ehpc                         Elastic High Performance Computing
+  eipanycast                   Anycast EIP
+  elasticsearch                Elasticsearch
+  emr                          E-MapReduce
+  ens                          edge node service
+  esa                          
+  ess                          Auto Scaling
+  eventbridge                  EventBridge
+  expressconnectrouter         
+  facebody                     viapi-facebody
+  fc                           
+  fc-open                      Function Compute
+  fnf                          CloudFlow
+  foasconsole                  
+  ga                           Global Acceleration
+  goodstech                    viapi-goodstech
+  gpdb                         AnalyticDB for PostgreSQL
+  green                        Content Moderation
+  gwlb                         
+  hbase                        ApsaraDB for HBase
+  hitsdb                       
+  hologram                     
+  httpdns                      HttpDNS
+  imageaudit                   viapi-imageaudit
+  imageenhan                   viapi-imageenhan
+  imagerecog                   viapi-imagerecog
+  imageseg                     viapi-imageseg
+  ims                          RAM Identity Management Service
+  iot                          IoT Platform
+  iqs                          
+  kms                          KeyManagementService
+  live                         ApsaraVideo Live
+  maxcompute                   
+  mse                          Microservice Engine
+  mssp                         
+  mts                          ApsaraVideo for Media Processing
+  nas                          Network Attached Storage
+  nlb                          Network Load Balancer
+  objectdet                    viapi-objectdet
+  oceanbasepro                 ApsaraDB for OceanBase
+  ocr                          viapi-ocr
+  ons                          ApsaraMQ for RocketMQ 4.0
+  onsmqtt                      
+  oos                          CloudOps Orchestration Service
+  openapiexplorer              
+  openitag                     
+  ossadmin                     
+  pai-dlc                      
+  pai-dsw                      
+  paiautoml                    
+  paielasticdatasetaccelerator 
+  paifeaturestore              
+  paiflow                      
+  paiplugin                    
+  paistudio                    
+  polardb                      ApsaraDB for POLARDB
+  privatelink                  PrivateLink
+  push                         Alibaba Cloud Mobile Push
+  pvtz                         Alibaba Cloud DNS PrivateZone
+  qualitycheck                 Smart Conversation Analysis
+  quotas                       quotas
+  r-kvstore                    ApsaraDB for Redis
+  ram                          Resource Access Management
+  rds                          ApsaraDB for RDS
+  resourcecenter               ResourceCenter
+  resourcedirectorymaster      
+  resourcemanager              Resource Management
+  resourcesharing              
+  rocketmq                     ApsaraMQ for RocketMQ 5.0
+  ros                          Resource Orchestration Service
+  sae                          Serverless App Engine
+  sas                          Security Center
+  scdn                         scdn
+  schedulerx2                  
+  sddp                         
+  searchengine                 
+  servicemesh                  Service Mesh
+  slb                          Server Load Balancer
+  smc                          Server Migration Center
+  sophonsoar                   
+  sts                          Security Token Service
+  tag                          Tag
+  ververica                    
+  vod                          ApsaraVideo VOD
+  vpc                          Virtual Private Cloud
+  vpcipam                      
+  vpcpeer                      VPC peering connection
+  waf-openapi                  Web Application Firewall
+  yundun-bastionhost           bastionhost
+
+Use `aliyun --help` for more information.
+shell@Alicloud:~$ # Check if deployment actually created resources
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 | grep "InstanceName\|InstanceId\|Status"
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # List all regions to confirm we're checking the right one
+shell@Alicloud:~$ aliyun ecs DescribeRegions
+{
+        "Regions": {
+                "Region": [
+                        {
+                                "LocalName": "华北1（青岛）",
+                                "RegionEndpoint": "ecs.cn-qingdao.aliyuncs.com",
+                                "RegionId": "cn-qingdao"
+                        },
+                        {
+                                "LocalName": "华北2（北京）",
+                                "RegionEndpoint": "ecs.cn-beijing.aliyuncs.com",
+                                "RegionId": "cn-beijing"
+                        },
+                        {
+                                "LocalName": "华北3（张家口）",
+                                "RegionEndpoint": "ecs.cn-zhangjiakou.aliyuncs.com",
+                                "RegionId": "cn-zhangjiakou"
+                        },
+                        {
+                                "LocalName": "华北5（呼和浩特）",
+                                "RegionEndpoint": "ecs.cn-huhehaote.aliyuncs.com",
+                                "RegionId": "cn-huhehaote"
+                        },
+                        {
+                                "LocalName": "华北6（乌兰察布）",
+                                "RegionEndpoint": "ecs.cn-wulanchabu.aliyuncs.com",
+                                "RegionId": "cn-wulanchabu"
+                        },
+                        {
+                                "LocalName": "华东1（杭州）",
+                                "RegionEndpoint": "ecs.aliyuncs.com",
+                                "RegionId": "cn-hangzhou"
+                        },
+                        {
+                                "LocalName": "华东2（上海）",
+                                "RegionEndpoint": "ecs.cn-shanghai.aliyuncs.com",
+                                "RegionId": "cn-shanghai"
+                        },
+                        {
+                                "LocalName": "华东5（南京-本地地域）",
+                                "RegionEndpoint": "ecs.cn-nanjing.aliyuncs.com",
+                                "RegionId": "cn-nanjing"
+                        },
+                        {
+                                "LocalName": "华南1（深圳）",
+                                "RegionEndpoint": "ecs.cn-shenzhen.aliyuncs.com",
+                                "RegionId": "cn-shenzhen"
+                        },
+                        {
+                                "LocalName": "华南2（河源）",
+                                "RegionEndpoint": "ecs.cn-heyuan.aliyuncs.com",
+                                "RegionId": "cn-heyuan"
+                        },
+                        {
+                                "LocalName": "华南3（广州）",
+                                "RegionEndpoint": "ecs.cn-guangzhou.aliyuncs.com",
+                                "RegionId": "cn-guangzhou"
+                        },
+                        {
+                                "LocalName": "华东6（福州-本地地域）",
+                                "RegionEndpoint": "ecs.cn-fuzhou.aliyuncs.com",
+                                "RegionId": "cn-fuzhou"
+                        },
+                        {
+                                "LocalName": "华中1（武汉-本地地域）",
+                                "RegionEndpoint": "ecs.cn-wuhan-lr.aliyuncs.com",
+                                "RegionId": "cn-wuhan-lr"
+                        },
+                        {
+                                "LocalName": "西南1（成都）",
+                                "RegionEndpoint": "ecs.cn-chengdu.aliyuncs.com",
+                                "RegionId": "cn-chengdu"
+                        },
+                        {
+                                "LocalName": "中国香港",
+                                "RegionEndpoint": "ecs.cn-hongkong.aliyuncs.com",
+                                "RegionId": "cn-hongkong"
+                        },
+                        {
+                                "LocalName": "日本（东京）",
+                                "RegionEndpoint": "ecs.ap-northeast-1.aliyuncs.com",
+                                "RegionId": "ap-northeast-1"
+                        },
+                        {
+                                "LocalName": "韩国（首尔）",
+                                "RegionEndpoint": "ecs.ap-northeast-2.aliyuncs.com",
+                                "RegionId": "ap-northeast-2"
+                        },
+                        {
+                                "LocalName": "新加坡",
+                                "RegionEndpoint": "ecs.ap-southeast-1.aliyuncs.com",
+                                "RegionId": "ap-southeast-1"
+                        },
+                        {
+                                "LocalName": "马来西亚（吉隆坡）",
+                                "RegionEndpoint": "ecs.ap-southeast-3.aliyuncs.com",
+                                "RegionId": "ap-southeast-3"
+                        },
+                        {
+                                "LocalName": "菲律宾（马尼拉）",
+                                "RegionEndpoint": "ecs.ap-southeast-6.aliyuncs.com",
+                                "RegionId": "ap-southeast-6"
+                        },
+                        {
+                                "LocalName": "印度尼西亚（雅加达）",
+                                "RegionEndpoint": "ecs.ap-southeast-5.aliyuncs.com",
+                                "RegionId": "ap-southeast-5"
+                        },
+                        {
+                                "LocalName": "泰国（曼谷）",
+                                "RegionEndpoint": "ecs.ap-southeast-7.aliyuncs.com",
+                                "RegionId": "ap-southeast-7"
+                        },
+                        {
+                                "LocalName": "美国（弗吉尼亚）",
+                                "RegionEndpoint": "ecs.us-east-1.aliyuncs.com",
+                                "RegionId": "us-east-1"
+                        },
+                        {
+                                "LocalName": "美国（硅谷）",
+                                "RegionEndpoint": "ecs.us-west-1.aliyuncs.com",
+                                "RegionId": "us-west-1"
+                        },
+                        {
+                                "LocalName": "墨西哥",
+                                "RegionEndpoint": "ecs.na-south-1.aliyuncs.com",
+                                "RegionId": "na-south-1"
+                        },
+                        {
+                                "LocalName": "英国（伦敦）",
+                                "RegionEndpoint": "ecs.eu-west-1.aliyuncs.com",
+                                "RegionId": "eu-west-1"
+                        },
+                        {
+                                "LocalName": "阿联酋（迪拜）",
+                                "RegionEndpoint": "ecs.me-east-1.aliyuncs.com",
+                                "RegionId": "me-east-1"
+                        },
+                        {
+                                "LocalName": "沙特（利雅得)",
+                                "RegionEndpoint": "ecs.me-central-1.aliyuncs.com",
+                                "RegionId": "me-central-1"
+                        },
+                        {
+                                "LocalName": "德国（法兰克福）",
+                                "RegionEndpoint": "ecs.eu-central-1.aliyuncs.com",
+                                "RegionId": "eu-central-1"
+                        }
+                ]
+        },
+        "RequestId": "798C1AB6-C38A-3C0B-9600-6851922FE842"
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check if resources exist in other regions
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region cn-hangzhou --PageSize 10
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "691BF852-E67E-5AA8-88FB-B489200C646A",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region us-west-1 --PageSize 10
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "F1D11BD8-2DA3-37E4-96FF-A2CE010DF7A5",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ # Check your new ECS instance
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 --InstanceIds '["i-1749523600593"]'
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "12970E40-2A08-3A86-BA69-109521B27775",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check your Redis instance
+shell@Alicloud:~$ aliyun r-kvstore DescribeInstances --region ap-southeast-1 --InstanceIds '["r-1749523600348"]'
+{
+        "Instances": {
+                "KVStoreInstance": []
+        },
+        "PageNumber": 1,
+        "PageSize": 30,
+        "RequestId": "30C5ED13-A423-3937-8DA1-600E9BF37943",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check load balancer
+shell@Alicloud:~$ aliyun slb DescribeLoadBalancers --region ap-southeast-1 --LoadBalancerId slb-1749523601701
+{
+        "LoadBalancers": {
+                "LoadBalancer": []
+        },
+        "PageNumber": 1,
+        "PageSize": 0,
+        "RequestId": "9815BB51-EDA3-3399-9E9B-0C3673641F97",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Get public IP details
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 | grep -A 5 -B 5 "47.128.10"
+shell@Alicloud:~$ # Check if any ECS instances exist
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 --PageSize 50
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 50,
+        "RequestId": "554DB1B2-0A88-3513-A633-329206E1C4FB",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check security groups
+shell@Alicloud:~$ aliyun ecs DescribeSecurityGroups --region ap-southeast-1
+{
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RegionId": "ap-southeast-1",
+        "RequestId": "5DB252EA-6CBD-378D-ADFF-184360909C4B",
+        "SecurityGroups": {
+                "SecurityGroup": []
+        },
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check elastic IPs
+shell@Alicloud:~$ aliyun ecs DescribeEipAddresses --region ap-southeast-1
+{
+        "EipAddresses": {
+                "EipAddress": []
+        },
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "46E4DD22-3B5E-3DFF-BBB2-FF3332DB68FE",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
