@@ -1,0 +1,65 @@
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check load balancer
+shell@Alicloud:~$ aliyun slb DescribeLoadBalancers --region ap-southeast-1 --LoadBalancerId slb-1749523601701
+{
+        "LoadBalancers": {
+                "LoadBalancer": []
+        },
+        "PageNumber": 1,
+        "PageSize": 0,
+        "RequestId": "9815BB51-EDA3-3399-9E9B-0C3673641F97",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Get public IP details
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 | grep -A 5 -B 5 "47.128.10"
+shell@Alicloud:~$ # Check if any ECS instances exist
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 --PageSize 50
+{
+        "Instances": {
+                "Instance": []
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 50,
+        "RequestId": "554DB1B2-0A88-3513-A633-329206E1C4FB",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check security groups
+shell@Alicloud:~$ aliyun ecs DescribeSecurityGroups --region ap-southeast-1
+{
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RegionId": "ap-southeast-1",
+        "RequestId": "5DB252EA-6CBD-378D-ADFF-184360909C4B",
+        "SecurityGroups": {
+                "SecurityGroup": []
+        },
+        "TotalCount": 0
+}
+shell@Alicloud:~$ 
+shell@Alicloud:~$ # Check elastic IPs
+shell@Alicloud:~$ aliyun ecs DescribeEipAddresses --region ap-southeast-1
+{
+        "EipAddresses": {
+                "EipAddress": []
+        },
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "46E4DD22-3B5E-3DFF-BBB2-FF3332DB68FE",
+        "TotalCount": 0
+}
+shell@Alicloud:~$ aliyun vpc CreateVSwitch --VpcId vpc-t4nieljvv4252xbycwrqg --CidrBlock "10.0.1.0/24" --ZoneId ap-southeast-1a --VSwitchName "8trader8panda-subnet" --region ap-southeast-1
+{
+        "RequestId": "48E13F92-A919-340D-9BF4-41336376DD33",
+        "VSwitchId": "vsw-t4najempq4wxom2gajsoh"
+}
+shell@Alicloud:~$ aliyun ecs CreateSecurityGroup --VpcId vpc-t4nieljvv4252xbycwrqg --SecurityGroupName "8trader8panda-sg" --Description "Security group for trading system" --region ap-southeast-1
+ERROR: SDK.ServerError
+ErrorCode: InvalidSecurityGroupName.Malformed
+Recommend: https://api.aliyun.com/troubleshoot?q=InvalidSecurityGroupName.Malformed&product=Ecs&requestId=CC85D72C-9AAB-3401-9339-5B1B6D513B36
+RequestId: CC85D72C-9AAB-3401-9339-5B1B6D513B36
+Message: The specified parameter SecurityGroupName is not valid.
+RespHeaders: map[Access-Control-Allow-Origin:[*] Access-Control-Expose-Headers:[*] Connection:[keep-alive] Content-Length:[353] Content-Type:[application/json;charset=utf-8] Date:[Tue, 10 Jun 2025 03:04:33 GMT] Keep-Alive:[timeout=25] X-Acs-Request-Id:[CC85D72C-9AAB-3401-9339-5B1B6D513B36] X-Acs-Trace-Id:[ddb788293861c34828b5fa2e4dbf36ad]]
+shell@Alicloud:~$ 

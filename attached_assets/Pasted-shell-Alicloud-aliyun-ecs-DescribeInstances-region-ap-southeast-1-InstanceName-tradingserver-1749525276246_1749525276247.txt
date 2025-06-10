@@ -1,0 +1,293 @@
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 --InstanceName "tradingserver"
+{
+        "Instances": {
+                "Instance": [
+                        {
+                                "AdditionalInfo": {},
+                                "AutoReleaseTime": "",
+                                "ClusterId": "",
+                                "Cpu": 2,
+                                "CpuOptions": {
+                                        "CoreCount": 1,
+                                        "Numa": "",
+                                        "ThreadsPerCore": 2
+                                },
+                                "CreationTime": "2025-06-10T03:09Z",
+                                "CreditSpecification": "Standard",
+                                "DedicatedHostAttribute": {
+                                        "DedicatedHostClusterId": "",
+                                        "DedicatedHostId": "",
+                                        "DedicatedHostName": ""
+                                },
+                                "DedicatedInstanceAttribute": {
+                                        "Affinity": "",
+                                        "Tenancy": ""
+                                },
+                                "DeletionProtection": false,
+                                "DeploymentSetId": "",
+                                "Description": "",
+                                "DeviceAvailable": true,
+                                "EcsCapacityReservationAttr": {
+                                        "CapacityReservationId": "",
+                                        "CapacityReservationPreference": ""
+                                },
+                                "EipAddress": {
+                                        "AllocationId": "",
+                                        "InternetChargeType": "",
+                                        "IpAddress": ""
+                                },
+                                "ExpiredTime": "2099-12-31T15:59Z",
+                                "GPUAmount": 0,
+                                "GPUSpec": "",
+                                "HibernationOptions": {
+                                        "Configured": false
+                                },
+                                "HostName": "iZt4ndx1mvq6rwcxzwalrjZ",
+                                "ImageId": "ubuntu_24_04_x64_20G_alibase_20240812.vhd",
+                                "ImageOptions": {},
+                                "InnerIpAddress": {
+                                        "IpAddress": []
+                                },
+                                "InstanceChargeType": "PostPaid",
+                                "InstanceId": "i-t4ndx1mvq6rwcxzwalrj",
+                                "InstanceName": "tradingserver",
+                                "InstanceNetworkType": "vpc",
+                                "InstanceType": "ecs.t6-c1m2.large",
+                                "InstanceTypeFamily": "ecs.t6",
+                                "InternetChargeType": "PayByTraffic",
+                                "InternetMaxBandwidthIn": 80,
+                                "InternetMaxBandwidthOut": 100,
+                                "IoOptimized": true,
+                                "Memory": 4096,
+                                "MetadataOptions": {
+                                        "HttpEndpoint": "",
+                                        "HttpTokens": ""
+                                },
+                                "NetworkInterfaces": {
+                                        "NetworkInterface": [
+                                                {
+                                                        "MacAddress": "00:16:3e:16:c0:26",
+                                                        "NetworkInterfaceId": "eni-t4n5kz6qbhfz1z6xuaw1",
+                                                        "PrimaryIpAddress": "10.0.1.248",
+                                                        "PrivateIpSets": {
+                                                                "PrivateIpSet": [
+                                                                        {
+                                                                                "Primary": true,
+                                                                                "PrivateIpAddress": "10.0.1.248"
+                                                                        }
+                                                                ]
+                                                        },
+                                                        "Type": "Primary"
+                                                }
+                                        ]
+                                },
+                                "OSName": "Ubuntu  24.04 64位",
+                                "OSNameEn": "Ubuntu  24.04 64 bit",
+                                "OSType": "linux",
+                                "OperationLocks": {
+                                        "LockReason": []
+                                },
+                                "PrivateDnsNameOptions": {},
+                                "PublicIpAddress": {
+                                        "IpAddress": [
+                                                "8.222.177.208"
+                                        ]
+                                },
+                                "Recyclable": false,
+                                "RegionId": "ap-southeast-1",
+                                "ResourceGroupId": "",
+                                "SaleCycle": "",
+                                "SecurityGroupIds": {
+                                        "SecurityGroupId": [
+                                                "sg-t4nfmr0n02ch476dlwb6"
+                                        ]
+                                },
+                                "SerialNumber": "346e51f4-3d83-4118-9fbd-71fd59ae2de7",
+                                "SpotPriceLimit": 0.0,
+                                "SpotStrategy": "NoSpot",
+                                "StartTime": "2025-06-10T03:09Z",
+                                "Status": "Running",
+                                "StoppedMode": "Not-applicable",
+                                "VlanId": "",
+                                "VpcAttributes": {
+                                        "NatIpAddress": "",
+                                        "PrivateIpAddress": {
+                                                "IpAddress": [
+                                                        "10.0.1.248"
+                                                ]
+                                        },
+                                        "VSwitchId": "vsw-t4najempq4wxom2gajsoh",
+                                        "VpcId": "vpc-t4nieljvv4252xbycwrqg"
+                                },
+                                "ZoneId": "ap-southeast-1a"
+                        }
+                ]
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 10,
+        "RequestId": "5DF388BF-90AF-387E-B3BD-26866EF45D5F",
+        "TotalCount": 1
+}
+shell@Alicloud:~$ aliyun ecs ReleaseEipAddress --AllocationId $EIP_ID --region ap-southeast-1
+{
+        "RequestId": "1278C948-6E20-317E-B1A6-ECE95621EE41"
+}
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 | grep -A 20 -B 5 "tradingserver"
+                                "InnerIpAddress": {
+                                        "IpAddress": []
+                                },
+                                "InstanceChargeType": "PostPaid",
+                                "InstanceId": "i-t4ndx1mvq6rwcxzwalrj",
+                                "InstanceName": "tradingserver",
+                                "InstanceNetworkType": "vpc",
+                                "InstanceType": "ecs.t6-c1m2.large",
+                                "InstanceTypeFamily": "ecs.t6",
+                                "InternetChargeType": "PayByTraffic",
+                                "InternetMaxBandwidthIn": 80,
+                                "InternetMaxBandwidthOut": 100,
+                                "IoOptimized": true,
+                                "Memory": 4096,
+                                "MetadataOptions": {
+                                        "HttpEndpoint": "",
+                                        "HttpTokens": ""
+                                },
+                                "NetworkInterfaces": {
+                                        "NetworkInterface": [
+                                                {
+                                                        "MacAddress": "00:16:3e:16:c0:26",
+                                                        "NetworkInterfaceId": "eni-t4n5kz6qbhfz1z6xuaw1",
+                                                        "PrimaryIpAddress": "10.0.1.248",
+                                                        "PrivateIpSets": {
+                                                                "PrivateIpSet": [
+shell@Alicloud:~$ aliyun ecs DescribeInstances --region ap-southeast-1 --PageSize 50
+{
+        "Instances": {
+                "Instance": [
+                        {
+                                "AdditionalInfo": {},
+                                "AutoReleaseTime": "",
+                                "ClusterId": "",
+                                "Cpu": 2,
+                                "CpuOptions": {
+                                        "CoreCount": 1,
+                                        "Numa": "",
+                                        "ThreadsPerCore": 2
+                                },
+                                "CreationTime": "2025-06-10T03:09Z",
+                                "CreditSpecification": "Standard",
+                                "DedicatedHostAttribute": {
+                                        "DedicatedHostClusterId": "",
+                                        "DedicatedHostId": "",
+                                        "DedicatedHostName": ""
+                                },
+                                "DedicatedInstanceAttribute": {
+                                        "Affinity": "",
+                                        "Tenancy": ""
+                                },
+                                "DeletionProtection": false,
+                                "DeploymentSetId": "",
+                                "Description": "",
+                                "DeviceAvailable": true,
+                                "EcsCapacityReservationAttr": {
+                                        "CapacityReservationId": "",
+                                        "CapacityReservationPreference": ""
+                                },
+                                "EipAddress": {
+                                        "AllocationId": "",
+                                        "InternetChargeType": "",
+                                        "IpAddress": ""
+                                },
+                                "ExpiredTime": "2099-12-31T15:59Z",
+                                "GPUAmount": 0,
+                                "GPUSpec": "",
+                                "HibernationOptions": {
+                                        "Configured": false
+                                },
+                                "HostName": "iZt4ndx1mvq6rwcxzwalrjZ",
+                                "ImageId": "ubuntu_24_04_x64_20G_alibase_20240812.vhd",
+                                "ImageOptions": {},
+                                "InnerIpAddress": {
+                                        "IpAddress": []
+                                },
+                                "InstanceChargeType": "PostPaid",
+                                "InstanceId": "i-t4ndx1mvq6rwcxzwalrj",
+                                "InstanceName": "tradingserver",
+                                "InstanceNetworkType": "vpc",
+                                "InstanceType": "ecs.t6-c1m2.large",
+                                "InstanceTypeFamily": "ecs.t6",
+                                "InternetChargeType": "PayByTraffic",
+                                "InternetMaxBandwidthIn": 80,
+                                "InternetMaxBandwidthOut": 100,
+                                "IoOptimized": true,
+                                "Memory": 4096,
+                                "MetadataOptions": {
+                                        "HttpEndpoint": "",
+                                        "HttpTokens": ""
+                                },
+                                "NetworkInterfaces": {
+                                        "NetworkInterface": [
+                                                {
+                                                        "MacAddress": "00:16:3e:16:c0:26",
+                                                        "NetworkInterfaceId": "eni-t4n5kz6qbhfz1z6xuaw1",
+                                                        "PrimaryIpAddress": "10.0.1.248",
+                                                        "PrivateIpSets": {
+                                                                "PrivateIpSet": [
+                                                                        {
+                                                                                "Primary": true,
+                                                                                "PrivateIpAddress": "10.0.1.248"
+                                                                        }
+                                                                ]
+                                                        },
+                                                        "Type": "Primary"
+                                                }
+                                        ]
+                                },
+                                "OSName": "Ubuntu  24.04 64位",
+                                "OSNameEn": "Ubuntu  24.04 64 bit",
+                                "OSType": "linux",
+                                "OperationLocks": {
+                                        "LockReason": []
+                                },
+                                "PrivateDnsNameOptions": {},
+                                "PublicIpAddress": {
+                                        "IpAddress": [
+                                                "8.222.177.208"
+                                        ]
+                                },
+                                "Recyclable": false,
+                                "RegionId": "ap-southeast-1",
+                                "ResourceGroupId": "",
+                                "SaleCycle": "",
+                                "SecurityGroupIds": {
+                                        "SecurityGroupId": [
+                                                "sg-t4nfmr0n02ch476dlwb6"
+                                        ]
+                                },
+                                "SerialNumber": "346e51f4-3d83-4118-9fbd-71fd59ae2de7",
+                                "SpotPriceLimit": 0.0,
+                                "SpotStrategy": "NoSpot",
+                                "StartTime": "2025-06-10T03:09Z",
+                                "Status": "Running",
+                                "StoppedMode": "Not-applicable",
+                                "VlanId": "",
+                                "VpcAttributes": {
+                                        "NatIpAddress": "",
+                                        "PrivateIpAddress": {
+                                                "IpAddress": [
+                                                        "10.0.1.248"
+                                                ]
+                                        },
+                                        "VSwitchId": "vsw-t4najempq4wxom2gajsoh",
+                                        "VpcId": "vpc-t4nieljvv4252xbycwrqg"
+                                },
+                                "ZoneId": "ap-southeast-1a"
+                        }
+                ]
+        },
+        "NextToken": "",
+        "PageNumber": 1,
+        "PageSize": 50,
+        "RequestId": "F3DF1A87-27B1-3002-8DA8-2DB4DE92B07A",
+        "TotalCount": 1
+}
