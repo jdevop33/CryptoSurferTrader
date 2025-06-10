@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import { storage } from "./storage";
 import { dataService } from "./data_service";
+import { alibabaAIService } from "./alibaba_ai_service";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 import { spawn } from "child_process";
@@ -234,6 +235,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ error: "Failed to execute emergency stop" });
     }
+  });
+
+  // AI-powered trading recommendations using Alibaba Cloud Model Studio
+  app.get("/api/ai/recommendations", async (req, res) => {
+    try {
+      const symbols = req.query.symbols as string;
+      const symbolList = symbols ? symbols.split(',') : ['DOGECOIN', 'SHIBA', 'PEPE', 'FLOKI'];
+      
+      if (!alibabaAIService.isReady()) {
+        return res.status(503).json({ 
+          error: "AI service initializing",
+          message: "Alibaba Cloud AI service is starting up. Please try again in a moment."
+        });
+      }
+      
+      const recommendations = await alibabaAIService.getAIRecommendations(symbolList);
+      res.json(recommendations);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to get AI recommendations" });
+    }
+  });
+
+  app.post("/api/ai/analyze", async (req, res) => {
+    try {
+      const { symbol, price, volume, marketCap, sentiment, socialMentions, influencerCount } = req.body;
+      
+      if (!alibabaAIService.isReady()) {
+        return res.status(503).json({ 
+          error: "AI service not ready",
+          message: "Alibaba Cloud AI service is initializing"
+        });
+      }
+      
+      const marketData = {
+        symbol,
+        price: parseFloat(price),
+        volume: parseInt(volume),
+        marketCap: parseInt(marketCap),
+        sentiment: parseFloat(sentiment),
+        socialMentions: parseInt(socialMentions),
+        influencerCount: parseInt(influencerCount)
+      };
+      
+      const analysis = await alibabaAIService.analyzeMarketData(marketData);
+      res.json(analysis);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to analyze market data" });
+    }
+  });
+
+  // AI service status endpoint
+  app.get("/api/ai/status", async (req, res) => {
+    res.json({
+      ready: alibabaAIService.isReady(),
+      service: "Alibaba Cloud Model Studio",
+      capabilities: [
+        "Multi-agent market analysis",
+        "Social sentiment processing",
+        "Risk assessment",
+        "Trading signal generation"
+      ]
+    });
   });
 
   return httpServer;

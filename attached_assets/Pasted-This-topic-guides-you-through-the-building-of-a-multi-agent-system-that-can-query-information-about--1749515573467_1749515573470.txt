@@ -1,0 +1,691 @@
+This topic guides you through the building of a multi-agent system that can query information about Alibaba Cloud resources. After reading this topic, you will learn how to use the Assistant API of Alibaba Cloud Model Studio to create a multi-agent system capable of automatic planning and task orchestration without predefined workflows.
+
+A multi-agent system enables multiple agents to collaborate on tasks, typically achieving higher accuracy than a single agent. By assigning specific roles and responsibilities to each agent, their expertise is enhanced, and they can cooperate more effectively. The design of a multi-agent system is highly adaptable. You can apply the design and example code provided here to your business needs.
+
+Performance showcase
+Following this topic, you can create a multi-agent system that can query information about Alibaba Cloud resources. When a user poses a question, the system automatically plans the collaboration flow among agents. After executing the planned tasks, the system delivers the response back to the user.
+
+image
+
+output
+
+Detailed workflow:
+
+The user submits a question.
+
+PlannerAssistant receives the question and orchestrates the other agents accordingly.
+
+PlannerAssistant orchestrates ChatAssistant, AliyunInfoAssistant, and InstanceTypeDetailAssistant to receive the question and collaborate based on the designed interaction logic. In the process, each orchestrated agent carries specific responsibilities and capabilities.
+
+SummaryAssistant consolidates the outputs from each agent and combines them with the user's question to provide a comprehensive summary, which is the final response of the system.
+
+Prerequisites
+You have obtained an ACCESS_KEY_ID and an ACCESS_KEY_SECRET, see Create an AccessKey pair.
+
+You have activated Alibaba Cloud Model Studio and obtained an API key.
+
+To minimize the risk of leakage, we recommend that you set ALIBABA_CLOUD_ACCESS_KEY_ID, ALIBABA_CLOUD_ACCESS_KEY_SECRET, and DASHSCOPE_API_KEY as environment variables, see Set API key as an environment variable. For this topic, you can run the following commands to set environment variables according to your operating system. If you're using a Unix-like operating system, such as Linux, select Bash. If you're using Windows, select PowerShell.
+
+BashPowerShell
+
+ 
+# Replace with your actual API key and Alibaba Cloud AK information
+export DASHSCOPE_API_KEY="YOUR_DASHSCOPE_API_KEY"
+export ALIBABA_CLOUD_ACCESS_KEY_ID="YOUR_ALIBABA_CLOUD_ACCESS_KEY_ID"
+export ALIBABA_CLOUD_ACCESS_KEY_SECRET="YOUR_ALIBABA_CLOUD_ACCESS_KEY_SECRET"
+
+You have an ECS instance available. If you do not have one, go to the ECS console to create a pay-as-you-go ECS instance.
+
+Note
+To avoid unnecessary charges, release your ECS resources promptly after completing this tutorial.
+
+Python is installed in your environment. Create a requirements.txt file and insert the following content:
+
+ 
+alibabacloud_tea_openapi
+alibabacloud_tea_util
+alibabacloud_openapi_util
+alibabacloud_ecs20140526
+alibabacloud_bssopenapi20171214
+dashscope
+gradio
+Once you have saved requirements.txt, execute the command below in the directory containing requirements.txt to install the necessary dependencies:
+
+ 
+pip install -r requirements.txt
+Create a RAG agent application. Use Overview of instance families.pdf as your knowledge base file. Then, view the application ID.
+
+image
+
+Code implementation
+Prepare two Python files, tools.py and main.py, and place them in the same directory.
+
+tools.py (defines tool functions)
+tools.py defines the tool functions used by the agents. For the complete code of tools.py, see Complete code of tools.py.
+
+Import dependencies
+ 
+from alibabacloud_tea_util import models as util_models
+from alibabacloud_ecs20140526.client import Client as Ecs20140526Client
+from alibabacloud_ecs20140526 import models as ecs_20140526_models
+from alibabacloud_tea_openapi import models as open_api_models
+from alibabacloud_bssopenapi20171214.client import Client as BssOpenApi20171214Client
+from dashscope import Application
+import os
+import dashscope
+Define utilities
+tools.py uses two tool classes, namely ECS and Billing. The ECS class methods include query_source and call_agent_app, while the Billing class method is get_balance. You can add these tool classes and functions to your business by referencing the following code.
+
+ECSBilling
+The ECS class includes two functions: query_source and call_agent_app.
+
+query_source retrieves ECS instance information from a specified region using the OpenAPI service of Alibaba Cloud. The input is RegionID, such as cn-hangzhou, cn-beijing, cn-shanghai, and ap-southeast-1, and the outputs include instance ID, instance type, and pricing details.
+
+call_agent_app retrieves detailed instance specifications from the RAG agent application, which integrates knowledge from Overview of instance families.pdf. The input is a list of ECS instance types, such as ['ecs.e-c1m1.large', 'ecs.u1-c1m4.xlarge'], and the output is the response from the RAG application.
+
+Note
+The RAG application is also driven by an LLM, which may result in longer runtimes for the call_agent_app function.
+
+Sample code for the ECS class:
+
+Note
+Replace app_id in the code with the application ID of your RAG application.
+
+ 
+class ECS:
+    @classmethod
+    # Input: Region ID, such as cn-hangzhou, cn-beijing, ap-southeast-1, and others.
+    # Output: The ECS instance information, including instance ID, instance type, hourly charge. (The system disk is cloud_auto by default, with a size of 40 GiB)
+    def query_source(cls,RegionID):
+        config = open_api_models.Config(
+                # Obtain Alibaba Cloud AK information from environment variables
+                access_key_id=os.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"),
+                access_key_secret=os.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET")
+            )
+        # The endpoint of Hangzhou is different from those of Beijing, Singapore, and other regions
+        config.endpoint = f'ecs.{RegionID}.aliyuncs.com'
+        client = Ecs20140526Client(config)
+        describe_instances_request = ecs_20140526_models.DescribeInstancesRequest(region_id=RegionID)
+        runtime = util_models.RuntimeOptions()
+        # Obtain ECS instance information
+        response_source = client.describe_instances_with_options(describe_instances_request, runtime).body
+        if len(response_source.instances.instance) == 0:
+            return "You have no ECS instances in the current region"
+        # Initialize the result to be returned
+        result = ""
+        # There may be multiple instances, so use a for loop to traverse all instances
+        for i in range(len(response_source.instances.instance)):
+            # System disk type and storage space, cloud_auto by default, with a size of 40 GiB
+            system_disk = ecs_20140526_models.DescribePriceRequestSystemDisk(
+                category='cloud_auto',
+                size=40
+            )
+            describe_price_request = ecs_20140526_models.DescribePriceRequest(
+                region_id=RegionID,
+                resource_type='instance',
+                instance_type=response_source.instances.instance[i].instance_type,
+                system_disk=system_disk
+            )
+            response = client.describe_price_with_options(describe_price_request, runtime).body
+            cur_result = f"""Instance: {response_source.instances.instance[i].instance_id} has a type of {response_source.instances.instance[i].instance_type}. 
+    The hourly charge is {response.price_info.price.trade_price} USD\n"""
+            # Add the current instance information to the return result
+            result += cur_result
+        return result
+    @classmethod
+    # RAG application call
+    def call_agent_app(cls,InstanceType):
+        if len(InstanceType) == 0:
+            return "You have no ECS instances in the current region"
+        result = ""
+        for i in range(len(InstanceType)):
+            response = Application.call(
+                # Replace with the application ID of the RAG application
+                app_id='xxx',
+                prompt=f'Introduce {InstanceType[i]}',
+                # Obtain the DashScope API Key from environment variables
+                api_key=os.getenv("DASHSCOPE_API_KEY"))
+            result += response.output.text
+        return result
+Complete code of tools.py
+ 
+from alibabacloud_tea_util import models as util_models
+from alibabacloud_ecs20140526.client import Client as Ecs20140526Client
+from alibabacloud_ecs20140526 import models as ecs_20140526_models
+from alibabacloud_tea_openapi import models as open_api_models
+from alibabacloud_bssopenapi20171214.client import Client as BssOpenApi20171214Client
+from dashscope import Application
+import os
+import dashscope
+
+dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
+class ECS:
+    @classmethod
+    # Input: Region ID, such as cn-hangzhou, cn-beijing, ap-southeast-1, and others.
+    # Output: The ECS instance information, including instance ID, instance type, hourly charge. (The system disk is cloud_auto by default, with a size of 40 GiB)
+    def query_source(cls,RegionID):
+        config = open_api_models.Config(
+                # Obtain Alibaba Cloud AK information from environment variables
+                access_key_id=os.getenv("ALIBABA_CLOUD_ACCESS_KEY_ID"),
+                access_key_secret=os.getenv("ALIBABA_CLOUD_ACCESS_KEY_SECRET")
+            )
+        # The endpoint of Hangzhou is different from those of Beijing, Singapore, and other regions
+        config.endpoint = f'ecs.{RegionID}.aliyuncs.com'
+        client = Ecs20140526Client(config)
+        describe_instances_request = ecs_20140526_models.DescribeInstancesRequest(region_id=RegionID)
+        runtime = util_models.RuntimeOptions()
+        # Obtain ECS instance information
+        response_source = client.describe_instances_with_options(describe_instances_request, runtime).body
+        if len(response_source.instances.instance) == 0:
+            return "You have no ECS instances in the current region"
+        # Initialize the result to be returned
+        result = ""
+        # There may be multiple instances, so use a for loop to traverse all instances
+        for i in range(len(response_source.instances.instance)):
+            # System disk type and storage space, cloud_auto by default, with a size of 40 GiB
+            system_disk = ecs_20140526_models.DescribePriceRequestSystemDisk(
+                category='cloud_auto',
+                size=40
+            )
+            describe_price_request = ecs_20140526_models.DescribePriceRequest(
+                region_id=RegionID,
+                resource_type='instance',
+                instance_type=response_source.instances.instance[i].instance_type,
+                system_disk=system_disk
+            )
+            response = client.describe_price_with_options(describe_price_request, runtime).body
+            cur_result = f"""Instance: {response_source.instances.instance[i].instance_id} has a type of {response_source.instances.instance[i].instance_type}, 
+    The hourly charge is {response.price_info.price.trade_price} USD\n"""
+            # Add the current instance information to the return result
+            result += cur_result
+        return result
+    @classmethod
+    # RAG application call
+    def call_agent_app(cls,InstanceType):
+        if len(InstanceType) == 0:
+            return "You have no ECS instances in the current region"
+        result = ""
+        for i in range(len(InstanceType)):
+            response = Application.call(
+                # Replace with the application ID of the RAG application
+                app_id='xxx',
+                prompt=f'Introduce {InstanceType[i]}',
+                # Obtain the DashScope API Key from environment variables
+                api_key=os.getenv("DASHSCOPE_API_KEY"))
+            result += response.output.text
+        return result
+
+class Billing:
+    # No input required, the return is Alibaba Cloud account balance information
+    @classmethod
+    def get_balance(cls):
+        # Create a client
+        config = open_api_models.Config(
+            # Required. Make sure that the ALIBABA_CLOUD_ACCESS_KEY_ID environment variable is configured.
+            access_key_id=os.environ['ALIBABA_CLOUD_ACCESS_KEY_ID'],
+            # Required. Make sure that the ALIBABA_CLOUD_ACCESS_KEY_SECRET environment variable is configured.
+            access_key_secret=os.environ['ALIBABA_CLOUD_ACCESS_KEY_SECRET']
+        )
+        # For endpoints, see https://api.alibabacloud.com/product/BssOpenApi
+        config.endpoint = f'business.ap-southeast-1.aliyuncs.com'
+        runtime = util_models.RuntimeOptions()
+        client = BssOpenApi20171214Client(config)
+        balance_info = client.query_account_balance_with_options(runtime).body.data
+        return f"""Currency: {balance_info.currency}. Available amount: {balance_info.available_amount}. Credit amount: {balance_info.credit_amount}. 
+        Mybank credit amount: {balance_info.mybank_credit_amount}. Cash amount: {balance_info.available_cash_amount}. Quota limit for eco-partners: {balance_info.quota_limit}."""
+
+if __name__ == '__main__':
+    print(Billing.get_balance())
+    print(ECS.query_source('ap-southeast-1'))
+main.py (creates agents and defines how they interact)
+The file main.py is designed to:
+
+Create agents
+
+Define message passing functions
+
+Define interaction methods between agents and obtain responses
+
+For the complete code, see: Complete code of main.py.
+
+Import dependencies
+ 
+from dashscope import Assistants, Messages, Runs, Threads
+import json
+# Import tool functions from tools.py
+from tools import ECS,Billing
+# Import frontend display dependencies
+import gradio as gr
+
+# Parse a string in list format into data in list format, such as: "['a','b']"-->['a','b'].
+# Used to parse the output of plannerassistant into a list of assistants
+import ast
+import dashscope
+Create agents
+This tutorial includes five agents, each with integrated tool functions and features as shown in the table below:
+
+
+
+
+Agent name
+
+Tool function
+
+Feature
+
+PlannerAssistant
+
+None
+
+Orchestrate the other agents.
+
+ChatAssistant
+
+None
+
+If no tool is needed, use this agent to answer.
+
+AliyunInfoAssistant
+
+query_source and get_balance
+
+Query Alibaba Cloud resource information, including ECS instances and Alibaba Cloud balance.
+
+InstanceTypeDetailAssistant
+
+call_agent_app
+
+Query specification details of specified instance types.
+
+SummaryAssistant
+
+None
+
+Provide a comprehensive and complete response to the question by combining the output of previous agents.
+
+Details of the five agents are as follows:
+
+Note
+The LLM that each agent uses is specified by the model parameter in the Assistants.create method, while the capability of each agent is determined by the tools parameter. You can direct the agent on tool usage and output formatting through the instructions in Assistants.create, such as instructing the agent to output strings in JSON format.
+
+PlannerAssistantChatAssistantAliyunInfoAssistantInstanceTypeDetailAssistantSummaryAssistant
+PlannerAssistant is the core of the multi-agent system. It orchestrates the workflow of the multi-agent system based on user input and the capabilities of other agents. After obtaining the output from PlannerAssistant, the subsequent program must parse the string into a list format. Sample code:
+
+ 
+# Decision-level agent, decides which agents to use and their running order
+PlannerAssistant = Assistants.create(
+    # Because this agent is relatively important, it is recommended to choose a high-performance model: qwen-max. Model list: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    model="qwen-max",
+    # Define the name of the agent
+    name='Process Orchestration Bot',
+    # Define the function description of the agent
+    description='You are the leader of a team of multiple assistants. You need to decide the order in which to use these assistants based on the user input.',
+    # Define the instruction statement for the agent. The agent will call the tools and return the results according to the instruction statement.
+    instructions="""Your team includes the following assistants. AliyunInfoAssistant: Can query Alibaba Cloud ECS instance information in the user-specified region or query the user's Alibaba Cloud balance. InstanceTypeDetailAssistant: Can query detailed information of specified Alibaba Cloud ECS instance types, such as CPU cores, memory size, and others. Multiple instance type information can be queried at once, so multiple calls are not needed.
+    ChatAssistant: If the question does not require the above two assistants, call this assistant. You need to determine the order of using these assistants based on the question of the user. Your return format is a list and cannot return other information. For example: ["AliyunInfoAssistant", "AliyunInfoAssistant","InstanceTypeDetailAssistant"] or ["ChatAssistant"]. The elements in the list can only be the above assistants."""
+)
+Define mapping between strings and functions, strings and agents
+To interact with external systems, the program must parse and map strings generated by the model.
+
+ 
+# Map the name of the tool function to the function body
+function_mapper = {
+    "ECS instance information query": ECS.query_source,
+    "ECS instance type introduction":ECS.call_agent_app,
+    "Alibaba Cloud balance query":Billing.get_balance
+}
+# Map the name of the agent to the agent body
+assistant_mapper = {
+    "ChatAssistant": ChatAssistant,
+    "AliyunInfoAssistant":AliyunInfoAssistant,
+    "InstanceTypeDetailAssistant":InstanceTypeDetailAssistant
+}
+Define message passing functions
+The function get_agent_response takes two parameters, assistant and message, to retrieve the specified agent's output in response to an input message.
+
+ 
+# Input message information, the output is the response of the specified agent
+def get_agent_response(assistant, message=''):
+    # Print the input agent information
+    print(f"Query: {message}")
+    thread = Threads.create()
+    message = Messages.create(thread.id, content=message)
+    run = Runs.create(thread.id, assistant_id=assistant.id)
+    run_status = Runs.wait(run.id, thread_id=thread.id)
+    # If the response fails, it will print run failed
+    if run_status.status == 'failed':
+        print('run failed:')
+    # If tools are needed to assist the model output, the following process is carried out
+    if run_status.required_action:
+        f = run_status.required_action.submit_tool_outputs.tool_calls[0].function
+        # Obtain function name
+        func_name = f['name']
+        # Obtain input parameters of the function
+        param = json.loads(f['arguments'])
+        # Print tool information
+        print("function is",f)
+        # Map the function name to the function through function_mapper and input the parameters into the tool function to obtain the output
+        if func_name in function_mapper:
+            output = function_mapper[func_name](**param)
+        else:    
+            output = ""
+        tool_outputs = [{
+            'output':
+                output
+        }]
+        run = Runs.submit_tool_outputs(run.id,
+                                       thread_id=thread.id,
+                                       tool_outputs=tool_outputs)
+        run_status = Runs.wait(run.id, thread_id=thread.id)
+    run_status = Runs.get(run.id, thread_id=thread.id)
+    msgs = Messages.list(thread.id)
+    # Return the output of the agent
+    return msgs['data'][0]['content'][0]['text']['value']
+Define interaction methods between agents and obtain responses
+Agent interactions are managed by PlannerAssistant. Gradio is used as the frontend display tool in this tutorial. Gradio enables quick creation of interfaces to showcase machine learning model effects. To integrate with the frontend interface of Gradio, input and output parameters must be aligned with Gradio components. Sample code:
+
+Note
+Use the yield keyword instead of return to iteratively generate and return intermediate results, allowing for real-time display on the frontend interface rather than waiting until all results are ready.
+
+ 
+# Obtain the response of the multi-agent. The input and output need to be aligned with the parameters in the Gradio frontend display interface
+def get_multi_agent_response(query,history):
+    # Handle the case where the input is empty
+    if len(query) == 0:
+        return "",history+[("","")],"",""
+    # Obtain the running order of the agent
+    assistant_order = get_agent_response(PlannerAssistant,query)
+    try:
+        order_stk = ast.literal_eval(assistant_order)
+        cur_query = query
+        # Run the agents in sequence
+        for i in range(len(order_stk)):
+            yield "----->".join(order_stk),history+[(query,"mult-agent is working hard...")],f"{order_stk[i]} is processing information...",""
+            cur_assistant = assistant_mapper[order_stk[i]]
+            response = get_agent_response(cur_assistant,cur_query)
+            yield "----->".join(order_stk),history+[(query,"mult-agent is working hard...")],response,""
+            # If the current agent is the last agent, its output is used as the output of the multi-agent
+            if i == len(order_stk)-1:
+                yield "----->".join(order_stk),history+[(query,response)],"assistant has finished processing",""
+            # If the current agent is not the last agent, add the output response of the previous agent to the next round of query as reference information
+            else:
+                # Add special identifiers before and after the reference information to prevent the model from confusing reference information with questions
+                cur_query = f"You can refer to the known information:\n{response}\nYou need to fully answer the user's question. The question is: {query}."
+    # Fallback strategy, if the above program fails, directly call ChatAssistant
+    except Exception as e:
+        yield "ChatAssistant",[(query,get_agent_response(ChatAssistant,query))],"",""
+Input parameters include the user's query (in string format) and the conversation history (in list format) between the user and the multi-agent system.
+
+The output parameters include:
+
+The agent orchestration information (in string format).
+
+the dialogue history (in list format).
+
+The status of the currently active agent (in string format).
+
+The user's input box (in string format, set to "" to clear the input box after a question is posed).
+
+Frontend display interface
+Sample code:
+
+ 
+# Frontend display
+with gr.Blocks() as demo:
+    # Display the title in the center of the interface
+    gr.HTML('<center><h1>Welcome to Alibaba Cloud Resource Query Bot</h1></center>')
+    gr.HTML('<center><h3>Supported functions include ECS instance query in specified regions, balance query, and instance type detail query. You can add the tools you need in tools.py and configure related agents in main.py</h3></center>')
+    with gr.Row():
+        with gr.Column(scale=10):
+            chatbot = gr.Chatbot(value=[["hello","Nice to meet you! What questions do you have about Alibaba Cloud resources?"]],height=600)
+        with gr.Column(scale=4):
+            text1 = gr.Textbox(label="Assistant selection")
+            text2 = gr.Textbox(label="Current Assistant Status",lines=22)
+    with gr.Row():
+        msg = gr.Textbox(label="Input",placeholder="What would you like to know?")
+    # Some example questions
+    with gr.Row():
+        examples = gr.Examples(examples=[
+            'How much is my Alibaba Cloud balance?',
+            'What ECS instances do I have in Singapore? Tell me their instance IDs, prices, and instance type details.',
+            'I want to know the metrics of ecs.u1-c1m4.xlarge and ecs.gn6i-c4g1.xlarge'],inputs=[msg])
+    clear = gr.ClearButton([text1,chatbot,text2,msg])
+    msg.submit(get_multi_agent_response, [msg,chatbot], [text1,chatbot,text2,msg])
+Complete code of main.py
+ 
+from dashscope import Assistants, Messages, Runs, Threads
+import json
+# Import tool functions from tools.py
+from tools import ECS,Billing
+# Import frontend display dependencies
+import gradio as gr
+import ast
+import dashscope
+dashscope.base_http_api_url = 'https://dashscope-intl.aliyuncs.com/api/v1'
+
+# Decision-level agent, decides which agents to use and their running order
+PlannerAssistant = Assistants.create(
+    # Because this agent is relatively important, it is recommended to choose a high-performance model: qwen-max. Model list: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    model="qwen-max",
+    # Define the name of the agent
+    name='Process Orchestration Bot',
+    # Define the function description of the agent
+    description='You are the leader of a team of multiple assistants. You need to decide the order in which to use these assistants based on the user input.',
+    # Define the instruction statement for the agent. The agent will call the tools and return the results according to the instruction statement.
+    instructions="""Your team includes the following assistants. AliyunInfoAssistant: Can query Alibaba Cloud ECS instance information in the user-specified region or query the user's Alibaba Cloud balance. InstanceTypeDetailAssistant: Can query detailed information of specified Alibaba Cloud ECS instance types, such as CPU cores, memory size, and others. Multiple instance type information can be queried at once, so multiple calls are not needed.
+    ChatAssistant: If the question does not require the above two assistants, call this assistant. You need to determine the order of using these assistants based on the question of the user. Your return format is a list and cannot return other information. For example: ["AliyunInfoAssistant", "AliyunInfoAssistant","InstanceTypeDetailAssistant"] or ["ChatAssistant"]. The elements in the list can only be the above assistants."""
+)
+
+# The function is to answer routine questions. Use a cost-effective model
+ChatAssistant = Assistants.create(
+    # Because this agent does not require high performance from the model, the cost-effective qwen-turbo model is used. Model list: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    model="qwen-turbo",
+    name='Routine Question Bot',
+    description='An intelligent assistant that answers user questions',
+    instructions='Please answer the questions from the user politely'
+)
+
+# The function is to query Alibaba Cloud's resource information. Currently, there are two functions: ECS instance query and Alibaba Cloud balance query
+AliyunInfoAssistant = Assistants.create(
+    model="qwen-max", # Model list: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    name='Resource Query Bot',
+    description='An intelligent assistant that calls tools based on user queries and returns the queried Alibaba Cloud resource results',
+    instructions='You are an intelligent assistant. You have two functions: ECS instance information query and balance query. Please accurately determine which tool to call and answer the questions from the user politely.',
+    # Define the tools used by the agent. You can define one or more tools that the agent may use in the tools list based on your business scenario.
+    tools=[
+        {
+            'type': 'function',
+            'function': {
+                # The name of the tool function, which can be mapped to the function body through the function_mapper in the code below
+                'name': 'ECS instance information query',
+                # Description of the tool function
+                'description': 'Very useful when querying Alibaba Cloud ECS instance information, such as instance ID, instance type, charge information, and others.',
+                # Input parameters of the tool function
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        # This tool requires the user to input region information
+                        'RegionID': {
+                            'type': 'str',
+                            # Description of the parameter
+                            'description': 'The region ID of the instance the user wants to query. For Hangzhou, cn-hangzhou. For Singapore, ap-southeast-1.'
+                        },
+                    },
+                    'required': ['RegionID']},
+            }
+        },
+        {
+            'type': 'function',
+            'function': {
+                'name': 'Alibaba Cloud balance query',
+                # Description of the tool function
+                'description': 'Very useful when querying Alibaba Cloud account information',
+                # Input parameters of the tool function, balance query does not require input parameters, so it is empty
+                'parameters': {}
+            }
+        }
+    ]
+)
+
+# The function is to query detailed information of instance types through the RAG application created on the Dashscope platform
+InstanceTypeDetailAssistant = Assistants.create(
+    model="qwen-max", # Model list: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    name='ECS Instance Type Introduction Bot',
+    description='An intelligent assistant that can introduce instance type information to users by calling existing plug-in capabilities based on the instance types provided by the user.',
+    instructions='You are an intelligent assistant. You need to accurately extract instance type information from the input, such as [ecs.e-c1m1.large], or [ecs.u1-c1m4.xlarge,ecs.e-c1m1.large]. Input the instance type list into the tool to obtain their detailed information',
+    tools=[
+        {
+            'type': 'function',
+            'function': {
+                'name': 'ECS instance type introduction',
+                'description': 'Return the information of the specified ECS instance type queried by the customer',
+                'parameters': {
+                    'type': 'object',
+                    'properties': {
+                        'InstanceType': {
+                            'type': 'list',
+                            'InstanceType': 'The instance type the user wants to query. It may be one or multiple, such as: [ecs.e-c1m1.large], or [ecs.u1-c1m4.xlarge,ecs.e-c1m1.large]'
+                        },
+                    },
+                    'required': ['InstanceType']},
+            }
+        }
+    ]
+)
+
+# In the multi-agent scenario, define an agent for summarization. This agent will provide a comprehensive and complete response to the user's question based on the user's question and the reference information output by previous agents.
+SummaryAssistant = Assistants.create(
+    model="qwen-max", # Model list: https://www.alibabacloud.com/help/en/model-studio/getting-started/models
+    name='Summary Bot',
+    description='An intelligent assistant that provides a comprehensive and complete response to the question from the user based on the question and reference information',
+    instructions='You are an intelligent assistant that provides a comprehensive and complete response to the question from the user based on the question and reference information'
+)
+
+# Map the name of the tool function to the function body
+function_mapper = {
+    "ECS instance information query": ECS.query_source,
+    "ECS instance type introduction":ECS.call_agent_app,
+    "Alibaba Cloud balance query":Billing.get_balance
+}
+# Map the name of the agent to the agent body
+assistant_mapper = {
+    "ChatAssistant": ChatAssistant,
+    "AliyunInfoAssistant":AliyunInfoAssistant,
+    "InstanceTypeDetailAssistant":InstanceTypeDetailAssistant
+}
+
+# Input message information, the output is the response of the specified agent
+def get_agent_response(assistant, message=''):
+    # Print the input agent information
+    print(f"Query: {message}")
+    thread = Threads.create()
+    message = Messages.create(thread.id, content=message)
+    run = Runs.create(thread.id, assistant_id=assistant.id)
+    run_status = Runs.wait(run.id, thread_id=thread.id)
+    # If the response fails, it will print run failed
+    if run_status.status == 'failed':
+        print('run failed:')
+    # If tools are needed to assist the model output, the following process is carried out
+    if run_status.required_action:
+        f = run_status.required_action.submit_tool_outputs.tool_calls[0].function
+        # Obtain function name
+        func_name = f['name']
+        # Obtain input parameters of the function
+        param = json.loads(f['arguments'])
+        # Print tool information
+        print("function is",f)
+        # Map the function name to the function through function_mapper and input the parameters into the tool function to obtain the output
+        if func_name in function_mapper:
+            output = function_mapper[func_name](**param)
+        else:    
+            output = ""
+        tool_outputs = [{
+            'output':
+                output
+        }]
+        run = Runs.submit_tool_outputs(run.id,
+                                       thread_id=thread.id,
+                                       tool_outputs=tool_outputs)
+        run_status = Runs.wait(run.id, thread_id=thread.id)
+    run_status = Runs.get(run.id, thread_id=thread.id)
+    msgs = Messages.list(thread.id)
+    # Return the output of the agent
+    return msgs['data'][0]['content'][0]['text']['value']
+
+# Obtain the response of the multi-agent. The input and output need to be aligned with the parameters in the Gradio frontend display interface
+def get_multi_agent_response(query,history):
+    # Handle the case where the input is empty
+    if len(query) == 0:
+        return "",history+[("","")],"",""
+    # Obtain the running order of the agent
+    assistant_order = get_agent_response(PlannerAssistant,query)
+    try:
+        order_stk = ast.literal_eval(assistant_order)
+        cur_query = query
+        Agent_Message = ""
+        # Run the agents in sequence
+        for i in range(len(order_stk)):
+            yield "----->".join(order_stk),history+[(query,"mult-agent is working hard...")],Agent_Message+'\n'+f"*{order_stk[i]}* is processing...",""
+            cur_assistant = assistant_mapper[order_stk[i]]
+            response = get_agent_response(cur_assistant,cur_query)
+            Agent_Message += f"*{order_stk[i]}*'s response is: {response}\n\n"
+            yield "----->".join(order_stk),history+[(query,"mult-agent is working hard...")],Agent_Message,""
+            # If the current agent is the last agent, its output is used as the output of the multi-agent
+            if i == len(order_stk)-1:
+                prompt = f"Please refer to the known information: {Agent_Message}, and answer the user's question: {query}."
+                multi_agent_response = get_agent_response(SummaryAssistant,prompt)
+                yield "----->".join(order_stk),history+[(query,multi_agent_response)],Agent_Message,""
+            # If the current agent is not the last agent, add the output response of the previous agent to the next round of query as reference information
+            else:
+                # Add special identifiers before and after the reference information to prevent the model from confusing reference information with questions
+                cur_query = f"You can refer to the known information: {response}You need to fully answer the user's question. The question is: {query}."
+    # Fallback strategy, if the above program fails, directly call ChatAssistant
+    except Exception as e:
+        yield "ChatAssistant",[(query,get_agent_response(ChatAssistant,query))],"",""
+
+
+# Frontend display
+with gr.Blocks() as demo:
+    # Display the title in the center of the interface
+    gr.HTML('<center><h1>Welcome to Alibaba Cloud Resource Query Bot</h1></center>')
+    gr.HTML('<center><h3>Supported functions include ECS instance query in specified regions, balance query, and instance type detail query. You can add the tools you need in tools.py and configure related agents in main.py</h3></center>')
+    with gr.Row():
+        with gr.Column(scale=10):
+            chatbot = gr.Chatbot(value=[["hello","Nice to meet you! What questions do you have about Alibaba Cloud resources?"]],height=600)
+        with gr.Column(scale=4):
+            text1 = gr.Textbox(label="Assistant selection")
+            text2 = gr.Textbox(label="Current Assistant Status",lines=22)
+    with gr.Row():
+        msg = gr.Textbox(label="Input",placeholder="What would you like to know?")
+    # Some example questions
+    with gr.Row():
+        examples = gr.Examples(examples=[
+            'How much is my Alibaba Cloud balance?',
+            'What ECS instances do I have in Singapore? Tell me their instance IDs, prices, and instance type details.',
+            'I want to know the metrics of ecs.u1-c1m4.xlarge and ecs.gn6i-c4g1.xlarge'],inputs=[msg])
+    clear = gr.ClearButton([text1,chatbot,text2,msg])
+    msg.submit(get_multi_agent_response, [msg,chatbot], [text1,chatbot,text2,msg])
+
+if __name__ == '__main__':
+    demo.launch()
+Test the system
+Set the environment variables ALIBABA_CLOUD_ACCESS_KEY_ID, ALIBABA_CLOUD_ACCESS_KEY_SECRET, and DASHSCOPE_API_KEY.
+
+Run the main.py file. The terminal will display the message Running on local URL:.
+
+Access the URL to interact with the interface.
+
+Input the query: How much is my Alibaba Cloud balance and what ECS instances do I have in Singapore?, or select an example question from Examples to populate the input box and press Enter.
+
+Monitor Current Assistant Status for the agent's real-time status.image
+
+Conclusion
+This topic has guided you through:
+
+Integrating an agent with a RAG application and Alibaba Cloud OpenAPI.
+
+Developing a multi-agent system using the Assistants API.
+
+Presenting the results with a Gradio-based frontend.
+
+To tailor the multi-agent system to your business needs, you can customize the prompts, enhance agent interaction details, and modify tool functions.

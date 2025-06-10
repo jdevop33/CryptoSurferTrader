@@ -18,8 +18,10 @@ import {
   Zap,
   Target,
   Shield,
-  BarChart3
+  BarChart3,
+  Brain
 } from 'lucide-react';
+import { Link } from 'wouter';
 import { useTradingQueries, useTradingMutations, tradingAPI, type Position, type Trade, type SentimentData } from '@/lib/trading-api';
 import { queryClient } from '@/lib/queryClient';
 
