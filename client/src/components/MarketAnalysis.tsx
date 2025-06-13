@@ -72,8 +72,8 @@ export function MarketAnalysis() {
           technicalScore: Math.random() * 100,
           sentimentScore: (parseFloat(sentiment?.sentimentScore) || 0.5) * 100,
           riskScore: Math.random() * 100,
-          recommendation: aiData?.signal === 'BUY' ? 'BUY' : 
-                         aiData?.signal === 'SELL' ? 'SELL' : 'HOLD',
+          recommendation: (aiData?.signal === 'BUY' ? 'BUY' : 
+                         aiData?.signal === 'SELL' ? 'SELL' : 'HOLD') as 'STRONG_BUY' | 'BUY' | 'HOLD' | 'SELL' | 'STRONG_SELL',
           priceTargets: {
             support: Math.random() * 0.0001 + 0.00005,
             resistance: Math.random() * 0.0002 + 0.00015,
