@@ -26,6 +26,7 @@ import {
 import { Link } from 'wouter';
 import { useTradingQueries, useTradingMutations, tradingAPI, type Position, type Trade, type SentimentData } from '@/lib/trading-api';
 import { queryClient } from '@/lib/queryClient';
+import { ActionPanel } from '@/components/ActionPanel';
 
 const userId = 1; // Current user ID
 
@@ -107,90 +108,33 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
-      <div className="container mx-auto p-6 space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Meme Coin Trading Dashboard
-            </h1>
-            <p className="text-slate-400 mt-1">
-              Automated trading with social sentiment analysis
-              {isConnected && (
-                <span className="ml-2 inline-flex items-center text-green-400">
-                  <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></div>
-                  Live
-                </span>
-              )}
-            </p>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            {lastUpdate && (
-              <span className="text-sm text-slate-400">
-                Last update: {lastUpdate}
-              </span>
-            )}
-            
-            <Link href="/ai-insights">
-              <Button variant="outline" size="sm">
-                <Brain className="w-4 h-4 mr-1" />
-                AI Insights
-              </Button>
-            </Link>
-            
-            <Link href="/web3-trading">
-              <Button variant="outline" size="sm">
-                <Wallet className="w-4 h-4 mr-1" />
-                Web3 Trading
-              </Button>
-            </Link>
-            
-            <Button
-              variant="outline"
-              size="sm"
-              className="relative"
-            >
-              <Bell className="w-4 h-4" />
-              {unreadNotifications > 0 && (
-                <Badge variant="destructive" className="absolute -top-2 -right-2 h-5 w-5 p-0 text-xs">
-                  {unreadNotifications}
-                </Badge>
-              )}
-            </Button>
+    <div className="container mx-auto p-6 space-y-6">
+      {/* Header */}
+      <div className="text-center space-y-2">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+          AI Trading Dashboard
+        </h1>
+        <p className="text-slate-400">
+          Your $10,000 virtual portfolio • Automated trading with social sentiment analysis
+          {isConnected && (
+            <span className="ml-2 inline-flex items-center text-green-400">
+              <div className="w-2 h-2 bg-green-400 rounded-full mr-1 animate-pulse"></div>
+              Live Data
+            </span>
+          )}
+        </p>
+      </div>
 
-            <Button
-              variant={settings?.autoTradingEnabled ? "default" : "secondary"}
-              size="sm"
-              onClick={handleToggleTrading}
-              disabled={toggleTradingMutation.isPending}
-            >
-              <Activity className="w-4 h-4 mr-1" />
-              {settings?.autoTradingEnabled ? 'Trading ON' : 'Trading OFF'}
-            </Button>
+      {/* Main Action Panel */}
+      <ActionPanel
+        isTrading={settings?.autoTradingEnabled || false}
+        portfolio={portfolio}
+        onToggleTrading={handleToggleTrading}
+        onEmergencyStop={handleEmergencyStop}
+      />
 
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={handleEmergencyStop}
-              disabled={emergencyStopMutation.isPending}
-            >
-              <Shield className="w-4 h-4 mr-1" />
-              Emergency Stop
-            </Button>
-
-            <Link href="/deploy">
-              <Button variant="outline" size="sm">
-                <Settings className="w-4 h-4 mr-1" />
-                Deploy to Production
-              </Button>
-            </Link>
-          </div>
-        </div>
-
-        {/* Portfolio Overview */}
-        {portfolio && (
+      {/* Portfolio Overview */}
+      {portfolio && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
