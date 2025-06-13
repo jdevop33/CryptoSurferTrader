@@ -204,87 +204,87 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </div>
-        )}
+      )}
 
-        {/* Main Content Tabs */}
-        <Tabs defaultValue="positions" className="space-y-6">
-          <TabsList className="bg-slate-800/50">
-            <TabsTrigger value="positions">Positions</TabsTrigger>
-            <TabsTrigger value="sentiment">Market Sentiment</TabsTrigger>
-            <TabsTrigger value="trades">Trade History</TabsTrigger>
-            <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          </TabsList>
+      {/* Main Content Tabs */}
+      <Tabs defaultValue="positions" className="space-y-6">
+        <TabsList className="bg-slate-800/50">
+          <TabsTrigger value="positions">Positions</TabsTrigger>
+          <TabsTrigger value="sentiment">Market Sentiment</TabsTrigger>
+          <TabsTrigger value="trades">Trade History</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+        </TabsList>
 
-          {/* Positions Tab */}
-          <TabsContent value="positions">
-            <Card className="bg-slate-800/50 border-slate-700">
-              <CardHeader>
-                <CardTitle>Open Positions</CardTitle>
-                <CardDescription>
-                  Currently holding {positions.length} positions
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {positions.length === 0 ? (
-                  <div className="text-center py-8 text-slate-400">
-                    No open positions. The system is monitoring for trading opportunities.
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {positions.map((position: Position) => (
-                      <div
-                        key={position.id}
-                        className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg border border-slate-600"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <Badge variant="outline" className="font-mono">
-                            {position.symbol}
-                          </Badge>
-                          <div>
-                            <p className="font-medium">{position.side}</p>
-                            <p className="text-sm text-slate-400">
-                              Size: {position.size}
-                            </p>
-                          </div>
-                        </div>
-
-                        <div className="text-right">
-                          <p className="font-medium">
-                            Entry: {formatCurrency(position.entryPrice)}
-                          </p>
+        {/* Positions Tab */}
+        <TabsContent value="positions">
+          <Card className="bg-slate-800/50 border-slate-700">
+            <CardHeader>
+              <CardTitle>Open Positions</CardTitle>
+              <CardDescription>
+                Currently holding {positions.length} positions
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {positions.length === 0 ? (
+                <div className="text-center py-8 text-slate-400">
+                  No open positions. The system is monitoring for trading opportunities.
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {positions.map((position: Position) => (
+                    <div
+                      key={position.id}
+                      className="flex items-center justify-between p-4 bg-slate-700/30 rounded-lg border border-slate-600"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <Badge variant="outline" className="font-mono">
+                          {position.symbol}
+                        </Badge>
+                        <div>
+                          <p className="font-medium">{position.side}</p>
                           <p className="text-sm text-slate-400">
-                            Current: {formatCurrency(position.currentPrice)}
+                            Size: {position.size}
                           </p>
-                        </div>
-
-                        <div className="text-right">
-                          <p className={`font-bold ${
-                            parseFloat(position.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            {formatCurrency(position.pnl)}
-                          </p>
-                          <p className={`text-sm ${
-                            parseFloat(position.pnlPercent) >= 0 ? 'text-green-400' : 'text-red-400'
-                          }`}>
-                            {formatPercent(position.pnlPercent)}
-                          </p>
-                        </div>
-
-                        <div className="text-right text-sm text-slate-400">
-                          <p>SL: {position.stopLoss ? formatCurrency(position.stopLoss) : 'N/A'}</p>
-                          <p>TP: {position.takeProfit ? formatCurrency(position.takeProfit) : 'N/A'}</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
 
-          {/* Sentiment Tab */}
-          <TabsContent value="sentiment">
-            <Card className="bg-slate-800/50 border-slate-700">
+                      <div className="text-right">
+                        <p className="font-medium">
+                          Entry: {formatCurrency(position.entryPrice)}
+                        </p>
+                        <p className="text-sm text-slate-400">
+                          Current: {formatCurrency(position.currentPrice)}
+                        </p>
+                      </div>
+
+                      <div className="text-right">
+                        <p className={`font-bold ${
+                          parseFloat(position.pnl) >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}>
+                          {formatCurrency(position.pnl)}
+                        </p>
+                        <p className={`text-sm ${
+                          parseFloat(position.pnlPercent) >= 0 ? 'text-green-400' : 'text-red-400'
+                        }`}>
+                          {formatPercent(position.pnlPercent)}
+                        </p>
+                      </div>
+
+                      <div className="text-right text-sm text-slate-400">
+                        <p>SL: {position.stopLoss ? formatCurrency(position.stopLoss) : 'N/A'}</p>
+                        <p>TP: {position.takeProfit ? formatCurrency(position.takeProfit) : 'N/A'}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Sentiment Tab */}
+        <TabsContent value="sentiment">
+          <Card className="bg-slate-800/50 border-slate-700">
               <CardHeader>
                 <CardTitle>Social Media Sentiment</CardTitle>
                 <CardDescription>
@@ -437,8 +437,7 @@ export default function Dashboard() {
               </CardContent>
             </Card>
           </TabsContent>
-        </Tabs>
-      </div>
+      </Tabs>
     </div>
   );
 }
