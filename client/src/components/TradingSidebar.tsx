@@ -11,6 +11,7 @@ import { Link, useLocation } from "wouter";
 export function TradingSidebar() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [location] = useLocation();
 
   const { data: portfolio } = useQuery({
     queryKey: ['/api/portfolio/1'],
@@ -141,6 +142,43 @@ export function TradingSidebar() {
               Settings
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Navigation */}
+      <Card className="bg-slate-700 border-slate-600">
+        <CardHeader>
+          <CardTitle className="text-lg">Navigation</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-2">
+          <Link href="/dashboard">
+            <Button 
+              variant={location === '/dashboard' ? 'default' : 'ghost'} 
+              className="w-full justify-start"
+            >
+              <BarChart3 className="w-4 h-4 mr-2" />
+              Dashboard
+            </Button>
+          </Link>
+          <Link href="/ai-insights">
+            <Button 
+              variant={location === '/ai-insights' ? 'default' : 'ghost'} 
+              className="w-full justify-start"
+            >
+              <Brain className="w-4 h-4 mr-2" />
+              AI Insights
+            </Button>
+          </Link>
+          <Link href="/gs-quant">
+            <Button 
+              variant={location === '/gs-quant' ? 'default' : 'ghost'} 
+              className="w-full justify-start"
+            >
+              <Building2 className="w-4 h-4 mr-2" />
+              GS Quant
+              <Badge className="ml-auto bg-gold-500 text-black text-xs">PRO</Badge>
+            </Button>
+          </Link>
         </CardContent>
       </Card>
 
