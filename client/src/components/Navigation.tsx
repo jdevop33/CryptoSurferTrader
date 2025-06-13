@@ -11,7 +11,8 @@ import {
   Shield,
   Cloud,
   Activity,
-  Bell
+  Bell,
+  BookOpen
 } from 'lucide-react';
 
 export function Navigation() {
@@ -43,6 +44,13 @@ export function Navigation() {
       icon: BarChart3,
       description: 'Goldman Sachs tools',
       badge: 'PRO'
+    },
+    {
+      href: '/performance-story',
+      label: 'Performance Story',
+      icon: BookOpen,
+      description: 'Interactive trading journey',
+      badge: 'NEW'
     },
     {
       href: '/web3-trading',
