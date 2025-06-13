@@ -64,6 +64,8 @@ export function PerformanceStoryboard({ portfolio, trades }: PerformanceStoryboa
   const [currentChapter, setCurrentChapter] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(false);
   const [playbackSpeed, setPlaybackSpeed] = useState(3000); // 3 seconds per chapter
+  const [showAdvancedControls, setShowAdvancedControls] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   // Generate performance chapters from trading data
   const generateChapters = (): PerformanceChapter[] => {
@@ -279,13 +281,27 @@ export function PerformanceStoryboard({ portfolio, trades }: PerformanceStoryboa
                 <RotateCcw className="w-4 h-4" />
               </Button>
               <Button variant="outline" size="sm" onClick={handlePrevious}>
-                ←
+                <Rewind className="w-4 h-4" />
               </Button>
               <Button variant="outline" size="sm" onClick={toggleAutoPlay}>
                 {isAutoPlay ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               </Button>
               <Button variant="outline" size="sm" onClick={handleNext}>
-                →
+                <FastForward className="w-4 h-4" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setSoundEnabled(!soundEnabled)}
+              >
+                {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowAdvancedControls(!showAdvancedControls)}
+              >
+                ⚙️
               </Button>
             </div>
           </div>
@@ -298,6 +314,54 @@ export function PerformanceStoryboard({ portfolio, trades }: PerformanceStoryboa
             </div>
             <Progress value={progressPercent} className="h-2" />
           </div>
+
+          {/* Advanced Controls */}
+          {showAdvancedControls && (
+            <div className="p-4 bg-slate-700/30 rounded-lg border border-slate-600">
+              <h3 className="font-semibold mb-3">Advanced Playback Settings</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-sm text-slate-400 mb-2 block">
+                    Playback Speed: {playbackSpeed / 1000}s per chapter
+                  </label>
+                  <Slider
+                    value={[playbackSpeed]}
+                    onValueChange={(value) => setPlaybackSpeed(value[0])}
+                    min={1000}
+                    max={10000}
+                    step={500}
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-slate-400 mb-2 block">
+                    Chapter Navigation
+                  </label>
+                  <Slider
+                    value={[currentChapter]}
+                    onValueChange={(value) => setCurrentChapter(value[0])}
+                    min={0}
+                    max={chapters.length - 1}
+                    step={1}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+              <div className="mt-4 flex flex-wrap gap-2">
+                {chapters.map((chapter, index) => (
+                  <Button
+                    key={chapter.id}
+                    variant={index === currentChapter ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentChapter(index)}
+                    className="text-xs"
+                  >
+                    {index + 1}. {chapter.title}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          )}
         </CardHeader>
       </Card>
 
