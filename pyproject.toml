@@ -5,6 +5,7 @@ description = "Add your description here"
 requires-python = ">=3.11"
 dependencies = [
     "asyncio>=3.4.3",
+    "gs-quant>=1.0.54",
     "nautilus-trader>=1.218.0",
     "numpy>=2.3.0",
     "pandas>=2.3.0",
