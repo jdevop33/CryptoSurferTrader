@@ -26,7 +26,7 @@ export const users = pgTable("users", {
 
 export const tradingPositions = pgTable("trading_positions", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: varchar("user_id").notNull(),
   symbol: text("symbol").notNull(),
   exchange: text("exchange").notNull(),
   side: text("side").notNull(), // 'buy' or 'sell'
@@ -44,7 +44,7 @@ export const tradingPositions = pgTable("trading_positions", {
 
 export const tradeHistory = pgTable("trade_history", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: varchar("user_id").notNull(),
   positionId: integer("position_id"),
   symbol: text("symbol").notNull(),
   exchange: text("exchange").notNull(),
@@ -72,7 +72,7 @@ export const socialSentiment = pgTable("social_sentiment", {
 
 export const tradingSettings = pgTable("trading_settings", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull().unique(),
+  userId: varchar("user_id").notNull().unique(),
   maxPositionSize: decimal("max_position_size", { precision: 18, scale: 2 }).default("100"),
   maxPositions: integer("max_positions").default(5),
   dailyLossLimit: decimal("daily_loss_limit", { precision: 18, scale: 2 }).default("200"),
@@ -86,7 +86,7 @@ export const tradingSettings = pgTable("trading_settings", {
 
 export const notifications = pgTable("notifications", {
   id: serial("id").primaryKey(),
-  userId: integer("user_id").notNull(),
+  userId: varchar("user_id").notNull(),
   type: text("type").notNull(), // 'trade', 'alert', 'risk', 'system'
   title: text("title").notNull(),
   message: text("message").notNull(),
@@ -96,10 +96,10 @@ export const notifications = pgTable("notifications", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Insert schemas
-export const insertUserSchema = createInsertSchema(users).omit({
-  id: true,
+// Insert schemas for authentication system
+export const upsertUserSchema = createInsertSchema(users).omit({
   createdAt: true,
+  updatedAt: true,
 });
 
 export const insertTradingPositionSchema = createInsertSchema(tradingPositions).omit({
@@ -130,7 +130,7 @@ export const insertNotificationSchema = createInsertSchema(notifications).omit({
 
 // Types
 export type User = typeof users.$inferSelect;
-export type InsertUser = z.infer<typeof insertUserSchema>;
+export type UpsertUser = z.infer<typeof upsertUserSchema>;
 
 export type TradingPosition = typeof tradingPositions.$inferSelect;
 export type InsertTradingPosition = z.infer<typeof insertTradingPositionSchema>;
