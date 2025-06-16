@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "next-themes";
 import { Navigation } from "@/components/Navigation";
+import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
 import GettingStarted from "@/pages/GettingStarted";
 import AIInsights from "@/pages/AI-Insights";
@@ -23,8 +24,9 @@ function Router() {
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
       <Navigation />
       <Switch>
-        <Route path="/" component={GettingStarted} />
+        <Route path="/" component={Home} />
         <Route path="/dashboard" component={Dashboard} />
+        <Route path="/getting-started" component={GettingStarted} />
         <Route path="/ai-insights" component={AIInsights} />
         <Route path="/gs-quant" component={GSQuant} />
         <Route path="/performance-story" component={PerformanceStory} />
