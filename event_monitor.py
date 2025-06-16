@@ -41,18 +41,19 @@ class CryptoAPIEventMonitor:
         
         normalized_network = network_mapping.get(network.lower(), network)
         
-        # Use the correct CryptoAPIs endpoint for blockchain events
-        endpoint = f"{self.base_url}/blockchain-events/{normalized_network}"
+        # Use the correct CryptoAPIs endpoint structure from official documentation
+        endpoint = f"{self.base_url}/blockchain-events/{normalized_network}/subscriptions/addresses/{contract_address}"
         
-        # Prepare the request payload for address transactions webhook
+        # Prepare the request payload according to CryptoAPIs v2 specification
         payload = {
-            "item": {
-                "allowDuplicates": False,
-                "callbackSecretKey": f"webhook_secret_{contract_address[:10]}",
-                "callbackUrl": callback_url,
-                "confirmationsCount": 3,
-                "address": contract_address,
-                "eventType": "ADDRESS_COINS_TRANSACTION_CONFIRMED"
+            "data": {
+                "item": {
+                    "allowDuplicates": False,
+                    "callbackSecretKey": f"webhook_secret_{contract_address[:10]}",
+                    "callbackUrl": callback_url,
+                    "confirmationsCount": 3,
+                    "eventType": "ADDRESS_COINS_TRANSACTION_CONFIRMED"
+                }
             }
         }
         

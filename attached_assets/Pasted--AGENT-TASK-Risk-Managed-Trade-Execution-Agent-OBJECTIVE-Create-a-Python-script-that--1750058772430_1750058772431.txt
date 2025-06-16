@@ -1,0 +1,31 @@
+#
+# AGENT TASK: Risk-Managed Trade Execution Agent
+#
+# OBJECTIVE:
+# Create a Python script that safely executes a token swap on an EVM-compatible chain.
+# The script will first estimate fees, then simulate the transaction to check for errors,
+# and only then prepare and broadcast the real transaction.
+#
+# REQUIREMENTS:
+# 1.  Use the `requests` library. API keys and wallet private keys must be handled securely via environment variables.
+# 2.  The script must accept arguments for: `network`, `from_address`, `to_contract_address`, `token_to_buy_address`, and `amount_to_spend`.
+# 3.  **Execution Workflow (in order):**
+#     a. **Fee Estimation:** Call the "Get EIP 1559 Fee Recommendations" endpoint to get current `fast` gas price recommendations.
+#     b. **Transaction Simulation:** Use the "Simulate Transactions" endpoint. Construct a raw transaction payload for a token swap (e.g., interacting with a DEX like Uniswap). Send this to the simulator to ensure it will succeed and to get an accurate gas estimate. If the simulation fails, the script should stop and report the error.
+#     c. **Transaction Preparation:** If simulation is successful, use the "Prepare A Fungible Token Transfer From Address" endpoint (or a more complex contract interaction preparation) to create the final transaction payload.
+#     d. **Signing:** (Conceptual) In a real application, you would use a library like `web3.py` to sign the prepared transaction offline using a private key loaded securely from an environment variable. For this script, simulate this step.
+#     e. **Broadcast:** Use the "Broadcast Locally Signed Transaction" endpoint to send the signed transaction to the network.
+# 4.  **Output:**
+#     a. Print a single JSON object that logs the entire process.
+#     b. The JSON must include keys for: `status`, `fee_estimation`, `simulation_result`, and `broadcast_transaction_hash`. If any step fails, the `status` should reflect that.
+#
+# EXAMPLE USAGE:
+# python trade_executor.py "ethereum" "YOUR_WALLET_ADDRESS" "UNISWAP_ROUTER_ADDRESS" "TOKEN_TO_BUY_ADDRESS" "0.01"
+#
+# --- START SCRIPT ---
+import os
+import requests
+import json
+import sys
+
+# --- Your code here ---

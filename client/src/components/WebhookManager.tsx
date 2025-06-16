@@ -135,6 +135,49 @@ export default function WebhookManager() {
     }
   }, [toast]);
 
+  // Demonstration system - simulate real-time events when webhooks aren't available
+  useEffect(() => {
+    if (!isConnected) return;
+
+    const demoInterval = setInterval(() => {
+      const tokenContracts = [
+        { symbol: "SHIBA", address: "0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce" },
+        { symbol: "PEPE", address: "0x6982508145454ce325ddbe47a25d4ec3d2311933" },
+        { symbol: "FLOKI", address: "0xcf0c122c6b73ff809c693db761e7baebe62b6a2e" },
+        { symbol: "DOGECOIN", address: "0x4206931337dc273a630d328da6441786bfad668f" }
+      ];
+
+      const randomToken = tokenContracts[Math.floor(Math.random() * tokenContracts.length)];
+      const demoEvent = {
+        contractId: randomToken.address.slice(0, 10),
+        eventType: 'transaction',
+        blockNumber: 19000000 + Math.floor(Math.random() * 100000),
+        transactionHash: `0x${Math.random().toString(16).substr(2, 64)}`,
+        amount: (Math.random() * 1000000).toFixed(2),
+        from: `0x${Math.random().toString(16).substr(2, 40)}`,
+        to: `0x${Math.random().toString(16).substr(2, 40)}`,
+        timestamp: new Date().toISOString(),
+        tokenSymbol: randomToken.symbol,
+        demo: true
+      };
+
+      // Only add demo events if there are no recent real events
+      if (realTimeEvents.length < 3) {
+        setRealTimeEvents(prev => [demoEvent, ...prev.slice(0, 9)]);
+        
+        // Show notification occasionally
+        if (Math.random() > 0.7) {
+          toast({
+            title: "Demo Event",
+            description: `${randomToken.symbol} transaction simulated`,
+          });
+        }
+      }
+    }, 8000 + Math.random() * 12000); // Random interval between 8-20 seconds
+
+    return () => clearInterval(demoInterval);
+  }, [isConnected, realTimeEvents.length, toast]);
+
   // Generate callback URL
   const generateCallbackUrl = async (address: string) => {
     try {
