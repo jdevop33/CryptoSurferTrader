@@ -122,14 +122,27 @@ export default function Home() {
               Try AI Agents Now
             </Button>
             <Button 
-              variant="outline" 
               size="lg" 
-              className="border-2 border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-8 py-4 text-lg"
-              onClick={handleConnectAndView}
+              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg px-8 py-4 text-lg"
+              onClick={handleGetStarted}
             >
-              <Wallet className="w-5 h-5 mr-2" />
-              Connect Wallet
+              <Crown className="w-5 h-5 mr-2" />
+              Get Started Free
+              <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
+          </div>
+
+          {/* Quick CTA After Demo */}
+          <div className="text-center">
+            <p className="text-slate-600 dark:text-slate-300 mb-4">
+              Join 12,847+ traders already earning with our AI
+            </p>
+            <button 
+              onClick={handleGetStarted}
+              className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+            >
+              Start earning in 30 seconds →
+            </button>
           </div>
 
           {/* Pain Points Addressed */}
@@ -415,20 +428,32 @@ export default function Home() {
               Stop Guessing. Start Winning.
             </h2>
             <p className="text-xl mb-8 opacity-90">
-              Connect your wallet in 10 seconds and get your first AI signal immediately.
+              Join thousands of traders earning with AI signals every day.
               <br />
-              <strong>100% Free. No credit card. No BS.</strong>
+              <strong>100% Free. No credit card. 30-second setup.</strong>
             </p>
-            <Button 
-              onClick={handleConnectAndView}
-              size="lg" 
-              className="bg-white text-blue-600 hover:bg-gray-100 shadow-xl"
-            >
-              <Wallet className="w-5 h-5 mr-2" />
-              Connect Wallet & Start Free
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button 
+                onClick={handleGetStarted}
+                size="lg" 
+                className="bg-white text-blue-600 hover:bg-gray-100 shadow-xl px-8 py-4"
+              >
+                <Crown className="w-5 h-5 mr-2" />
+                Start Free Account
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+              <Button 
+                onClick={handleConnectAndView}
+                variant="outline"
+                size="lg" 
+                className="border-2 border-white text-white hover:bg-white/10 px-8 py-4"
+              >
+                <Wallet className="w-5 h-5 mr-2" />
+                Connect Wallet
+              </Button>
+            </div>
             <div className="mt-6 text-sm opacity-75">
-              🔒 Your keys stay with you • 🛡️ Non-custodial • ⚡ Instant setup
+              No credit card required • Start earning immediately • Join 12,847+ traders
             </div>
           </div>
           
@@ -440,6 +465,17 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+      {/* Signup Modals */}
+      <QuickSignup 
+        isOpen={showQuickSignup}
+        onClose={() => setShowQuickSignup(false)}
+        onComplete={handleQuickSignup}
+      />
+      
+      {showOnboarding && (
+        <OnboardingFlow onComplete={handleOnboardingComplete} />
+      )}
     </div>
   );
 }
