@@ -1,0 +1,15 @@
+The Core Concept: A Gamified, On-Chain Prediction Arena
+Our app becomes a platform where users don't just use trading bots; they become managers of a "stable" of AI agents. They can mix, match, and backtest combinations of agents to create their own unique trading strategies. The platform's (and users') performance is not just claimed; it's proven immutably on a public blockchain.
+
+Gamification Mechanics
+Agent Marketplace & Composition: Users can browse a marketplace of "Trading Agents," each with a distinct strategy (e.g., Mean Reversion, Momentum, Social Sentiment). They can select a "team" of agents to follow or simulate trading with.   
+Backtesting Arena: Before committing funds, users can run their chosen agent team through a backtesting engine to see how it would have performed on historical data. This uses Python libraries like Backtesting.py to provide performance metrics like Sharpe ratio and max drawdown.   
+Leaderboards & Competitions: We will feature public leaderboards ranking the performance of individual agents, agent combinations, and users themselves. This fosters competition and helps users discover which agents are performing best in current market conditions.   
+Progression & Rewards: Users can earn badges or unlock new, more advanced agents by achieving certain performance milestones (e.g., "Top 10% Performer," "Diamond Hands Award" for holding through volatility).   
+On-Chain Transparency: The Trust Layer
+This is our most powerful feature and our biggest differentiator.
+
+The Prediction: When our system (or a user's chosen agent team) generates a trading signal (e.g., "Agent 'Momentum-Max' predicts BTC will rise 5% in the next 24 hours"), we create a JSON object containing the prediction, the agent(s) involved, the target asset, the prediction timeframe, and a timestamp.
+Off-Chain Storage (IPFS): Storing large amounts of data directly on most blockchains is expensive. We will use the InterPlanetary File System (IPFS) to store the detailed JSON prediction data. IPFS is a decentralized storage solution that gives us a unique, immutable content identifier (CID) for our prediction file. This is extremely cost-effective.   
+On-Chain Proof (The Ledger): We then take the IPFS hash (CID) and store that on a cost-effective blockchain via a simple smart contract function call. This creates an immutable, publicly verifiable, and timestamped record that proves our prediction existed at a specific time. Blockchains like Polygon, Solana, or other low-cost L2s are ideal for this to minimize transaction fees.   
+Verification: Anyone can take the hash from the blockchain, look it up on IPFS, and see the exact prediction we made, proving we cannot alter our predictions after the fact. This builds unparalleled trust.

@@ -13,7 +13,9 @@ import {
   Activity,
   Bell,
   BookOpen,
-  Crown
+  Crown,
+  Trophy,
+  Users
 } from 'lucide-react';
 
 export function Navigation() {
@@ -57,6 +59,13 @@ export function Navigation() {
       label: 'Expert Agents',
       icon: Brain,
       description: 'AI clones of legendary traders',
+      badge: 'NEW'
+    },
+    {
+      href: '/trading-arena',
+      label: 'Trading Arena',
+      icon: Trophy,
+      description: 'Gamified agent selection and competitions',
       badge: 'NEW'
     },
     {
