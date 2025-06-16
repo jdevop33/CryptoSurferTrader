@@ -582,6 +582,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Secure Uniswap link generation endpoint
+  app.get("/api/alchemy/uniswap-link/:tokenAddress", async (req, res) => {
+    try {
+      const { tokenAddress } = req.params;
+      const { inputCurrency = 'ETH' } = req.query;
+      
+      // Validate token address for security
+      if (!alchemyService.isValidWalletAddress(tokenAddress)) {
+        return res.status(400).json({ error: "Invalid token address format" });
+      }
+      
+      const uniswapLink = alchemyService.generateUniswapLink(
+        tokenAddress, 
+        inputCurrency as string
+      );
+      
+      res.json({ uniswapLink });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to generate Uniswap link" });
+    }
+  });
+
   app.post("/api/alchemy/swap/quote", async (req, res) => {
     try {
       const { tokenIn, tokenOut, amountIn, walletAddress } = req.body;

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { TrendingUp, TrendingDown, Minus, AlertTriangle, CheckCircle } from 'lucide-react';
+import { UniswapTradeButton } from '@/components/UniswapTradeButton';
 
 interface TradingSignal {
   symbol: string;
@@ -275,8 +276,28 @@ export function TradingSignals() {
                   </div>
                 )}
 
-                {!isAutoTrading && signal.signal !== 'HOLD' && signal.confidence > 0.7 && (
-                  <div className="flex justify-end">
+                <div className="flex justify-between items-center">
+                  <div className="flex gap-2">
+                    {/* Get token address for popular tokens */}
+                    {(() => {
+                      const tokenAddresses: Record<string, string> = {
+                        'DOGECOIN': '0x4206931337dc273a630d328dA6441786BfaD668f',
+                        'SHIBA': '0x95aD61b0a150d79219dCF64E1E6Cc01f0B64C4cE',
+                        'PEPE': '0x6982508145454Ce325dDbE47a25d4ec3d2311933',
+                        'FLOKI': '0xcf0C122c6b73ff809C693DB761e7BaeBe62b6a2E'
+                      };
+                      const tokenAddress = tokenAddresses[signal.symbol];
+                      return tokenAddress ? (
+                        <UniswapTradeButton
+                          tokenAddress={tokenAddress}
+                          tokenSymbol={signal.symbol}
+                          size="sm"
+                          variant="outline"
+                        />
+                      ) : null;
+                    })()}
+                  </div>
+                  {!isAutoTrading && signal.signal !== 'HOLD' && signal.confidence > 0.7 && (
                     <Button
                       size="sm"
                       onClick={() => executeSignal(signal)}
@@ -284,8 +305,8 @@ export function TradingSignals() {
                     >
                       Execute {signal.signal} Signal
                     </Button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             ))}
 

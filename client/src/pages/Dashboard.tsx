@@ -276,7 +276,23 @@ export default function Dashboard() {
             )}
           </CardContent>
         </Card>
+
+        {/* Transaction History */}
+        {isConnected && account && (
+          <TransactionHistory 
+            walletAddress={account} 
+            limit={10}
+            className="mt-6"
+          />
+        )}
       </div>
+      
+      {/* Security Notice */}
+      {isConnected && (
+        <div className="mt-6">
+          <SecurityNotice />
+        </div>
+      )}
     </div>
   );
 }

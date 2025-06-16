@@ -67,6 +67,16 @@ A cutting-edge cryptocurrency trading platform that combines advanced AI-driven 
 
 ## Recent Changes (June 2025)
 
+### ✅ Secure Non-Custodial Trading Implementation
+- Created secure UniswapTradeButton component with read-only wallet access and external Uniswap integration
+- Built comprehensive TransactionHistory component displaying secure transaction data via Alchemy APIs
+- Integrated "Trade on Uniswap" buttons throughout platform: Dashboard asset listings, Trading Signals, and market analysis
+- Added secure API endpoints for transaction history, Uniswap link generation, and security compliance verification
+- Implemented SecurityNotice component emphasizing platform's non-custodial security model
+- Enhanced Alchemy service with secure transaction history methods and wallet address validation
+- Removed all private key handling functionality, maintaining complete non-custodial security
+- Added token address mapping for major cryptocurrencies (DOGECOIN, SHIBA, PEPE, FLOKI) for seamless trading
+
 ### ✅ NicheSignal AI Market Intelligence Integration
 - Built comprehensive NicheSignal AI service with Alibaba Cloud Qwen model integration for autonomous market intelligence
 - Created market intelligence dashboard with 4 key sections: Market Intelligence, Community Discovery, Sentiment Trends, Actionable Insights
