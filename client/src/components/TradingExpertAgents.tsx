@@ -64,7 +64,7 @@ export default function TradingExpertAgents() {
 
   // Single symbol analysis mutation
   const analyzeMutation = useMutation({
-    mutationFn: async (symbol: string) => {
+    mutationFn: async (symbol: string): Promise<TeamConsensus> => {
       const marketData = {
         symbol,
         currentPrice: Math.random() * 1000 + 100,
@@ -74,12 +74,13 @@ export default function TradingExpertAgents() {
         sentiment: Math.random() * 0.6 + 0.2 // 0.2 to 0.8
       };
       
-      return await apiRequest('POST', '/api/expert-agents/analyze', marketData);
+      const response = await apiRequest('POST', '/api/expert-agents/analyze', marketData);
+      return response as TeamConsensus;
     },
-    onSuccess: (data) => {
+    onSuccess: (consensus: TeamConsensus) => {
       setAnalysisResults(prev => {
         const filtered = prev.filter(r => r.symbol !== selectedSymbol);
-        return [...filtered, { symbol: selectedSymbol, consensus: data }];
+        return [...filtered, { symbol: selectedSymbol, consensus }];
       });
       setIsAnalyzing(false);
     }
@@ -87,11 +88,12 @@ export default function TradingExpertAgents() {
 
   // Batch analysis mutation
   const batchAnalyzeMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async (): Promise<{ analyses: AnalysisResult[] }> => {
       const symbols = ['DOGECOIN', 'SHIBA', 'PEPE', 'FLOKI'];
-      return await apiRequest('POST', '/api/expert-agents/batch-analyze', { symbols });
+      const response = await apiRequest('POST', '/api/expert-agents/batch-analyze', { symbols });
+      return response as { analyses: AnalysisResult[] };
     },
-    onSuccess: (data) => {
+    onSuccess: (data: { analyses: AnalysisResult[] }) => {
       setAnalysisResults(data.analyses);
       setIsAnalyzing(false);
     }

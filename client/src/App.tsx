@@ -21,6 +21,7 @@ import MarketSentiment from "@/pages/MarketSentiment";
 import StrategySimulator from "@/pages/StrategySimulator";
 import PortfolioRisk from "@/pages/PortfolioRisk";
 import OnChainSignals from "@/pages/OnChainSignals";
+import ExpertAgents from "@/pages/ExpertAgents";
 import NotFound from "@/pages/not-found";
 import { NotificationSystem } from "@/components/NotificationSystem";
 
@@ -43,6 +44,7 @@ function Router() {
         <Route path="/strategy-simulator" component={StrategySimulator} />
         <Route path="/portfolio-risk" component={PortfolioRisk} />
         <Route path="/onchain-signals" component={OnChainSignals} />
+        <Route path="/expert-agents" component={ExpertAgents} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route component={NotFound} />

@@ -26,6 +26,9 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
+// Initialize Trading Team
+const tradingTeam = new TradingTeamOrchestrator();
+
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
   const io = new SocketIOServer(httpServer, {
