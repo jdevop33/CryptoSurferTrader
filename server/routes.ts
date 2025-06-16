@@ -554,6 +554,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Secure transaction history endpoint (read-only)
+  app.get("/api/alchemy/history/:address", async (req, res) => {
+    try {
+      const { address } = req.params;
+      const limit = parseInt(req.query.limit as string) || 20;
+      
+      // Validate wallet address for security
+      if (!alchemyService.isValidWalletAddress(address)) {
+        return res.status(400).json({ error: "Invalid wallet address format" });
+      }
+      
+      const history = await alchemyService.getTransactionHistory(address, limit);
+      res.json(history);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to fetch transaction history" });
+    }
+  });
+
+  // Security compliance verification endpoint
+  app.get("/api/alchemy/security-compliance", async (req, res) => {
+    try {
+      const compliance = alchemyService.confirmSecurityCompliance();
+      res.json(compliance);
+    } catch (error) {
+      res.status(500).json({ error: "Failed to verify security compliance" });
+    }
+  });
+
   app.post("/api/alchemy/swap/quote", async (req, res) => {
     try {
       const { tokenIn, tokenOut, amountIn, walletAddress } = req.body;

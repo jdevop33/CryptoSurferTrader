@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { useMetaMask } from '@/hooks/useMetaMask';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { UniswapTradeButton, SecurityNotice } from '@/components/UniswapTradeButton';
+import { TransactionHistory } from '@/components/TransactionHistory';
 
 export default function Dashboard() {
   const { isConnected, account, connect } = useMetaMask();
@@ -242,13 +244,23 @@ export default function Dashboard() {
                           <p className="text-sm text-slate-400">{token.name || 'Unknown Token'}</p>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <p className="font-semibold">
-                          ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                        </p>
-                        <p className="text-sm text-slate-400">
-                          {parseFloat(token.balance || '0').toLocaleString()} {token.symbol}
-                        </p>
+                      <div className="flex items-center gap-4">
+                        <div className="text-right">
+                          <p className="font-semibold">
+                            ${value.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          </p>
+                          <p className="text-sm text-slate-400">
+                            {parseFloat(token.balance || '0').toLocaleString()} {token.symbol}
+                          </p>
+                        </div>
+                        {token.contractAddress && (
+                          <UniswapTradeButton
+                            tokenAddress={token.contractAddress}
+                            tokenSymbol={token.symbol || 'Token'}
+                            size="sm"
+                            variant="outline"
+                          />
+                        )}
                       </div>
                     </div>
                   );
