@@ -1,4 +1,4 @@
-import { Alchemy, Network, TokenBalanceType } from 'alchemy-sdk';
+import { Alchemy, Network, TokenBalanceType, AssetTransfersCategory } from 'alchemy-sdk';
 import { ethers } from 'ethers';
 
 interface AlchemyConfig {
@@ -40,7 +40,6 @@ interface SwapQuote {
 export class AlchemyTradingService {
   private alchemy: Alchemy;
   private provider: ethers.JsonRpcProvider;
-  private etherscanProvider: ethers.EtherscanProvider;
   private isInitialized = false;
 
   constructor() {
@@ -53,7 +52,6 @@ export class AlchemyTradingService {
     this.provider = new ethers.JsonRpcProvider(
       `https://eth-mainnet.g.alchemy.com/v2/${config.apiKey}`
     );
-    this.etherscanProvider = new ethers.EtherscanProvider("mainnet", process.env.ETHERSCAN_API_KEY);
     this.initialize();
   }
 
@@ -297,9 +295,8 @@ export class AlchemyTradingService {
       // Use Alchemy's enhanced API for transaction history
       const transfers = await this.alchemy.core.getAssetTransfers({
         fromAddress: walletAddress,
-        category: ['external', 'erc20'],
-        maxCount: limit,
-        order: 'desc'
+        category: ['erc20', 'external'],
+        maxCount: limit
       });
       
       return transfers.transfers.map((transfer: any) => ({
