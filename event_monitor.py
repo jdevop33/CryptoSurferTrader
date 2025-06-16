@@ -41,17 +41,18 @@ class CryptoAPIEventMonitor:
         
         normalized_network = network_mapping.get(network.lower(), network)
         
-        # Construct the webhook endpoint URL
-        endpoint = f"{self.base_url}/blockchain-events/{normalized_network}/transactions/new-mined-transaction-for-specific-token"
+        # Use the correct CryptoAPIs endpoint for blockchain events
+        endpoint = f"{self.base_url}/blockchain-events/{normalized_network}"
         
-        # Prepare the request payload
+        # Prepare the request payload for address transactions webhook
         payload = {
             "item": {
                 "allowDuplicates": False,
                 "callbackSecretKey": f"webhook_secret_{contract_address[:10]}",
                 "callbackUrl": callback_url,
                 "confirmationsCount": 3,
-                "tokenAddress": contract_address
+                "address": contract_address,
+                "eventType": "ADDRESS_COINS_TRANSACTION_CONFIRMED"
             }
         }
         
@@ -96,7 +97,9 @@ class CryptoAPIEventMonitor:
                 "error_details": error_data,
                 "monitored_contract": contract_address,
                 "callback_url": callback_url,
-                "network": normalized_network
+                "network": normalized_network,
+                "note": "Webhook creation failed - API endpoint may require different parameters or subscription plan",
+                "fallback_available": True
             }
             
         except requests.exceptions.RequestException as e:
