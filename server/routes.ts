@@ -1045,7 +1045,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           const userId = session.metadata?.userId;
           
           if (userId && session.subscription) {
-            await storage.updateUser(userId, {
+            await subscriptionStorage.updateUser(userId, {
               subscriptionStatus: 'pro',
               stripeSubscriptionId: session.subscription as string,
               subscriptionExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
@@ -1060,7 +1060,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           if (customer && !customer.deleted) {
             const userId = customer.metadata.userId;
             if (userId) {
-              await storage.updateUser(userId, {
+              await subscriptionStorage.updateUser(userId, {
                 subscriptionStatus: 'free',
                 stripeSubscriptionId: null,
                 subscriptionExpiresAt: null
@@ -1080,7 +1080,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get('/api/subscriptions/status/:userId', async (req, res) => {
     try {
       const { userId } = req.params;
-      const user = await storage.getUser(userId);
+      const user = await subscriptionStorage.getUser(userId);
       
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
@@ -1090,7 +1090,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       let isActive = user.subscriptionStatus === 'pro';
       if (user.subscriptionExpiresAt && new Date() > user.subscriptionExpiresAt) {
         isActive = false;
-        await storage.updateUser(userId, { subscriptionStatus: 'free' });
+        await subscriptionStorage.updateUser(userId, { subscriptionStatus: 'free' });
       }
 
       res.json({

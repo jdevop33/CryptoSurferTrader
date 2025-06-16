@@ -12,7 +12,8 @@ import {
   Cloud,
   Activity,
   Bell,
-  BookOpen
+  BookOpen,
+  Crown
 } from 'lucide-react';
 
 export function Navigation() {

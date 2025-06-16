@@ -12,6 +12,7 @@ import Deploy from "@/pages/Deploy";
 import Web3Trading from "@/pages/Web3Trading";
 import GSQuant from "@/pages/GSQuant";
 import PerformanceStory from "@/pages/PerformanceStory";
+import Pricing from "@/pages/Pricing";
 import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
 import NotFound from "@/pages/not-found";
@@ -27,6 +28,7 @@ function Router() {
         <Route path="/ai-insights" component={AIInsights} />
         <Route path="/gs-quant" component={GSQuant} />
         <Route path="/performance-story" component={PerformanceStory} />
+        <Route path="/pricing" component={Pricing} />
         <Route path="/deploy" component={Deploy} />
         <Route path="/web3-trading" component={Web3Trading} />
         <Route path="/terms" component={Terms} />
