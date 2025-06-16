@@ -564,13 +564,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/alchemy/swap/execute", async (req, res) => {
+  // SECURITY: Removed unsafe swap execution - replaced with secure Uniswap link generation
+  app.get("/api/alchemy/uniswap-link/:tokenAddress", async (req, res) => {
     try {
-      const { tokenIn, tokenOut, amountIn, minAmountOut, walletAddress, privateKey } = req.body;
-      const txHash = await alchemyService.executeSwap(tokenIn, tokenOut, amountIn, minAmountOut, walletAddress, privateKey);
-      res.json({ transactionHash: txHash });
+      const { tokenAddress } = req.params;
+      const inputCurrency = req.query.input as string || 'ETH';
+      
+      // Validate token address for security
+      if (!alchemyService.isValidWalletAddress(tokenAddress)) {
+        return res.status(400).json({ error: "Invalid token contract address" });
+      }
+      
+      const uniswapLink = alchemyService.generateUniswapLink(tokenAddress, inputCurrency);
+      res.json({ 
+        uniswapLink, 
+        tokenAddress, 
+        inputCurrency,
+        nonCustodial: true,
+        securityNote: "This link redirects to Uniswap - no private keys are handled by this platform"
+      });
     } catch (error) {
-      res.status(500).json({ error: "Failed to execute swap" });
+      res.status(500).json({ error: "Failed to generate Uniswap link" });
     }
   });
 
