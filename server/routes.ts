@@ -14,9 +14,9 @@ import { alchemyService } from "./alchemy_service";
 import { enhancedTwitterService } from "./enhanced_twitter_service";
 import { pythonBridge } from "./python_bridge";
 import { nicheSignalAI } from "./niche_signal_ai";
+import { onChainValidatorService } from "./onchain_validator_service";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
-import { spawn } from "child_process";
 
 // Initialize Stripe
 if (!process.env.STRIPE_SECRET_KEY) {
@@ -1483,6 +1483,188 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Subscription status error:', error);
       res.status(500).json({ error: 'Failed to get subscription status' });
+    }
+  });
+
+  // On-Chain Signal Validation Endpoints
+  app.get('/api/onchain/validate/:symbol', async (req, res) => {
+    try {
+      const { symbol } = req.params;
+      const { network = 'ethereum' } = req.query;
+      
+      console.log(`🔗 Validating on-chain data for ${symbol} on ${network}`);
+      
+      const validation = await onChainValidatorService.validateSignal(
+        symbol.toUpperCase(), 
+        network as string
+      );
+      
+      if (!validation) {
+        return res.status(404).json({ 
+          error: 'Token not supported or validation failed',
+          symbol,
+          network 
+        });
+      }
+      
+      res.json({
+        symbol: symbol.toUpperCase(),
+        network,
+        validation,
+        validationScore: onChainValidatorService.getValidationScore(validation),
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('On-chain validation error:', error);
+      res.status(500).json({ 
+        error: 'Failed to validate on-chain data',
+        message: error.message 
+      });
+    }
+  });
+
+  app.post('/api/onchain/enhanced-analysis', async (req, res) => {
+    try {
+      const { symbol, sentimentSignal, confidence, network = 'ethereum' } = req.body;
+      
+      if (!symbol || !sentimentSignal || confidence === undefined) {
+        return res.status(400).json({ 
+          error: 'Missing required fields: symbol, sentimentSignal, confidence' 
+        });
+      }
+      
+      console.log(`🧠 Enhanced analysis for ${symbol}: ${sentimentSignal} (${confidence})`);
+      
+      const enhancedAnalysis = await onChainValidatorService.getEnhancedSignalAnalysis(
+        symbol.toUpperCase(),
+        sentimentSignal,
+        confidence,
+        network
+      );
+      
+      res.json({
+        symbol: symbol.toUpperCase(),
+        network,
+        analysis: enhancedAnalysis,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Enhanced analysis error:', error);
+      res.status(500).json({ 
+        error: 'Failed to perform enhanced analysis',
+        message: error.message 
+      });
+    }
+  });
+
+  app.post('/api/onchain/validate-multiple', async (req, res) => {
+    try {
+      const { signals } = req.body;
+      
+      if (!Array.isArray(signals) || signals.length === 0) {
+        return res.status(400).json({ 
+          error: 'signals must be a non-empty array' 
+        });
+      }
+      
+      console.log(`🔗 Validating ${signals.length} signals with on-chain data`);
+      
+      const validations = await onChainValidatorService.validateMultipleSignals(signals);
+      
+      // Add validation scores
+      const enrichedValidations = Object.entries(validations).reduce((acc, [symbol, validation]) => {
+        acc[symbol] = {
+          validation,
+          validationScore: validation ? onChainValidatorService.getValidationScore(validation) : 0
+        };
+        return acc;
+      }, {} as Record<string, any>);
+      
+      res.json({
+        validations: enrichedValidations,
+        summary: {
+          total: signals.length,
+          validated: Object.values(validations).filter(v => v !== null).length,
+          strongValidations: Object.values(validations).filter(v => 
+            v && onChainValidatorService.getValidationScore(v) > 0.7
+          ).length
+        },
+        timestamp: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Multiple validation error:', error);
+      res.status(500).json({ 
+        error: 'Failed to validate multiple signals',
+        message: error.message 
+      });
+    }
+  });
+
+  // Integration with existing trading signals
+  app.get('/api/trading/enhanced-signals', async (req, res) => {
+    try {
+      console.log('🚀 Generating enhanced trading signals with on-chain validation');
+      
+      // Get AI signals
+      const symbols = ['DOGECOIN', 'SHIBA', 'PEPE', 'FLOKI'];
+      const aiSignals = await Promise.all(
+        symbols.map(async (symbol) => {
+          const analysis = await alibabaAIService.analyzeMarketData(symbol);
+          return {
+            symbol,
+            signal: analysis.signal,
+            confidence: analysis.confidence,
+            risk: analysis.risk
+          };
+        })
+      );
+      
+      // Validate with on-chain data
+      const signalsToValidate = symbols.map(symbol => ({ symbol, network: 'ethereum' }));
+      const onChainValidations = await onChainValidatorService.validateMultipleSignals(signalsToValidate);
+      
+      // Combine AI signals with on-chain validation
+      const enhancedSignals = await Promise.all(
+        aiSignals.map(async (aiSignal) => {
+          const enhancedAnalysis = await onChainValidatorService.getEnhancedSignalAnalysis(
+            aiSignal.symbol,
+            aiSignal.signal,
+            aiSignal.confidence,
+            'ethereum'
+          );
+          
+          return {
+            symbol: aiSignal.symbol,
+            originalSignal: aiSignal,
+            onChainValidation: onChainValidations[aiSignal.symbol],
+            enhancedAnalysis,
+            finalRecommendation: {
+              signal: enhancedAnalysis.enhancedSignal,
+              confidence: enhancedAnalysis.enhancedConfidence,
+              risk: aiSignal.risk,
+              recommendation: enhancedAnalysis.recommendation
+            }
+          };
+        })
+      );
+      
+      res.json({
+        enhancedSignals,
+        metadata: {
+          totalSignals: enhancedSignals.length,
+          validatedSignals: enhancedSignals.filter(s => s.onChainValidation !== null).length,
+          strongBuySignals: enhancedSignals.filter(s => 
+            s.finalRecommendation.signal === 'STRONG_BUY'
+          ).length,
+          timestamp: new Date().toISOString()
+        }
+      });
+    } catch (error: any) {
+      console.error('Enhanced signals error:', error);
+      res.status(500).json({ 
+        error: 'Failed to generate enhanced signals',
+        message: error.message 
+      });
     }
   });
 
