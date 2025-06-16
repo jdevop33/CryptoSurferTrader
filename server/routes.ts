@@ -16,6 +16,7 @@ import { pythonBridge } from "./python_bridge";
 import { nicheSignalAI } from "./niche_signal_ai";
 import { onChainValidatorService } from "./onchain_validator_service";
 import { eventMonitorService } from "./event_monitor_service";
+import { TradingTeamOrchestrator } from "./trading_expert_agents";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 
@@ -49,6 +50,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // Store io instance for use in other modules
   (app as any).io = io;
+
+  // Initialize Trading Expert Agents Team
+  const tradingTeam = new TradingTeamOrchestrator();
+  console.log('🧠 Trading Expert Agents Team initialized');
+  
+  // Set up expert agent event handlers
+  tradingTeam.on('agentDecision', (data) => {
+    io.emit('agent-decision', data);
+    console.log(`📊 ${data.agent}: ${data.decision.action} (${(data.decision.confidence * 100).toFixed(0)}% confidence)`);
+  });
+  
+  tradingTeam.on('teamConsensus', (data) => {
+    io.emit('team-consensus', data);
+    console.log(`🎯 Team Consensus: ${data.consensus.finalDecision.action} (${(data.consensus.consensusStrength * 100).toFixed(0)}% agreement)`);
+  });
 
   // Initialize Python trading bridge with Nautilus Trader
   pythonBridge.initialize().then(() => {
@@ -344,6 +360,75 @@ export async function registerRoutes(app: Express): Promise<Server> {
         "Trading signal generation"
       ]
     });
+  });
+
+  // Trading Expert Agents Endpoints
+  app.post("/api/expert-agents/analyze", async (req, res) => {
+    try {
+      const { symbol, currentPrice, historicalPrices, volume, marketCap, sentiment } = req.body;
+      
+      const marketData = {
+        symbol,
+        currentPrice: parseFloat(currentPrice),
+        historicalPrices: historicalPrices || [],
+        volume: parseInt(volume) || 1000000,
+        marketCap: parseInt(marketCap) || 100000000,
+        sentiment: parseFloat(sentiment) || 0.5
+      };
+      
+      const consensus = await tradingTeam.analyzeMarket(marketData);
+      res.json(consensus);
+    } catch (error) {
+      console.error('Expert agents analysis error:', error);
+      res.status(500).json({ error: "Failed to analyze market with expert agents" });
+    }
+  });
+
+  app.get("/api/expert-agents/team", async (req, res) => {
+    try {
+      const activeAgents = tradingTeam.getActiveAgents();
+      const agentDetails = activeAgents.map(agentName => ({
+        name: agentName,
+        expertise: tradingTeam.getAgentExpertise(agentName)
+      }));
+      
+      res.json({
+        teamSize: activeAgents.length,
+        agents: agentDetails,
+        status: "active"
+      });
+    } catch (error) {
+      console.error('Expert agents team error:', error);
+      res.status(500).json({ error: "Failed to get expert agents team info" });
+    }
+  });
+
+  app.post("/api/expert-agents/batch-analyze", async (req, res) => {
+    try {
+      const { symbols } = req.body;
+      const symbolList = symbols || ['DOGECOIN', 'SHIBA', 'PEPE', 'FLOKI'];
+      
+      const analyses = await Promise.all(
+        symbolList.map(async (symbol: string) => {
+          const marketData = {
+            symbol,
+            currentPrice: Math.random() * 1000,
+            historicalPrices: Array.from({length: 30}, () => Math.random() * 1000),
+            volume: Math.floor(Math.random() * 10000000),
+            marketCap: Math.floor(Math.random() * 1000000000),
+            sentiment: Math.random()
+          };
+          
+          const consensus = await tradingTeam.analyzeMarket(marketData);
+          return { symbol, consensus };
+        })
+      );
+      
+      res.json({ analyses });
+    } catch (error) {
+      console.error('Batch analysis error:', error);
+      res.status(500).json({ error: "Failed to perform batch analysis" });
+    }
   });
 
   // Production Testing Endpoints

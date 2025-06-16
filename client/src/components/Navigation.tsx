@@ -53,6 +53,13 @@ export function Navigation() {
       badge: 'NEW'
     },
     {
+      href: '/expert-agents',
+      label: 'Expert Agents',
+      icon: Brain,
+      description: 'AI clones of legendary traders',
+      badge: 'NEW'
+    },
+    {
       href: '/pricing',
       label: 'Settings',
       icon: Settings,
