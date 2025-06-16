@@ -22,6 +22,7 @@ import StrategySimulator from "@/pages/StrategySimulator";
 import PortfolioRisk from "@/pages/PortfolioRisk";
 import OnChainSignals from "@/pages/OnChainSignals";
 import ExpertAgents from "@/pages/ExpertAgents";
+import TradingArena from "@/pages/TradingArena";
 import NotFound from "@/pages/not-found";
 import { NotificationSystem } from "@/components/NotificationSystem";
 
@@ -45,6 +46,7 @@ function Router() {
         <Route path="/portfolio-risk" component={PortfolioRisk} />
         <Route path="/onchain-signals" component={OnChainSignals} />
         <Route path="/expert-agents" component={ExpertAgents} />
+        <Route path="/trading-arena" component={TradingArena} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route component={NotFound} />

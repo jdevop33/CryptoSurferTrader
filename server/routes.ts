@@ -17,6 +17,7 @@ import { nicheSignalAI } from "./niche_signal_ai";
 import { onChainValidatorService } from "./onchain_validator_service";
 import { eventMonitorService } from "./event_monitor_service";
 import { TradingTeamOrchestrator } from "./trading_expert_agents";
+import { predictionTracker } from "./prediction_tracker";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 
@@ -431,6 +432,88 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Batch analysis error:', error);
       res.status(500).json({ error: "Failed to perform batch analysis" });
+    }
+  });
+
+  // Gamified Prediction Tracking Endpoints
+  app.get("/api/predictions/agents", async (req, res) => {
+    try {
+      const agentPerformance = predictionTracker.getAgentPerformance();
+      res.json(agentPerformance);
+    } catch (error) {
+      console.error('Agent performance error:', error);
+      res.status(500).json({ error: "Failed to get agent performance" });
+    }
+  });
+
+  app.post("/api/predictions/create", async (req, res) => {
+    try {
+      const { userId, agentName, symbol, prediction, confidence, targetPrice, currentPrice, timeframe, reasoning } = req.body;
+      
+      const newPrediction = await predictionTracker.createPrediction(
+        userId,
+        agentName,
+        symbol,
+        prediction,
+        confidence,
+        targetPrice,
+        currentPrice,
+        timeframe,
+        reasoning
+      );
+      
+      res.json(newPrediction);
+    } catch (error) {
+      console.error('Create prediction error:', error);
+      res.status(500).json({ error: "Failed to create prediction" });
+    }
+  });
+
+  app.get("/api/predictions/user/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const portfolio = predictionTracker.getUserPortfolio(userId);
+      const activePredictions = predictionTracker.getActivePredictions(userId);
+      
+      res.json({
+        portfolio,
+        activePredictions
+      });
+    } catch (error) {
+      console.error('User predictions error:', error);
+      res.status(500).json({ error: "Failed to get user predictions" });
+    }
+  });
+
+  app.get("/api/predictions/leaderboard", async (req, res) => {
+    try {
+      const leaderboard = predictionTracker.getLeaderboard();
+      res.json(leaderboard);
+    } catch (error) {
+      console.error('Leaderboard error:', error);
+      res.status(500).json({ error: "Failed to get leaderboard" });
+    }
+  });
+
+  app.get("/api/predictions/recent", async (req, res) => {
+    try {
+      const limit = parseInt(req.query.limit as string) || 50;
+      const recentPredictions = predictionTracker.getRecentPredictions(limit);
+      res.json(recentPredictions);
+    } catch (error) {
+      console.error('Recent predictions error:', error);
+      res.status(500).json({ error: "Failed to get recent predictions" });
+    }
+  });
+
+  app.post("/api/predictions/agents/update", async (req, res) => {
+    try {
+      const { userId, selectedAgents, allocations } = req.body;
+      await predictionTracker.updateUserAgents(userId, selectedAgents, allocations);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Update agents error:', error);
+      res.status(500).json({ error: "Failed to update user agents" });
     }
   });
 
