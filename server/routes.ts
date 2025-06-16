@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { Server as SocketIOServer } from "socket.io";
+import Stripe from "stripe";
 import { storage } from "./storage";
 import { dataService } from "./data_service";
 import { alibabaAIService } from "./alibaba_ai_service";
@@ -14,6 +15,14 @@ import { pythonBridge } from "./python_bridge";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 import { spawn } from "child_process";
+
+// Initialize Stripe
+if (!process.env.STRIPE_SECRET_KEY) {
+  throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
+}
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+  apiVersion: "2025-05-28.basil",
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -975,6 +984,131 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error('Deployment status error:', error);
       res.status(500).json({ error: 'Failed to get deployment status' });
+    }
+  });
+
+  // Stripe Subscription Management Endpoints
+  app.post('/api/subscriptions/create-checkout-session', async (req, res) => {
+    try {
+      const { priceId, userId } = req.body;
+      
+      if (!priceId || !userId) {
+        return res.status(400).json({ error: 'Missing required parameters' });
+      }
+
+      // Get user from storage
+      const user = await storage.getUser(userId);
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Create or get Stripe customer
+      let customerId = user.stripeCustomerId;
+      if (!customerId) {
+        const customer = await stripe.customers.create({
+          email: user.email || undefined,
+          metadata: { userId: user.id }
+        });
+        customerId = customer.id;
+        await storage.updateUser(userId, { stripeCustomerId: customerId });
+      }
+
+      // Create checkout session
+      const session = await stripe.checkout.sessions.create({
+        customer: customerId,
+        payment_method_types: ['card'],
+        line_items: [{
+          price: priceId,
+          quantity: 1,
+        }],
+        mode: 'subscription',
+        success_url: `${req.headers.origin}/dashboard?subscription=success`,
+        cancel_url: `${req.headers.origin}/pricing?subscription=cancelled`,
+        metadata: { userId }
+      });
+
+      res.json({ sessionId: session.id });
+    } catch (error) {
+      console.error('Stripe checkout session error:', error);
+      res.status(500).json({ error: 'Failed to create checkout session' });
+    }
+  });
+
+  app.post('/api/subscriptions/webhook', async (req, res) => {
+    const sig = req.headers['stripe-signature'] as string;
+    
+    try {
+      const event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET!);
+
+      switch (event.type) {
+        case 'checkout.session.completed':
+          const session = event.data.object as Stripe.Checkout.Session;
+          const userId = session.metadata?.userId;
+          
+          if (userId && session.subscription) {
+            await storage.updateUser(userId, {
+              subscriptionStatus: 'pro',
+              stripeSubscriptionId: session.subscription as string,
+              subscriptionExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) // 30 days
+            });
+          }
+          break;
+
+        case 'customer.subscription.deleted':
+          const subscription = event.data.object as Stripe.Subscription;
+          const customer = await stripe.customers.retrieve(subscription.customer as string);
+          
+          if (customer && !customer.deleted) {
+            const userId = customer.metadata.userId;
+            if (userId) {
+              await storage.updateUser(userId, {
+                subscriptionStatus: 'free',
+                stripeSubscriptionId: null,
+                subscriptionExpiresAt: null
+              });
+            }
+          }
+          break;
+      }
+
+      res.json({ received: true });
+    } catch (error) {
+      console.error('Webhook error:', error);
+      res.status(400).json({ error: 'Webhook validation failed' });
+    }
+  });
+
+  app.get('/api/subscriptions/status/:userId', async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const user = await storage.getUser(userId);
+      
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+
+      // Check if subscription is still valid
+      let isActive = user.subscriptionStatus === 'pro';
+      if (user.subscriptionExpiresAt && new Date() > user.subscriptionExpiresAt) {
+        isActive = false;
+        await storage.updateUser(userId, { subscriptionStatus: 'free' });
+      }
+
+      res.json({
+        status: isActive ? 'pro' : 'free',
+        expiresAt: user.subscriptionExpiresAt,
+        features: {
+          basicTrading: true,
+          performanceStory: true,
+          strategySimulator: isActive,
+          portfolioRiskDashboard: isActive,
+          advancedAnalytics: isActive,
+          realTimeAlerts: isActive
+        }
+      });
+    } catch (error) {
+      console.error('Subscription status error:', error);
+      res.status(500).json({ error: 'Failed to get subscription status' });
     }
   });
 
