@@ -3,8 +3,7 @@ import { createServer, type Server } from "http";
 import { spawn } from "child_process";
 import { Server as SocketIOServer } from "socket.io";
 import Stripe from "stripe";
-import { storage } from "./storage";
-import { subscriptionStorage } from "./subscription_storage";
+import { storage } from "./subscription_storage";
 import { dataService } from "./data_service";
 import { alibabaAIService } from "./alibaba_ai_service";
 import { twitterService } from "./twitter_service";
@@ -702,7 +701,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Stripe webhook endpoint for subscription events
-  app.post("/api/stripe/webhook", app.raw({ type: 'application/json' }), async (req, res) => {
+  app.post("/api/stripe/webhook", async (req, res) => {
     try {
       const sig = req.headers['stripe-signature'];
       const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
