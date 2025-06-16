@@ -11,7 +11,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { useMetaMask } from '@/hooks/useMetaMask';
-import { PieChart, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 export default function Dashboard() {
   const { isConnected, account, connect } = useMetaMask();

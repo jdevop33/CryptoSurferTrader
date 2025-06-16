@@ -67,6 +67,23 @@ A cutting-edge cryptocurrency trading platform that combines advanced AI-driven 
 
 ## Recent Changes (June 2025)
 
+### ✅ Consumer-Focused UX Redesign Implementation
+- Created streamlined one-click onboarding with single "Connect Wallet & View Dashboard" button
+- Redesigned main landing page for consumer accessibility and trust-building
+- Implemented simplified navigation with clear sections: Dashboard, Strategy Simulator, Portfolio Risk, Market Sentiment, Settings
+- Built consumer-focused dashboard with large portfolio value display and color-coded 24h performance
+- Integrated authentic data from Alchemy service for real-time wallet balances and asset tracking
+- Added professional charts using recharts: PieChart for asset allocation, BarChart for daily performance
+- Implemented clean asset list displaying real token balances with values and metadata
+- Enhanced MetaMask integration for seamless wallet connection and auto-redirect to dashboard
+
+### ✅ Freemium Subscription Model Implementation
+- Added subscription fields to user schema with Pro tier ($15/month) pricing
+- Built Stripe checkout integration with feature gating system for premium analytics
+- Created subscription status API endpoints and feature access controls
+- Implemented feature gates for GS Quant analytics, strategy simulator, and portfolio risk dashboard
+- Added pricing page with upgrade flow and subscription management
+
 ### ✅ Interactive Trading Performance Storytelling Implementation
 - Created comprehensive PerformanceStoryboard component with chapter-based narrative structure
 - Implemented auto-play functionality with customizable speed controls (1-10 seconds per chapter)

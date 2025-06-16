@@ -21,56 +21,35 @@ export function Navigation() {
 
   const navItems = [
     {
-      href: '/',
-      label: 'Getting Started',
-      icon: Home,
-      description: 'Learn how to use the platform'
-    },
-    {
       href: '/dashboard',
-      label: 'Trading Dashboard',
-      icon: TrendingUp,
-      description: 'Monitor your portfolio and trades',
-      primary: true
+      label: 'Dashboard',
+      icon: Home,
+      description: 'View your portfolio and trading activity'
     },
     {
       href: '/ai-insights',
-      label: 'AI Analysis',
+      label: 'Strategy Simulator',
       icon: Brain,
-      description: 'Real-time market insights'
+      description: 'Test trading strategies with AI'
     },
     {
       href: '/gs-quant',
-      label: 'PRO Analytics',
-      icon: BarChart3,
-      description: 'Goldman Sachs tools',
+      label: 'Portfolio Risk',
+      icon: Shield,
+      description: 'Risk management and analytics',
       badge: 'PRO'
     },
     {
-      href: '/performance-story',
-      label: 'Performance Story',
-      icon: BookOpen,
-      description: 'Interactive trading journey',
-      badge: 'NEW'
+      href: '/web3-trading',
+      label: 'Market Sentiment',
+      icon: TrendingUp,
+      description: 'Real-time market analysis'
     },
     {
       href: '/pricing',
-      label: 'Upgrade to Pro',
-      icon: Crown,
-      description: 'Unlock premium features',
-      badge: 'UPGRADE'
-    },
-    {
-      href: '/web3-trading',
-      label: 'Web3 Trading',
-      icon: Wallet,
-      description: 'Connect your crypto wallet'
-    },
-    {
-      href: '/deploy',
-      label: 'Deploy',
-      icon: Cloud,
-      description: 'Production deployment'
+      label: 'Settings',
+      icon: Settings,
+      description: 'Account and preferences'
     }
   ];
 
