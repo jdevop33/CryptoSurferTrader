@@ -46,6 +46,13 @@ export function Navigation() {
       description: 'Real-time market analysis'
     },
     {
+      href: '/onchain-signals',
+      label: 'On-Chain Signals',
+      icon: Activity,
+      description: 'Blockchain-validated trading signals',
+      badge: 'NEW'
+    },
+    {
       href: '/pricing',
       label: 'Settings',
       icon: Settings,

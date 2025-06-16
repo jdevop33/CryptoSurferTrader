@@ -1609,12 +1609,21 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const symbols = ['DOGECOIN', 'SHIBA', 'PEPE', 'FLOKI'];
       const aiSignals = await Promise.all(
         symbols.map(async (symbol) => {
-          const analysis = await alibabaAIService.analyzeMarketData(symbol);
+          const mockMarketData = {
+            symbol,
+            price: 0.1,
+            volume: 1000000,
+            marketCap: 10000000,
+            sentiment: 0.7,
+            socialMentions: 500,
+            influencerCount: 25
+          };
+          const analysis = await alibabaAIService.analyzeMarketData(mockMarketData);
           return {
             symbol,
-            signal: analysis.signal,
+            signal: analysis.tradingSignal,
             confidence: analysis.confidence,
-            risk: analysis.risk
+            risk: analysis.riskLevel
           };
         })
       );

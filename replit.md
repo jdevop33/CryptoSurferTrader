@@ -67,6 +67,16 @@ A cutting-edge cryptocurrency trading platform that combines advanced AI-driven 
 
 ## Recent Changes (June 2025)
 
+### ✅ On-Chain Signal Validator Integration ⭐ NEW
+- Created comprehensive Python script using CryptoAPIs.io for authentic blockchain transaction data validation
+- Built On-Chain Validator Service with multi-token support (DOGECOIN, SHIBA, PEPE, FLOKI) across Ethereum, Polygon, BSC networks
+- Integrated whale activity detection analyzing top 5 largest transactions and transaction volume patterns
+- Added enhanced signal analysis combining AI sentiment with on-chain validation metrics for improved confidence scoring
+- Created dedicated On-Chain Signals page with validation status indicators (STRONG/MODERATE/WEAK/NO validation)
+- Implemented API endpoints for single token validation, multiple signal validation, and enhanced signal analysis
+- Added comprehensive error handling and validation score calculation based on transaction count, whale activity, and volume
+- Enhanced navigation with "NEW" badge for On-Chain Signals feature accessible at /onchain-signals
+
 ### ✅ Secure Non-Custodial Trading Implementation
 - Created secure UniswapTradeButton component with read-only wallet access and external Uniswap integration
 - Built comprehensive TransactionHistory component displaying secure transaction data via Alchemy APIs
