@@ -18,6 +18,7 @@ import { onChainValidatorService } from "./onchain_validator_service";
 import { eventMonitorService } from "./event_monitor_service";
 import { TradingTeamOrchestrator } from "./trading_expert_agents";
 import { predictionTracker } from "./prediction_tracker";
+import { blockchainPredictionService } from "./blockchain_prediction_service";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 
@@ -2060,6 +2061,147 @@ export async function registerRoutes(app: Express): Promise<Server> {
         error: 'Failed to create integrated webhooks',
         message: error.message
       });
+    }
+  });
+
+  // Blockchain Prediction & Betting Endpoints
+  app.post('/api/blockchain/predictions/create', async (req, res) => {
+    try {
+      const { agentName, symbol, action, confidence, targetPrice, timeframe, reasoning } = req.body;
+      
+      const expiryTimestamp = Date.now() + (
+        timeframe === '1h' ? 3600000 :
+        timeframe === '24h' ? 86400000 :
+        timeframe === '7d' ? 604800000 :
+        2592000000 // 30d default
+      );
+
+      const prediction = await blockchainPredictionService.createPrediction({
+        agentName,
+        symbol: symbol.toUpperCase(),
+        action,
+        confidence,
+        targetPrice,
+        timeframe,
+        reasoning,
+        expiryTimestamp
+      });
+
+      res.json({
+        success: true,
+        prediction,
+        blockchainProof: {
+          txHash: prediction.blockchainTxHash,
+          ipfsHash: prediction.ipfsHash,
+          verificationUrl: `https://mumbai.polygonscan.com/tx/${prediction.blockchainTxHash}`
+        }
+      });
+    } catch (error: any) {
+      console.error('Blockchain prediction creation error:', error);
+      res.status(500).json({ error: 'Failed to create blockchain prediction', message: error.message });
+    }
+  });
+
+  app.get('/api/blockchain/predictions/verified', async (req, res) => {
+    try {
+      const predictions = await blockchainPredictionService.getVerifiedPredictions();
+      res.json({
+        predictions,
+        totalCount: predictions.length,
+        blockchainVerified: predictions.filter(p => p.blockchainTxHash).length
+      });
+    } catch (error: any) {
+      console.error('Get verified predictions error:', error);
+      res.status(500).json({ error: 'Failed to get verified predictions', message: error.message });
+    }
+  });
+
+  app.get('/api/blockchain/predictions/:id/proof', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const proof = await blockchainPredictionService.getVerificationProof(id);
+      
+      if (!proof) {
+        return res.status(404).json({ error: 'Prediction not found' });
+      }
+
+      res.json(proof);
+    } catch (error: any) {
+      console.error('Get verification proof error:', error);
+      res.status(500).json({ error: 'Failed to get verification proof', message: error.message });
+    }
+  });
+
+  app.post('/api/blockchain/betting/create', async (req, res) => {
+    try {
+      const { predictionId, creatorAddress, betAmount } = req.body;
+      
+      const bettingContract = await blockchainPredictionService.createBettingContract(
+        predictionId, 
+        creatorAddress, 
+        betAmount
+      );
+
+      res.json({
+        success: true,
+        bettingContract,
+        contractAddress: bettingContract.contractAddress,
+        instructions: 'Users can now join this bet by calling /api/blockchain/betting/join'
+      });
+    } catch (error: any) {
+      console.error('Betting contract creation error:', error);
+      res.status(500).json({ error: 'Failed to create betting contract', message: error.message });
+    }
+  });
+
+  app.post('/api/blockchain/betting/join', async (req, res) => {
+    try {
+      const { predictionId, userAddress, betAmount, supportsPrediction } = req.body;
+      
+      await blockchainPredictionService.joinBet(predictionId, userAddress, betAmount, supportsPrediction);
+
+      res.json({
+        success: true,
+        message: 'Successfully joined bet',
+        betAmount,
+        supportsPrediction
+      });
+    } catch (error: any) {
+      console.error('Join bet error:', error);
+      res.status(500).json({ error: 'Failed to join bet', message: error.message });
+    }
+  });
+
+  app.get('/api/blockchain/betting/active', async (req, res) => {
+    try {
+      const activeBets = blockchainPredictionService.getActiveBets();
+      res.json({
+        activeBets,
+        totalCount: activeBets.length,
+        totalPoolValue: activeBets.reduce((sum, bet) => sum + parseFloat(bet.totalPool), 0)
+      });
+    } catch (error: any) {
+      console.error('Get active bets error:', error);
+      res.status(500).json({ error: 'Failed to get active bets', message: error.message });
+    }
+  });
+
+  app.post('/api/blockchain/predictions/:id/resolve', async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { actualPrice } = req.body;
+      
+      await blockchainPredictionService.resolvePrediction(id, actualPrice);
+
+      res.json({
+        success: true,
+        message: 'Prediction resolved and bets settled',
+        predictionId: id,
+        actualPrice
+      });
+    } catch (error: any) {
+      console.error('Resolve prediction error:', error);
+      res.status(500).json({ error: 'Failed to resolve prediction', message: error.message });
     }
   });
 

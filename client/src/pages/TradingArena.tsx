@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import AgentSelector from '@/components/AgentSelector';
+import BlockchainPredictionArena from '@/components/BlockchainPredictionArena';
 import { useAuth } from '@/hooks/useAuth';
 
 export default function TradingArena() {
@@ -122,7 +123,7 @@ export default function TradingArena() {
 
         {/* Main Content */}
         <Tabs value={selectedTab} onValueChange={setSelectedTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="agents" className="flex items-center gap-2">
               <Users className="h-4 w-4" />
               My Trading Team
@@ -130,6 +131,10 @@ export default function TradingArena() {
             <TabsTrigger value="predictions" className="flex items-center gap-2">
               <Activity className="h-4 w-4" />
               Live Predictions
+            </TabsTrigger>
+            <TabsTrigger value="blockchain" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Blockchain Betting
             </TabsTrigger>
             <TabsTrigger value="leaderboard" className="flex items-center gap-2">
               <Trophy className="h-4 w-4" />
