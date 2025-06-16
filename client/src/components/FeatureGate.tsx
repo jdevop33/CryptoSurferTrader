@@ -6,8 +6,9 @@ import { Crown, Lock } from "lucide-react";
 import { Link } from "wouter";
 
 interface FeatureGateProps {
-  feature: 'strategySimulator' | 'portfolioRiskDashboard' | 'advancedAnalytics' | 'realTimeAlerts';
+  feature: 'strategySimulator' | 'portfolioRiskDashboard' | 'advancedAnalytics' | 'realTimeAlerts' | 'marketIntelligence';
   children: ReactNode;
+  tier?: 'FREE' | 'PRO';
   fallback?: ReactNode;
 }
 
@@ -31,6 +32,11 @@ const featureInfo = {
     title: "Real-time Trading Alerts",
     description: "Get instant notifications for market opportunities and risk events",
     icon: "🔔"
+  },
+  marketIntelligence: {
+    title: "NicheSignal AI Market Intelligence",
+    description: "Discover emerging crypto communities and predict market sentiment with Qwen AI models",
+    icon: "🧠"
   }
 };
 

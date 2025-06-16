@@ -13,6 +13,7 @@ import { productionTestingService } from "./production_testing_service";
 import { alchemyService } from "./alchemy_service";
 import { enhancedTwitterService } from "./enhanced_twitter_service";
 import { pythonBridge } from "./python_bridge";
+import { nicheSignalAI } from "./niche_signal_ai";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 import { spawn } from "child_process";
@@ -865,6 +866,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error('Twitter OAuth callback error:', error);
       res.redirect('https://8trader8panda8.xin/?auth=error');
     }
+  });
+
+  // NicheSignal AI - Market Intelligence API Endpoints
+  app.get('/api/niche-signal/market-intelligence', async (req, res) => {
+    try {
+      const intelligence = await nicheSignalAI.getMarketIntelligence();
+      if (!intelligence) {
+        return res.status(404).json({ error: 'Market intelligence not available' });
+      }
+      res.json(intelligence);
+    } catch (error) {
+      console.error('Market intelligence error:', error);
+      res.status(500).json({ error: 'Failed to fetch market intelligence' });
+    }
+  });
+
+  app.get('/api/niche-signal/community-insights', async (req, res) => {
+    try {
+      const insights = await nicheSignalAI.getCommunityInsights();
+      res.json(insights);
+    } catch (error) {
+      console.error('Community insights error:', error);
+      res.status(500).json({ error: 'Failed to fetch community insights' });
+    }
+  });
+
+  app.post('/api/niche-signal/content-resonance', async (req, res) => {
+    try {
+      const { contentType } = req.body;
+      if (!contentType) {
+        return res.status(400).json({ error: 'Content type is required' });
+      }
+      
+      const resonance = await nicheSignalAI.predictContentResonance(contentType);
+      res.json(resonance);
+    } catch (error) {
+      console.error('Content resonance prediction error:', error);
+      res.status(500).json({ error: 'Failed to predict content resonance' });
+    }
+  });
+
+  app.get('/api/niche-signal/status', (req, res) => {
+    res.json({
+      ready: nicheSignalAI.isReady(),
+      service: 'NicheSignal AI Market Intelligence',
+      features: [
+        'Community Discovery',
+        'Sentiment Analysis',
+        'Content Resonance Prediction',
+        'Market Intelligence'
+      ]
+    });
   });
 
   // Alibaba Cloud Deployment API Endpoints
