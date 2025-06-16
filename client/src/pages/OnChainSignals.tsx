@@ -1,4 +1,5 @@
 import OnChainValidatedSignals from "@/components/OnChainValidatedSignals";
+import WebhookManager from "@/components/WebhookManager";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Activity, TrendingUp, Database } from "lucide-react";
@@ -108,6 +109,9 @@ export default function OnChainSignals() {
 
       {/* Main Component */}
       <OnChainValidatedSignals />
+
+      {/* Real-Time Event Monitor */}
+      <WebhookManager />
 
       {/* Technical Note */}
       <Card className="border-gray-200 bg-gray-50">

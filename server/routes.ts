@@ -15,6 +15,7 @@ import { enhancedTwitterService } from "./enhanced_twitter_service";
 import { pythonBridge } from "./python_bridge";
 import { nicheSignalAI } from "./niche_signal_ai";
 import { onChainValidatorService } from "./onchain_validator_service";
+import { eventMonitorService } from "./event_monitor_service";
 import { z } from "zod";
 import { insertTradingPositionSchema, insertTradingSettingsSchema } from "@shared/schema";
 
@@ -1673,6 +1674,220 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ 
         error: 'Failed to generate enhanced signals',
         message: error.message 
+      });
+    }
+  });
+
+  // Real-Time Event Monitor (Webhook) Endpoints
+  app.post('/api/webhooks/create', async (req, res) => {
+    try {
+      const { network, contractAddress, callbackUrl } = req.body;
+      
+      if (!network || !contractAddress || !callbackUrl) {
+        return res.status(400).json({
+          error: 'Missing required fields: network, contractAddress, callbackUrl'
+        });
+      }
+      
+      console.log(`🔔 Creating webhook for ${contractAddress} on ${network}`);
+      
+      // Validate parameters
+      const validation = eventMonitorService.validateWebhookParams(network, contractAddress, callbackUrl);
+      if (!validation.valid) {
+        return res.status(400).json({
+          error: 'Invalid webhook parameters',
+          details: validation.errors
+        });
+      }
+      
+      const webhook = await eventMonitorService.createWebhookSubscription(network, contractAddress, callbackUrl);
+      
+      res.json({
+        webhook,
+        created_at: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Webhook creation error:', error);
+      res.status(500).json({
+        error: 'Failed to create webhook',
+        message: error.message
+      });
+    }
+  });
+
+  app.post('/api/webhooks/setup-trading', async (req, res) => {
+    try {
+      const { baseCallbackUrl } = req.body;
+      
+      if (!baseCallbackUrl) {
+        return res.status(400).json({
+          error: 'Missing required field: baseCallbackUrl'
+        });
+      }
+      
+      console.log(`🚀 Setting up trading webhooks with base URL: ${baseCallbackUrl}`);
+      
+      const result = await eventMonitorService.setupTradingWebhooks(baseCallbackUrl);
+      
+      res.json({
+        message: 'Trading webhooks setup completed',
+        result,
+        setup_at: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Trading webhook setup error:', error);
+      res.status(500).json({
+        error: 'Failed to setup trading webhooks',
+        message: error.message
+      });
+    }
+  });
+
+  app.post('/api/webhooks/crypto-events/:contractId', async (req, res) => {
+    try {
+      const { contractId } = req.params;
+      const eventData = req.body;
+      
+      console.log(`🔔 Received webhook event for contract ${contractId}:`, JSON.stringify(eventData, null, 2));
+      
+      // Process the webhook event
+      const processedEvent = {
+        contractId,
+        eventType: eventData.type || 'transaction',
+        blockNumber: eventData.data?.item?.blockHeight,
+        transactionHash: eventData.data?.item?.transactionId,
+        amount: eventData.data?.item?.amount,
+        from: eventData.data?.item?.fromAddress,
+        to: eventData.data?.item?.toAddress,
+        timestamp: new Date().toISOString(),
+        rawData: eventData
+      };
+      
+      // Emit to connected WebSocket clients
+      const io = (app as any).io;
+      if (io) {
+        io.emit('crypto-event', processedEvent);
+        console.log(`📡 Broadcasted crypto event to connected clients`);
+      }
+      
+      // Here you could also:
+      // - Store the event in database
+      // - Trigger additional analysis
+      // - Send notifications to users
+      
+      res.json({
+        status: 'received',
+        contractId,
+        processed_at: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Webhook processing error:', error);
+      res.status(500).json({
+        error: 'Failed to process webhook event',
+        message: error.message
+      });
+    }
+  });
+
+  app.get('/api/webhooks/generate-callback/:contractAddress', async (req, res) => {
+    try {
+      const { contractAddress } = req.params;
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      
+      const callbackUrl = eventMonitorService.generateCallbackUrl(baseUrl, contractAddress);
+      
+      res.json({
+        contractAddress,
+        callbackUrl,
+        baseUrl,
+        generated_at: new Date().toISOString(),
+        instructions: {
+          step1: 'Use this callback URL when creating webhooks',
+          step2: 'CryptoAPIs will send real-time events to this endpoint',
+          step3: 'Events will be broadcasted to WebSocket clients automatically'
+        }
+      });
+    } catch (error: any) {
+      console.error('Callback URL generation error:', error);
+      res.status(500).json({
+        error: 'Failed to generate callback URL',
+        message: error.message
+      });
+    }
+  });
+
+  // Enhanced webhook management with real-time integration
+  app.post('/api/webhooks/create-with-integration', async (req, res) => {
+    try {
+      const { tokens } = req.body; // Array of token symbols
+      
+      if (!Array.isArray(tokens) || tokens.length === 0) {
+        return res.status(400).json({
+          error: 'tokens must be a non-empty array'
+        });
+      }
+      
+      console.log(`🔄 Creating integrated webhooks for tokens: ${tokens.join(', ')}`);
+      
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      
+      // Token contract mapping
+      const tokenContracts: Record<string, { network: string; address: string }> = {
+        'SHIBA': { network: 'ethereum', address: '0x95ad61b0a150d79219dcf64e1e6cc01f0b64c4ce' },
+        'PEPE': { network: 'ethereum', address: '0x6982508145454ce325ddbe47a25d4ec3d2311933' },
+        'FLOKI': { network: 'ethereum', address: '0xcf0c122c6b73ff809c693db761e7baebe62b6a2e' },
+        'DOGECOIN': { network: 'ethereum', address: '0x4206931337dc273a630d328da6441786bfad668f' }
+      };
+      
+      const webhookPromises = tokens.map(async (token: string) => {
+        const tokenConfig = tokenContracts[token.toUpperCase()];
+        if (!tokenConfig) {
+          return {
+            token,
+            status: 'error',
+            error: `Token ${token} not supported`
+          };
+        }
+        
+        const callbackUrl = eventMonitorService.generateCallbackUrl(baseUrl, tokenConfig.address);
+        const webhook = await eventMonitorService.createWebhookSubscription(
+          tokenConfig.network,
+          tokenConfig.address,
+          callbackUrl
+        );
+        
+        return {
+          token,
+          webhook,
+          callbackUrl
+        };
+      });
+      
+      const results = await Promise.all(webhookPromises);
+      
+      const successful = results.filter(r => r.webhook?.status === 'success').length;
+      const failed = results.filter(r => r.webhook?.status === 'error').length;
+      
+      res.json({
+        message: 'Webhook integration completed',
+        results,
+        summary: {
+          total: tokens.length,
+          successful,
+          failed
+        },
+        real_time_events: {
+          websocket_endpoint: `${baseUrl.replace('http', 'ws')}/`,
+          event_channel: 'crypto-event',
+          instructions: 'Connect to WebSocket to receive real-time events'
+        },
+        created_at: new Date().toISOString()
+      });
+    } catch (error: any) {
+      console.error('Integrated webhook creation error:', error);
+      res.status(500).json({
+        error: 'Failed to create integrated webhooks',
+        message: error.message
       });
     }
   });
