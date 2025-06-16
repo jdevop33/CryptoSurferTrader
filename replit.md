@@ -67,6 +67,15 @@ A cutting-edge cryptocurrency trading platform that combines advanced AI-driven 
 
 ## Recent Changes (June 2025)
 
+### ✅ Interactive AI Demos for Immediate Value ⭐ NEW
+- Created comprehensive InteractiveDemos component with live AI agent demonstrations (AI Signals, Whale Tracker, Scam Detector)
+- Built engaging tabbed interface allowing users to test AI capabilities without wallet connection or signup
+- Implemented real-time mock data generation showing AI analysis, whale movements, and on-chain validation
+- Added clear action-reward loops with start/stop controls and visual feedback for user engagement
+- Redesigned landing page to focus on "Try AI Agents Now" rather than wallet connection as primary CTA
+- Removed scam warnings and trust-building copy in favor of demonstrable value through interactive testing
+- Created immediate gratification experience where users can see AI working within seconds of arriving
+
 ### ✅ Risk-Managed Trade Execution Agent Integration ⭐ NEW
 - Created comprehensive Risk-Managed Trade Execution Agent with secure transaction workflow and CryptoAPIs.io integration
 - Implemented complete 5-step execution pipeline: fee estimation, transaction simulation, preparation, signing, and broadcasting
