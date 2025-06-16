@@ -40,7 +40,7 @@ export function Navigation() {
       badge: 'PRO'
     },
     {
-      href: '/web3-trading',
+      href: '/market-sentiment',
       label: 'Market Sentiment',
       icon: TrendingUp,
       description: 'Real-time market analysis'

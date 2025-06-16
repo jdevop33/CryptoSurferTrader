@@ -89,7 +89,7 @@ export function NicheSignalDashboard() {
   }
 
   return (
-    <FeatureGate feature="market-intelligence" tier="PRO">
+    <FeatureGate feature="marketIntelligence" tier="PRO">
       <div className="space-y-6">
         <div className="flex items-center gap-2">
           <Brain className="h-6 w-6 text-primary" />

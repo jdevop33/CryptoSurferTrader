@@ -67,6 +67,16 @@ A cutting-edge cryptocurrency trading platform that combines advanced AI-driven 
 
 ## Recent Changes (June 2025)
 
+### ✅ NicheSignal AI Market Intelligence Integration
+- Built comprehensive NicheSignal AI service with Alibaba Cloud Qwen model integration for autonomous market intelligence
+- Created market intelligence dashboard with 4 key sections: Market Intelligence, Community Discovery, Sentiment Trends, Actionable Insights
+- Implemented real-time crypto community discovery and sentiment analysis powered by Qwen AI models
+- Added emerging narrative tracking and community shift analysis for crypto market insights
+- Built content resonance prediction system for optimal timing and audience targeting
+- Integrated actionable insights generation for trading strategy recommendations
+- Added Market Sentiment page with full NicheSignal AI dashboard accessible via simplified navigation
+- Created feature gating for Pro tier access to advanced market intelligence capabilities
+
 ### ✅ Consumer-Focused UX Redesign Implementation
 - Created streamlined one-click onboarding with single "Connect Wallet & View Dashboard" button
 - Redesigned main landing page for consumer accessibility and trust-building
