@@ -17,6 +17,8 @@ import Pricing from "@/pages/Pricing";
 import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
 import MarketSentiment from "@/pages/MarketSentiment";
+import StrategySimulator from "@/pages/StrategySimulator";
+import PortfolioRisk from "@/pages/PortfolioRisk";
 import NotFound from "@/pages/not-found";
 import { NotificationSystem } from "@/components/NotificationSystem";
 
@@ -35,6 +37,8 @@ function Router() {
         <Route path="/deploy" component={Deploy} />
         <Route path="/web3-trading" component={Web3Trading} />
         <Route path="/market-sentiment" component={MarketSentiment} />
+        <Route path="/strategy-simulator" component={StrategySimulator} />
+        <Route path="/portfolio-risk" component={PortfolioRisk} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
         <Route component={NotFound} />

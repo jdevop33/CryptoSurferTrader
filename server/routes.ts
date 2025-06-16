@@ -868,6 +868,105 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Strategy Simulator API Endpoint
+  app.post('/api/strategy/backtest', async (req, res) => {
+    try {
+      const params = req.body;
+      
+      // Validate required parameters
+      if (!params.strategy_type || !params.symbol || !params.initial_capital) {
+        return res.status(400).json({ error: 'Missing required parameters' });
+      }
+
+      // Run backtest using Python script
+      const python = spawn('python3', ['server/strategy_backtest.py']);
+      
+      let output = '';
+      let errorOutput = '';
+
+      python.stdout.on('data', (data) => {
+        output += data.toString();
+      });
+
+      python.stderr.on('data', (data) => {
+        errorOutput += data.toString();
+      });
+
+      python.on('close', (code) => {
+        if (code !== 0) {
+          console.error('Python backtest error:', errorOutput);
+          return res.status(500).json({ error: 'Backtest execution failed' });
+        }
+
+        try {
+          const result = JSON.parse(output.trim());
+          res.json(result);
+        } catch (parseError) {
+          console.error('Failed to parse backtest results:', parseError);
+          res.status(500).json({ error: 'Failed to parse backtest results' });
+        }
+      });
+
+      // Send parameters to Python script
+      python.stdin.write(JSON.stringify(params));
+      python.stdin.end();
+
+    } catch (error) {
+      console.error('Backtest API error:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+  // Portfolio Risk API Endpoints
+  app.get('/api/portfolio/risk/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      
+      // Get user's portfolio data
+      const portfolio = await storage.getPortfolio(parseInt(userId));
+      if (!portfolio) {
+        return res.status(404).json({ error: 'Portfolio not found' });
+      }
+
+      // Calculate VaR using simplified approach
+      const portfolioValue = parseFloat(portfolio.totalValue);
+      const confidenceLevel = 0.95;
+      
+      // Simulate 1-day 95% VaR calculation
+      // Using a simplified approach: assume 2% daily volatility
+      const dailyVolatility = 0.02;
+      const zScore = 1.645; // 95% confidence level
+      const var95 = portfolioValue * dailyVolatility * zScore;
+      
+      // Risk level assessment
+      const riskPercentage = (var95 / portfolioValue) * 100;
+      let riskLevel = 'Low';
+      let riskColor = '#10B981'; // green
+      
+      if (riskPercentage > 5) {
+        riskLevel = 'High';
+        riskColor = '#EF4444'; // red
+      } else if (riskPercentage > 2) {
+        riskLevel = 'Medium';
+        riskColor = '#F59E0B'; // yellow
+      }
+
+      res.json({
+        portfolioValue,
+        var95: Math.round(var95),
+        riskPercentage: Math.round(riskPercentage * 100) / 100,
+        riskLevel,
+        riskColor,
+        confidenceLevel,
+        message: `There is a 95% probability your portfolio will not lose more than $${Math.round(var95).toLocaleString()} in the next 24 hours.`
+      });
+
+    } catch (error) {
+      console.error('Portfolio risk calculation error:', error);
+      res.status(500).json({ error: 'Failed to calculate portfolio risk' });
+    }
+  });
+
   // NicheSignal AI - Market Intelligence API Endpoints
   app.get('/api/niche-signal/market-intelligence', async (req, res) => {
     try {

@@ -27,13 +27,13 @@ export function Navigation() {
       description: 'View your portfolio and trading activity'
     },
     {
-      href: '/ai-insights',
+      href: '/strategy-simulator',
       label: 'Strategy Simulator',
       icon: Brain,
       description: 'Test trading strategies with AI'
     },
     {
-      href: '/gs-quant',
+      href: '/portfolio-risk',
       label: 'Portfolio Risk',
       icon: Shield,
       description: 'Risk management and analytics',
