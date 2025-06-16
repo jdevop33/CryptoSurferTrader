@@ -279,8 +279,14 @@ export class MemStorage implements IStorage {
   async updateSocialSentiment(sentiment: InsertSocialSentiment): Promise<SocialSentiment> {
     const id = this.currentSentimentId++;
     const newSentiment: SocialSentiment = {
-      ...sentiment,
       id,
+      symbol: sentiment.symbol,
+      sentimentScore: sentiment.sentimentScore,
+      metadata: sentiment.metadata || {},
+      mentions: sentiment.mentions || null,
+      influencerCount: sentiment.influencerCount || null,
+      marketCap: sentiment.marketCap || null,
+      volumeChange: sentiment.volumeChange || null,
       timestamp: new Date(),
     };
     this.sentiments.set(sentiment.symbol, newSentiment);
@@ -328,8 +334,14 @@ export class MemStorage implements IStorage {
   async createNotification(notification: InsertNotification): Promise<Notification> {
     const id = this.currentNotificationId++;
     const newNotification: Notification = {
-      ...notification,
       id,
+      userId: notification.userId,
+      type: notification.type,
+      title: notification.title,
+      message: notification.message,
+      metadata: notification.metadata || {},
+      priority: notification.priority || null,
+      read: notification.read || false,
       createdAt: new Date(),
     };
     this.notifications.set(id, newNotification);
