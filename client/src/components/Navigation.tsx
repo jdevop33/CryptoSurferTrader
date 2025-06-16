@@ -54,6 +54,13 @@ export function Navigation() {
       badge: 'NEW'
     },
     {
+      href: '/pricing',
+      label: 'Upgrade to Pro',
+      icon: Crown,
+      description: 'Unlock premium features',
+      badge: 'UPGRADE'
+    },
+    {
       href: '/web3-trading',
       label: 'Web3 Trading',
       icon: Wallet,

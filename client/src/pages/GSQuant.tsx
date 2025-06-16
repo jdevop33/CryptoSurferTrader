@@ -1,6 +1,7 @@
 import { GSQuantDashboard } from '@/components/GSQuantDashboard';
 import { TradingHeader } from '@/components/TradingHeader';
 import { TradingSidebar } from '@/components/TradingSidebar';
+import { ProFeature } from '@/components/FeatureGate';
 
 export default function GSQuant() {
   return (
@@ -9,7 +10,9 @@ export default function GSQuant() {
       <div className="flex">
         <TradingSidebar />
         <main className="flex-1 p-6">
-          <GSQuantDashboard />
+          <ProFeature feature="advancedAnalytics">
+            <GSQuantDashboard />
+          </ProFeature>
         </main>
       </div>
     </div>
