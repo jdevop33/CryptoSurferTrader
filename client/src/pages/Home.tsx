@@ -6,7 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMetaMask } from '@/hooks/useMetaMask';
-import { Wallet, TrendingUp, Shield, Brain, Zap, AlertTriangle, CheckCircle, PlayCircle, Trophy, Star, Flame, Eye, Clock, Target, Users, DollarSign, BarChart3, Lock } from 'lucide-react';
+import { Wallet, TrendingUp, Shield, Brain, Zap, AlertTriangle, CheckCircle, PlayCircle, Trophy, Star, Flame, Eye, Clock, Target, Users, DollarSign, BarChart3, Lock, Play } from 'lucide-react';
+import { InteractiveDemos } from '@/components/InteractiveDemos';
 
 export default function Home() {
   const [, navigate] = useLocation();
@@ -70,74 +71,43 @@ export default function Home() {
             </div>
           </div>
 
-          <Badge variant="secondary" className="mb-4 bg-gradient-to-r from-orange-100 to-red-100 dark:from-orange-900 dark:to-red-900 border-orange-200 dark:border-orange-700">
-            <Flame className="w-3 h-3 mr-1" />
-            🔥 LIVE: AI Signals Firing Now
+          <Badge variant="secondary" className="mb-4 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 border-blue-200 dark:border-blue-700">
+            <Brain className="w-3 h-3 mr-1" />
+            AI Trading Intelligence Platform
           </Badge>
           
           <h1 className="text-6xl font-bold text-slate-900 dark:text-white mb-6 leading-tight">
-            Stop Losing Money to{" "}
-            <span className="text-red-600 dark:text-red-400 relative">
-              Crypto Scams
-              <div className="absolute -top-2 -right-8">
-                <AlertTriangle className="w-8 h-8 text-red-500 animate-pulse" />
-              </div>
+            See AI Trading Agents{" "}
+            <span className="text-blue-600 dark:text-blue-400">
+              Work Live
             </span>
           </h1>
           
           <div className="text-2xl text-slate-700 dark:text-slate-200 mb-8 font-medium">
-            <span className="text-green-600 dark:text-green-400">Trade Smart</span> with AI that actually works.
+            <span className="text-green-600 dark:text-green-400">Try our AI agents</span> right now - no signup needed.
             <br />
-            <span className="text-blue-600 dark:text-blue-400">Get instant signals</span> from Goldman Sachs tech.
-          </div>
-
-          {/* Live Signals Preview */}
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-lg p-6 mb-8 border-2 border-blue-100 dark:border-blue-800">
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-              <span className="font-semibold text-slate-700 dark:text-slate-200">LIVE SIGNALS RIGHT NOW</span>
-              <Eye className="w-4 h-4 text-slate-500" />
-            </div>
-            
-            <div className="grid md:grid-cols-3 gap-4">
-              {liveSignals.map((signal, idx) => (
-                <div key={idx} className={`p-4 rounded-lg border-2 ${
-                  signal.signal === 'BUY' ? 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-700' :
-                  signal.signal === 'SELL' ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-700' :
-                  'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-700'
-                }`}>
-                  <div className="flex justify-between items-start mb-2">
-                    <span className="font-bold text-lg">{signal.token}</span>
-                    <Badge variant={signal.signal === 'BUY' ? 'default' : signal.signal === 'SELL' ? 'destructive' : 'secondary'}>
-                      {signal.signal}
-                    </Badge>
-                  </div>
-                  <div className="text-sm text-slate-600 dark:text-slate-300 mb-2">
-                    Confidence: {Math.round(signal.confidence)}%
-                  </div>
-                  <Progress value={signal.confidence} className="h-2 mb-2" />
-                  <div className={`text-sm font-medium ${
-                    signal.change.startsWith('+') ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-                  }`}>
-                    {signal.change} today
-                  </div>
-                </div>
-              ))}
-            </div>
+            <span className="text-blue-600 dark:text-blue-400">Watch them analyze</span> markets in real-time.
           </div>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
             <Button 
-              onClick={handleConnectAndView}
               size="lg" 
-              className="bg-gradient-to-r from-green-600 to-blue-600 hover:from-green-700 hover:to-blue-700 shadow-lg"
+              className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 shadow-lg px-8 py-4 text-lg"
+              onClick={() => {
+                document.getElementById('demos')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              <PlayCircle className="w-5 h-5 mr-2" />
+              Try AI Agents Now
+            </Button>
+            <Button 
+              variant="outline" 
+              size="lg" 
+              className="border-2 border-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-8 py-4 text-lg"
+              onClick={handleConnectAndView}
             >
               <Wallet className="w-5 h-5 mr-2" />
-              {isConnected ? 'View Your Dashboard' : 'Connect Wallet & Start Free'}
-            </Button>
-            <Button variant="outline" size="lg" className="border-2 border-slate-300 dark:border-slate-600">
-              <PlayCircle className="w-5 h-5 mr-2" />
-              Watch Demo (2 min)
+              Connect Wallet
             </Button>
           </div>
 
@@ -180,6 +150,11 @@ export default function Home() {
             </Card>
           </div>
         </div>
+      </section>
+
+      {/* Interactive AI Demos */}
+      <section id="demos" className="container mx-auto px-4 py-16">
+        <InteractiveDemos />
       </section>
 
       {/* Free Value Proposition */}
