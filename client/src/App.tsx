@@ -7,6 +7,7 @@ import { ThemeProvider } from "next-themes";
 import { Navigation } from "@/components/Navigation";
 import Home from "@/pages/Home";
 import Dashboard from "@/pages/Dashboard";
+import Profile from "@/pages/Profile";
 import GettingStarted from "@/pages/GettingStarted";
 import AIInsights from "@/pages/AI-Insights";
 import Deploy from "@/pages/Deploy";
@@ -30,6 +31,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/dashboard" component={Dashboard} />
+        <Route path="/profile" component={Profile} />
         <Route path="/getting-started" component={GettingStarted} />
         <Route path="/ai-insights" component={AIInsights} />
         <Route path="/gs-quant" component={GSQuant} />

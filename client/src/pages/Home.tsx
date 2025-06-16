@@ -6,12 +6,17 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useMetaMask } from '@/hooks/useMetaMask';
-import { Wallet, TrendingUp, Shield, Brain, Zap, AlertTriangle, CheckCircle, PlayCircle, Trophy, Star, Flame, Eye, Clock, Target, Users, DollarSign, BarChart3, Lock, Play } from 'lucide-react';
+import { Wallet, TrendingUp, Shield, Brain, Zap, AlertTriangle, CheckCircle, PlayCircle, Trophy, Star, Flame, Eye, Clock, Target, Users, DollarSign, BarChart3, Lock, Play, ArrowRight, Crown, Sparkles } from 'lucide-react';
 import { InteractiveDemos } from '@/components/InteractiveDemos';
+import { QuickSignup } from '@/components/QuickSignup';
+import { OnboardingFlow } from '@/components/OnboardingFlow';
 
 export default function Home() {
   const [, navigate] = useLocation();
   const { isConnected, connect, isInstalled } = useMetaMask();
+  const [showQuickSignup, setShowQuickSignup] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [user, setUser] = useState(null);
   const [liveSignals, setLiveSignals] = useState([
     { token: 'PEPE', signal: 'BUY', confidence: 87, change: '+12.4%', risk: 'LOW' },
     { token: 'SHIBA', signal: 'HOLD', confidence: 74, change: '+3.2%', risk: 'LOW' },
@@ -48,6 +53,22 @@ export default function Home() {
       await connect();
       // The useEffect will handle navigation after connection
     }
+  };
+
+  const handleQuickSignup = (userData: any) => {
+    setUser(userData);
+    setShowQuickSignup(false);
+    setShowOnboarding(true);
+  };
+
+  const handleOnboardingComplete = (completeUserData: any) => {
+    setUser(completeUserData);
+    setShowOnboarding(false);
+    navigate('/profile');
+  };
+
+  const handleGetStarted = () => {
+    setShowQuickSignup(true);
   };
 
   return (
