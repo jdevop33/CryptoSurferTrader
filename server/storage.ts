@@ -6,7 +6,7 @@ import {
   tradingSettings, 
   notifications,
   type User, 
-  type InsertUser,
+  type UpsertUser,
   type TradingPosition,
   type InsertTradingPosition,
   type TradeHistory,
@@ -21,9 +21,10 @@ import {
 
 export interface IStorage {
   // User methods
-  getUser(id: number): Promise<User | undefined>;
+  getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
+  updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
 
   // Trading position methods
   getActivePositions(userId: number): Promise<TradingPosition[]>;
@@ -51,7 +52,7 @@ export interface IStorage {
 }
 
 export class MemStorage implements IStorage {
-  private users: Map<number, User>;
+  private users: Map<string, User>;
   private positions: Map<number, TradingPosition>;
   private trades: Map<number, TradeHistory>;
   private sentiments: Map<string, SocialSentiment>;

@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { Server as SocketIOServer } from "socket.io";
 import Stripe from "stripe";
 import { storage } from "./storage";
+import { subscriptionStorage } from "./subscription_storage";
 import { dataService } from "./data_service";
 import { alibabaAIService } from "./alibaba_ai_service";
 import { twitterService } from "./twitter_service";
@@ -20,9 +21,7 @@ import { spawn } from "child_process";
 if (!process.env.STRIPE_SECRET_KEY) {
   throw new Error('Missing required Stripe secret: STRIPE_SECRET_KEY');
 }
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-  apiVersion: "2025-05-28.basil",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 export async function registerRoutes(app: Express): Promise<Server> {
   const httpServer = createServer(app);
@@ -996,8 +995,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: 'Missing required parameters' });
       }
 
-      // Get user from storage
-      const user = await storage.getUser(userId);
+      // Get user from subscription storage
+      const user = await subscriptionStorage.getUser(userId);
       if (!user) {
         return res.status(404).json({ error: 'User not found' });
       }
@@ -1010,7 +1009,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           metadata: { userId: user.id }
         });
         customerId = customer.id;
-        await storage.updateUser(userId, { stripeCustomerId: customerId });
+        await subscriptionStorage.updateUser(userId, { stripeCustomerId: customerId });
       }
 
       // Create checkout session
