@@ -604,6 +604,165 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User registration endpoint
+  app.post("/api/auth/register", async (req, res) => {
+    try {
+      const { email, password, firstName, lastName, walletAddress, subscriptionStatus } = req.body;
+      
+      // Check if user already exists
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ error: "User already exists with this email" });
+      }
+
+      // Create new user with hashed password
+      const bcrypt = await import('bcrypt');
+      const hashedPassword = await bcrypt.hash(password, 10);
+      
+      const userData = {
+        id: `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        email,
+        password: hashedPassword,
+        firstName,
+        lastName,
+        walletAddress,
+        subscriptionStatus: subscriptionStatus || 'free',
+        stripeCustomerId: null,
+        stripeSubscriptionId: null,
+        subscriptionExpiresAt: null,
+        profileImageUrl: null,
+      };
+
+      const newUser = await storage.createUser(userData);
+      
+      // Remove password from response
+      const { password: _, ...userResponse } = newUser;
+      
+      res.status(201).json(userResponse);
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      res.status(500).json({ error: "Failed to create user account" });
+    }
+  });
+
+  // Stripe checkout session creation
+  app.post("/api/stripe/create-checkout-session", async (req, res) => {
+    try {
+      const { userId, email, priceId, successUrl, cancelUrl } = req.body;
+
+      if (!process.env.STRIPE_SECRET_KEY) {
+        return res.status(500).json({ error: "Stripe not configured" });
+      }
+
+      const stripe = new (await import('stripe')).default(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: '2023-10-16',
+      });
+
+      // Create or retrieve Stripe customer
+      let customer;
+      const user = await storage.getUser(userId);
+      
+      if (user?.stripeCustomerId) {
+        customer = await stripe.customers.retrieve(user.stripeCustomerId);
+      } else {
+        customer = await stripe.customers.create({
+          email: email,
+          metadata: {
+            userId: userId,
+          },
+        });
+        
+        // Update user with Stripe customer ID
+        await storage.updateUserStripeCustomerId(userId, customer.id);
+      }
+
+      // Create checkout session
+      const session = await stripe.checkout.sessions.create({
+        customer: customer.id,
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price: priceId,
+            quantity: 1,
+          },
+        ],
+        mode: 'subscription',
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: {
+          userId: userId,
+        },
+      });
+
+      res.json({ checkoutUrl: session.url });
+    } catch (error: any) {
+      console.error('Stripe checkout error:', error);
+      res.status(500).json({ error: "Failed to create checkout session" });
+    }
+  });
+
+  // Stripe webhook endpoint for subscription events
+  app.post("/api/stripe/webhook", app.raw({ type: 'application/json' }), async (req, res) => {
+    try {
+      const sig = req.headers['stripe-signature'];
+      const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
+
+      if (!endpointSecret || !process.env.STRIPE_SECRET_KEY) {
+        return res.status(500).json({ error: "Stripe webhook not configured" });
+      }
+
+      const stripe = new (await import('stripe')).default(process.env.STRIPE_SECRET_KEY, {
+        apiVersion: '2023-10-16',
+      });
+
+      let event;
+      try {
+        event = stripe.webhooks.constructEvent(req.body, sig as string, endpointSecret);
+      } catch (err: any) {
+        console.error('Webhook signature verification failed:', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+      }
+
+      // Handle checkout.session.completed event
+      if (event.type === 'checkout.session.completed') {
+        const session = event.data.object as any;
+        const userId = session.metadata?.userId;
+
+        if (userId) {
+          // Update user subscription status to 'pro'
+          await storage.updateUserSubscription(userId, {
+            subscriptionStatus: 'pro',
+            stripeSubscriptionId: session.subscription,
+            subscriptionExpiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+          });
+
+          console.log(`User ${userId} upgraded to Pro subscription`);
+        }
+      }
+
+      // Handle subscription cancellation
+      if (event.type === 'customer.subscription.deleted') {
+        const subscription = event.data.object as any;
+        const customer = await stripe.customers.retrieve(subscription.customer);
+        
+        if (customer && !customer.deleted && customer.metadata?.userId) {
+          await storage.updateUserSubscription(customer.metadata.userId, {
+            subscriptionStatus: 'free',
+            stripeSubscriptionId: null,
+            subscriptionExpiresAt: null,
+          });
+
+          console.log(`User ${customer.metadata.userId} subscription cancelled`);
+        }
+      }
+
+      res.json({ received: true });
+    } catch (error: any) {
+      console.error('Webhook processing error:', error);
+      res.status(500).json({ error: "Webhook processing failed" });
+    }
+  });
+
   app.post("/api/alchemy/swap/quote", async (req, res) => {
     try {
       const { tokenIn, tokenOut, amountIn, walletAddress } = req.body;

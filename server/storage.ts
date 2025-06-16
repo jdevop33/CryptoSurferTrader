@@ -23,8 +23,15 @@ export interface IStorage {
   // User methods
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
-  createUser(user: InsertUser): Promise<User>;
+  getUserByEmail(email: string): Promise<User | undefined>;
+  createUser(user: UpsertUser): Promise<User>;
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
+  updateUserStripeCustomerId(userId: string, stripeCustomerId: string): Promise<User>;
+  updateUserSubscription(userId: string, subscription: {
+    subscriptionStatus: string;
+    stripeSubscriptionId: string | null;
+    subscriptionExpiresAt: Date | null;
+  }): Promise<User>;
 
   // Trading position methods
   getActivePositions(userId: number): Promise<TradingPosition[]>;
