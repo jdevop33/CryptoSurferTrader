@@ -48,6 +48,9 @@ export interface IStorage {
   // Notification methods
   getNotifications(userId: number): Promise<Notification[]>;
   createNotification(notification: InsertNotification): Promise<Notification>;
+
+  // Portfolio methods
+  getPortfolio(userId: number): Promise<{ totalValue: string; dailyPnL: string; assets: any[] } | null>;
   markNotificationRead(id: number): Promise<boolean>;
 }
 
@@ -332,6 +335,19 @@ export class MemStorage implements IStorage {
     const updated = { ...notification, read: true };
     this.notifications.set(id, updated);
     return true;
+  }
+
+  async getPortfolio(userId: number): Promise<{ totalValue: string; dailyPnL: string; assets: any[] } | null> {
+    // Return mock portfolio data for demonstration
+    return {
+      totalValue: "10000.00",
+      dailyPnL: "150.25",
+      assets: [
+        { symbol: "BTC", balance: "0.5", value: "25000", change24h: "2.5%" },
+        { symbol: "ETH", balance: "2.0", value: "6000", change24h: "1.8%" },
+        { symbol: "DOGE", balance: "10000", value: "800", change24h: "-0.5%" }
+      ]
+    };
   }
 }
 

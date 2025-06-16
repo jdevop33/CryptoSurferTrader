@@ -46,9 +46,9 @@ export default function StrategySimulator() {
   const backtestMutation = useMutation({
     mutationFn: async (strategyParams: StrategyParams) => {
       const response = await apiRequest('POST', '/api/strategy/backtest', strategyParams);
-      return response;
+      return response.json();
     },
-    onSuccess: (data) => {
+    onSuccess: (data: BacktestResult) => {
       setResult(data);
     },
     onError: (error) => {
