@@ -14,6 +14,19 @@ interface TokenData {
   balance?: string;
   price?: number;
   logo?: string;
+  contractAddress?: string;
+}
+
+interface TransactionHistory {
+  hash: string;
+  from: string;
+  to: string;
+  value: string;
+  timestamp: number;
+  blockNumber: number;
+  gasUsed: string;
+  gasPrice: string;
+  status: number;
 }
 
 interface SwapQuote {
@@ -27,6 +40,7 @@ interface SwapQuote {
 export class AlchemyTradingService {
   private alchemy: Alchemy;
   private provider: ethers.JsonRpcProvider;
+  private etherscanProvider: ethers.EtherscanProvider;
   private isInitialized = false;
 
   constructor() {
@@ -39,6 +53,7 @@ export class AlchemyTradingService {
     this.provider = new ethers.JsonRpcProvider(
       `https://eth-mainnet.g.alchemy.com/v2/${config.apiKey}`
     );
+    this.etherscanProvider = new ethers.EtherscanProvider("mainnet", process.env.ETHERSCAN_API_KEY);
     this.initialize();
   }
 
